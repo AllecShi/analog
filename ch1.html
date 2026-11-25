@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第1章 半导体二极管 · 模电讲义</title>
+<link rel="stylesheet" href="assets/katex/katex.min.css">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="本章目录"></nav>
+<article>
+<div class="eyebrow">第 1 章 · 课件 91 页</div>
+<h1>半导体二极管及其基本应用电路</h1>
+<p class="lead">从“放大电路要做什么”说起，再钻进硅原子内部，看 PN 结怎样让电流只能单向流动；最后学会把二极管换成你在电路原理里熟悉的元件来算题。</p>
+<div class="key"><b>本章学习目标</b> <a class="src" data-s="28"></a><br>① 理解 PN 结的形成和单向导电性　② 掌握二极管的伏安特性曲线　③ 掌握含二极管电路的分析方法（<b>重点难点</b>）</div>
+
+<!-- ================= 绪论 ================= -->
+<h2 id="intro"><span class="n">1.0</span>绪论：信号与放大电路模型</h2>
+<p>模电整门课的<b>主线任务</b>只有一句话：<b>尽可能不失真地放大微弱的输入信号</b> <a class="src" data-s="12"></a>。麦克风输出的电压只有几毫伏，要推动喇叭就必须放大。</p>
+<h3>模拟信号和数字信号</h3>
+<div class="panel fig"><svg id="sigs" viewBox="0 0 680 170" role="img" aria-label="模拟信号与数字信号"></svg>
+<div class="cap">左：模拟信号在时间和幅度上都连续；右：数字信号只取高、低两种电平。模电里三极管工作在<b>放大区</b>，数电里工作在<b>截止区和饱和区</b>当开关用 <a class="src" data-s="25"></a> <a class="src" data-s="26"></a>。</div></div>
+
+<h3>放大电路 = 一个双口网络</h3>
+<p>先不管放大电路里面有什么，只看它的两个端口 <a class="src" data-s="19"></a>：</p>
+<ul>
+<li>从<b>输入端</b>看进去，它就像一个电阻，叫<b>输入电阻 \(R_i\)</b>；</li>
+<li>从<b>输出端</b>看进去，它像一个“受控电压源 + 内阻”，内阻叫<b>输出电阻 \(R_o\)</b>。</li>
+</ul>
+<p>这就是你学过的戴维宁等效。下面是课件 S20 的<b>电压放大模型</b>：</p>
+<div class="panel fig"><svg id="ampModel" class="wide" viewBox="0 0 660 240" role="img" aria-label="电压放大模型"></svg>
+<div class="cap">虚线框内是放大电路。\(A_{vo}\) 是负载开路时的电压增益，受控源输出 \(A_{vo}v_i\)。</div></div>
+<p>两次分压，就能写出整个链路的增益：</p>
+<div class="formula">\[ v_i = v_s\,\frac{R_i}{R_s+R_i}\qquad v_o = A_{vo}v_i\,\frac{R_L}{R_o+R_L}\qquad A_v=\frac{v_o}{v_i}=A_{vo}\frac{R_L}{R_o+R_L} \]</div>
+<div class="panel">
+<b>动手试一试：</b>调电阻，看信号在输入端和输出端各损失了多少（取 \(A_{vo}=100\)）。
+<div class="ctl"><label for="mRs">\(R_s\)</label><input type="range" id="mRs" min="-1" max="2" step="0.01" value="0"><output for="mRs"></output></div>
+<div class="ctl"><label for="mRi">\(R_i\)</label><input type="range" id="mRi" min="-1" max="3" step="0.01" value="1"><output for="mRi"></output></div>
+<div class="ctl"><label for="mRo">\(R_o\)</label><input type="range" id="mRo" min="-2" max="1" step="0.01" value="0"><output for="mRo"></output></div>
+<div class="ctl"><label for="mRL">\(R_L\)</label><input type="range" id="mRL" min="-1" max="2" step="0.01" value="0.7"><output for="mRL"></output></div>
+<div class="fig"><svg id="ampBars" viewBox="0 0 640 120" role="img" aria-label="增益条形图"></svg></div>
+</div>
+<div class="key"><b>结论（S20–S21 的两个“希望…？”）</b><br>
+想让负载不影响增益，希望 \(R_o \ll R_L\)，理想 \(R_o=0\)；想让信号源不被衰减，希望 \(R_i \gg R_s\)，理想 \(R_i\to\infty\)。<br>这两条是评价电压放大电路好坏的核心，后面每一章都会算 \(R_i\)、\(R_o\)。</div>
+<h3>四种增益 <a class="src" data-s="18"></a></h3>
+<div class="tbl"><table>
+<thead><tr><th>名称</th><th>定义</th><th>单位</th><th>对应模型</th></tr></thead>
+<tbody>
+<tr><td>电压增益</td><td>\(A_v = v_o / v_i\)</td><td>无（或 dB）</td><td>电压放大：希望 \(R_i\) 大、\(R_o\) 小</td></tr>
+<tr><td>电流增益</td><td>\(A_i = i_o / i_i\)</td><td>无</td><td>电流放大：希望 \(R_i\) 小、\(R_o\) 大 <a class="src" data-s="23"></a></td></tr>
+<tr><td>互阻增益</td><td>\(A_r = v_o / i_i\)</td><td>Ω</td><td>电流进、电压出</td></tr>
+<tr><td>互导增益</td><td>\(A_g = i_o / v_i\)</td><td>S</td><td>电压进、电流出</td></tr>
+</tbody></table></div>
+<p class="muted">分贝换算：\(A_v(\mathrm{dB}) = 20\lg|A_v|\)。例如放大 100 倍就是 40 dB。</p>
+
+<!-- ================= 1.1 ================= -->
+<h2 id="semi"><span class="n">1.1</span>半导体的基础知识</h2>
+<p>导体里自由电子非常多，绝缘体里几乎没有，硅、锗介于两者之间，所以叫<b>半导体</b> <a class="src" data-s="30"></a>。它有三个“敏感”特性：热敏、光敏、<b>杂敏</b>（掺杂敏感），本课主要讨论掺杂性 <a class="src" data-s="31"></a>。</p>
+<h3>本征半导体：电子与空穴成对出现</h3>
+<p>纯净的硅叫<b>本征半导体</b>。每个硅原子有 4 个价电子，与 4 个邻居形成共价键。常温下偶尔有电子挣脱出来成为<b>自由电子</b>，原位留下一个<b>空穴</b>，这个过程叫<b>本征激发</b> <a class="src" data-s="34"></a>。</p>
+<div class="panel fig"><svg id="lattice" viewBox="0 0 640 250" role="img" aria-label="硅晶格本征激发"></svg>
+<div class="cap">一个电子挣脱共价键（蓝点），原地留下空穴（红圈）。</div></div>
+<div class="key"><b>空穴怎么移动？</b>想象一排座位里有一个空座。旁边的人挪过去坐，空座就跑到了他原来的位置。电子往左挪，空穴就往右移，效果相当于一个<b>带正电</b>的粒子在运动。</div>
+<h3>掺杂：N 型和 P 型 <a class="src" data-s="35"></a> <a class="src" data-s="36"></a></h3>
+<div class="grid3">
+<div class="panel"><svg viewBox="0 0 200 165" role="img" aria-label="本征硅"><g id="mini-i"></g></svg><h4>本征硅</h4><p class="muted">电子 = 空穴，都很少，导电差。</p></div>
+<div class="panel"><svg viewBox="0 0 200 165" role="img" aria-label="N型"><g id="mini-n"></g></svg><h4>N 型：掺 5 价磷</h4><p class="muted">磷多出 1 个电子，<b>自由电子是多子</b>。</p></div>
+<div class="panel"><svg viewBox="0 0 200 165" role="img" aria-label="P型"><g id="mini-p"></g></svg><h4>P 型：掺 3 价硼</h4><p class="muted">硼缺 1 个电子形成空穴，<b>空穴是多子</b>。</p></div>
+</div>
+<div class="tbl"><table>
+<thead><tr><th></th><th>多子</th><th>少子</th><th>杂质原子变成</th></tr></thead>
+<tbody>
+<tr><td><b>N 型</b></td><td class="c-blue">● 自由电子</td><td class="c-red">○ 空穴</td><td>⊕ 正离子（不能动）</td></tr>
+<tr><td><b>P 型</b></td><td class="c-red">○ 空穴</td><td class="c-blue">● 自由电子</td><td>⊖ 负离子（不能动）</td></tr>
+</tbody></table></div>
+<p>掺杂的效果非常显著：多子和少子的浓度相差约 \(10^6\) 倍 <a class="src" data-s="37"></a>。温度升高，本征激发增强，<b>少子</b>增多，这是后面“温漂”的根源。</p>
+<div class="warn"><b>易错点：</b>N 型半导体电子多，但整体<b>不带电</b>。每多一个自由电子，就有一个磷正离子与之抵消。</div>
+
+<!-- ================= 1.2 ================= -->
+<h2 id="pn"><span class="n">1.2</span>PN 结的形成与单向导电性</h2>
+<p>把 P 型和 N 型做在同一块硅片上，交界处会自发形成一层特殊的区域。课件用 4 页图讲这个过程 <a class="src" data-s="39"></a>–<a class="src" data-s="42"></a>，下面逐步演示：</p>
+<div class="panel">
+<div class="fig"><svg id="form" class="wide" viewBox="0 0 640 300" role="img" aria-label="PN结形成过程"></svg></div>
+<div id="fcaps">
+<p class="fcap"><b>① 扩散。</b>P 区空穴多、N 区电子多，浓度差驱使多子越过交界：空穴往右进入 N 区，电子往左进入 P 区。就像墨水在清水里散开。</p>
+<p class="fcap"><b>② 复合，露出离子。</b>越过去的电子和空穴相遇复合。交界附近的可动载流子消失，只剩锁在晶格里的离子：P 侧 ⊖，N 侧 ⊕。</p>
+<p class="fcap"><b>③ 内电场。</b>正负离子之间形成电场，方向从 ⊕ 指向 ⊖，即 <b>N → P</b>。它阻碍多子继续扩散，同时把少子拉向对面，这种电场驱动的运动叫<b>漂移</b>。</p>
+<p class="fcap"><b>④ 动态平衡。</b>扩散与漂移相等时，宽度稳定。这层只有离子、没有可动载流子的区域叫<b>空间电荷区</b>（耗尽层），就是 <b>PN 结</b>。</p>
+</div>
+<div class="btns"><button type="button" id="fprev">上一步</button><button type="button" id="fnext">下一步</button><span class="muted" id="fidx"></span></div>
+</div>
+<div class="shots"><figure class="sl" data-s="39">多子的扩散运动</figure><figure class="sl" data-s="42">空间电荷区就是 PN 结</figure></div>
+<h3>加电压：正偏导通，反偏截止</h3>
+<ul>
+<li><b>正偏</b>（P 接正、N 接负）：外电场与内电场相反，PN 结<b>变窄</b>，多子大量扩散，电流大（mA 级）<a class="src" data-s="45"></a></li>
+<li><b>反偏</b>（P 接负、N 接正）：外电场加强内电场，PN 结<b>变宽</b>，只有少子漂移，电流极小（μA 级）<a class="src" data-s="47"></a></li>
+</ul>
+<div class="panel">
+<div class="ctl"><label for="bias">外加电压 \(V\)</label><input id="bias" type="range" min="-5.4" max="0.72" step="0.01" value="0.65"><output for="bias"></output></div>
+<div class="btns" id="presets">
+<button type="button" data-v="-5.25">击穿 −5.25V</button><button type="button" data-v="-3">反偏 −3V</button><button type="button" data-v="0">零偏</button><button type="button" data-v="0.4">死区 0.4V</button><button type="button" data-v="0.65">正偏 0.65V</button>
+</div>
+<div class="readout" id="readout"></div>
+<div class="fig"><svg id="biasSvg" class="wide" viewBox="0 0 640 325" role="img" aria-label="外加电压下的PN结"></svg></div>
+<div class="fig"><svg id="ivSvg" class="wide" viewBox="0 0 640 360" role="img" aria-label="伏安特性"></svg></div>
+<div class="cap">为了同时看清正反两侧，负半轴电压刻度被压缩了（课件原图也这样画）。击穿电压取 5V 仅作演示。</div>
+</div>
+<p>PN 结的伏安特性方程 <a class="src" data-s="50"></a>：</p>
+<div class="formula boxed">\[ i_D = I_S\left(e^{v_D/V_T}-1\right) \]</div>
+<p>\(I_S\) 是反向饱和电流（极小）；\(V_T\) 是温度的电压当量，常温下 \(V_T\approx 26\,\mathrm{mV}\)。正向时 \(v_D\gg V_T\)，\(i_D\approx I_S e^{v_D/V_T}\) 指数增长；反向时 \(i_D\approx -I_S\)，几乎为零。</p>
+
+<!-- ================= 1.3 ================= -->
+<h2 id="diode"><span class="n">1.3</span>半导体二极管</h2>
+<p>PN 结加上引线和管壳就是二极管 <a class="src" data-s="52"></a>。P 区一端叫<b>阳极</b>，N 区一端叫<b>阴极</b>。符号里的三角形指向就是允许电流流过的方向 <a class="src" data-s="55"></a>。</p>
+<div class="panel fig"><svg id="dsym" viewBox="0 0 640 150" role="img" aria-label="二极管结构与符号"></svg></div>
+<h3>伏安特性要记住的数字 <a class="src" data-s="56"></a></h3>
+<div class="tbl"><table>
+<thead><tr><th></th><th>硅管 Si</th><th>锗管 Ge</th><th>含义</th></tr></thead>
+<tbody>
+<tr><td>死区电压</td><td>0.5 V</td><td>0.1 V</td><td>正向电压小于它，基本没电流</td></tr>
+<tr><td>导通压降</td><td><b>0.6 ~ 0.8 V</b>（计算常取 0.7V）</td><td>0.2 ~ 0.3 V</td><td>导通后两端电压基本不变</td></tr>
+<tr><td>反向电流</td><td colspan="2">很小，但随温度升高而增大</td><td>温度对半导体器件影响很大</td></tr>
+<tr><td>反向击穿</td><td colspan="2">反向电压超过 \(U_{(BR)}\) 时电流急增</td><td>普通二极管击穿后失去单向导电性</td></tr>
+</tbody></table></div>
+<div class="shots"><figure class="sl" data-s="56">伏安特性</figure><figure class="sl" data-s="57">硅管与锗管比较</figure></div>
+<h3>主要参数 <a class="src" data-s="59"></a></h3>
+<ul>
+<li><b>最大整流电流 \(I_F\)</b>：长期允许通过的最大正向平均电流。</li>
+<li><b>最高反向工作电压 \(U_R\)</b>：一般取击穿电压的一半，保证不被击穿。</li>
+<li><b>反向电流 \(I_R\)</b>：越小越好，受温度影响大。</li>
+<li><b>极间电容 \(C_d\)</b>、<b>反向恢复时间 \(T_{RR}\)</b>：决定二极管能工作到多高的频率。</li>
+</ul>
+
+<!-- ================= 1.4.1 ================= -->
+<h2 id="model"><span class="n">1.4.1</span>二极管的三种电路模型</h2>
+<p>二极管方程是指数形式，直接列 KVL 方程不好解。工程上用<b>折线近似</b>把二极管替换成导线、电压源、电阻的组合，这样就能用电路原理的方法计算了 <a class="src" data-s="60"></a>。</p>
+<div class="grid3">
+<div class="panel"><h4>(a) 理想模型</h4><svg id="m1" viewBox="0 0 220 230" role="img" aria-label="理想模型"></svg><p class="muted">导通时当导线（压降 0），截止时当开路。适合电源电压远大于 0.7V 的场合。</p></div>
+<div class="panel"><h4>(b) 恒压降模型</h4><svg id="m2" viewBox="0 0 220 230" role="img" aria-label="恒压降模型"></svg><p class="muted">导通时两端电压恒为 \(U_{on}\)（硅 0.7V）。<b>最常用</b>。</p></div>
+<div class="panel"><h4>(c) 折线模型</h4><svg id="m3" viewBox="0 0 220 230" role="img" aria-label="折线模型"></svg><p class="muted">门槛电压 \(U_{th}\)（0.5V）再串一个电阻 \(r_d\)，最接近真实曲线。</p></div>
+</div>
+<div class="key"><b>解题通用步骤</b> <a class="src" data-s="61"></a><br>① 先把二极管<b>断开</b>，求它两端的开路电压 \(U_{阳}-U_{阴}\)；<br>② 开路电压为正（大于导通电压）→ 导通，换成对应模型；为负 → 截止，当开路；<br>③ 用电路原理的方法（KVL、分压）求解。<br>多个二极管并联时：<b>开路电压最大的那个优先导通</b>，导通后再重新判断其余的 <a class="src" data-s="65"></a>。</div>
+
+<!-- ================= 1.4.2 ================= -->
+<h2 id="examples"><span class="n">1.4.2</span>例题：模型分析法</h2>
+
+<div class="ex">
+<div class="exh"><span class="tag">例 1.4.1</span>三种模型求 \(U_{AB}\) <a class="src" data-s="62"></a> <a class="src" data-s="63"></a></div>
+<p>硅二极管电路如图，\(R=3\,\mathrm{k\Omega}\)。分别用理想模型、恒压降模型和折线模型（\(U_{th}=0.5\,\mathrm{V}\)，\(r_d=0.2\,\mathrm{k\Omega}\)）求 \(U_{AB}\)。</p>
+<div class="fig"><svg id="ex1" viewBox="0 0 440 240" role="img" aria-label="例1.4.1电路"></svg></div>
+<p class="muted">注意电池方向：6V 电池<b>正极朝下</b>接地，12V 电池也是<b>正极朝下</b>。所以以 B 为参考点，二极管阳极电位是 −6V，电阻下端是 −12V。</p>
+<div class="reveal">
+<div class="rs"><b>断开二极管，求开路电压。</b>断开后 R 中没有电流，A 点电位等于 12V 电池负极：\(V_A = -12\,\mathrm{V}\)。阳极接 6V 电池负极：\(V_P=-6\,\mathrm{V}\)。
+\[U_{D,开路}=V_P - V_N = -6-(-12)=6\,\mathrm{V}>0\]
+所以二极管<b>导通</b>。</div>
+<div class="rs"><b>理想模型：</b>二极管换成导线，A 点直接等于阳极电位：
+\[U_{AB}=-6\,\mathrm{V}\]</div>
+<div class="rs"><b>恒压降模型：</b>二极管换成 0.7V 电压源（正极在阳极一侧）：
+\[U_{AB}=-6-0.7=-6.7\,\mathrm{V},\qquad I_D=\frac{-6.7-(-12)}{3\,\mathrm{k\Omega}}\approx 1.77\,\mathrm{mA}\]
+<div class="fig"><svg id="ex1b" viewBox="0 0 440 240" role="img" aria-label="恒压降等效电路"></svg></div></div>
+<div class="rs"><b>折线模型：</b>二极管换成 0.5V 电压源串 0.2kΩ 电阻，列回路 KVL：
+\[I_D=\frac{-6-0.5-(-12)}{0.2+3}=\frac{5.5}{3.2}\approx1.72\,\mathrm{mA}\]
+\[U_{AB}=-12+I_D R=-12+1.72\times3\approx-6.84\,\mathrm{V}\]</div>
+<div class="rs"><b>对比：</b>三种模型结果为 −6V、−6.7V、−6.84V。电源电压（6V、12V）远大于 0.7V 时，三者相差不大，用理想模型估算就够了。</div>
+</div>
+</div>
+
+<div class="ex">
+<div class="exh"><span class="tag">课堂练习</span>判断 D 是否导通，求 \(U_o\) <a class="src" data-s="64"></a></div>
+<p>D 为硅二极管，正向压降 0.7V。</p>
+<div class="fig"><svg id="ex2" viewBox="0 0 440 210" role="img" aria-label="课堂练习电路"></svg></div>
+<div class="reveal">
+<div class="rs"><b>断开 D，</b>10kΩ 与 1kΩ 串联分压：
+\[U_{D,开路}=5\times\frac{1}{10+1}\approx0.45\,\mathrm{V}\]</div>
+<div class="rs"><b>判断：</b>\(0.45\,\mathrm{V}\lt 0.7\,\mathrm{V}\)，不足以使二极管导通，<b>D 截止</b>。</div>
+<div class="rs"><b>结果：</b>D 相当于开路，\(U_o\approx0.45\,\mathrm{V}\)。<br><span class="muted">这道题提醒你：不能看到二极管正向接就以为导通，一定要先算开路电压。</span></div>
+</div>
+</div>
+
+<div class="ex">
+<div class="exh"><span class="tag">讲解例题</span>两个二极管并联，谁先导通？ <a class="src" data-s="66"></a> <a class="src" data-s="67"></a> <a class="src" data-s="68"></a></div>
+<p>硅二极管，导通压降 0.7V，\(R=3\,\mathrm{k\Omega}\)，用恒压降模型求 \(U_{AB}\)。</p>
+<div class="fig"><svg id="ex3" viewBox="0 0 460 250" role="img" aria-label="双二极管电路"></svg></div>
+<div class="reveal">
+<div class="rs"><b>同时断开 D1、D2，</b>分析阳极和阴极电位。</div>
+<div class="rs"><b>阳极电位：</b>D1 阳极接 6V 电池负极：\(V_{P1}=-6\,\mathrm{V}\)；D2 阳极接到 B 点（地）：\(V_{P2}=0\,\mathrm{V}\)。</div>
+<div class="rs"><b>阴极电位：</b>两管阴极都接 A 点，断开后 R 无电流：\(V_A=-12\,\mathrm{V}\)。</div>
+<div class="rs"><b>开路电压：</b>\(U_{D1}=-6-(-12)=6\,\mathrm{V}\)，\(U_{D2}=0-(-12)=12\,\mathrm{V}\)。D2 的正向电压更大，<b>D2 优先导通</b>。</div>
+<div class="rs"><b>D2 导通后重新判断 D1：</b>\(V_A=0-0.7=-0.7\,\mathrm{V}\)。此时 D1 阳极 −6V，阴极 −0.7V，承受反向电压 → <b>D1 截止</b>。
+\[U_{AB}=-0.7\,\mathrm{V}\]</div>
+</div>
+</div>
+
+<!-- ================= 1.4.3 ================= -->
+<h2 id="apps"><span class="n">1.4.3</span>二极管的应用：开关、限幅、整流</h2>
+<h3>应用 1：开关电路（与门）<a class="src" data-s="70"></a></h3>
+<p>点击输入端切换 0V / 5V（理想二极管）。只要有一个输入为 0V，对应二极管导通，把输出拉到 0V。</p>
+<div class="panel">
+<div class="btns"><button type="button" id="gA">\(u_{I1}\) = 0V</button><button type="button" id="gB">\(u_{I2}\) = 0V</button></div>
+<div class="fig"><svg id="gate" viewBox="0 0 460 250" role="img" aria-label="二极管与门"></svg></div>
+<div class="readout" id="gateOut"></div>
+</div>
+<p class="muted">这种“全 1 才出 1”的关系在数字电路里叫<b>与逻辑</b>。</p>
+
+<h3>应用 2：限幅电路 <a class="src" data-s="71"></a> <a class="src" data-s="72"></a></h3>
+<div class="tabs">
+<div class="tabbar"><button>单向限幅（8V）</button><button>双向限幅（±3V）</button></div>
+<div class="tab">
+<div class="grid2">
+<div class="panel fig"><svg id="clip1" viewBox="0 0 300 210" role="img" aria-label="单向限幅电路"></svg></div>
+<div class="panel"><p>二极管阴极电位固定为 8V（理想二极管）：</p>
+<p>\(u_i>8\,\mathrm{V}\)：二极管导通，相当于短路，\(u_o=8\,\mathrm{V}\)<br>\(u_i\lt 8\,\mathrm{V}\)：二极管截止，相当于开路，R 中无电流，\(u_o=u_i\)</p></div>
+</div>
+<div class="panel">
+<div class="ctl"><label for="cA">输入幅值</label><input type="range" id="cA" min="2" max="20" step="0.5" value="12"><output for="cA"></output></div>
+<div class="ctl"><label for="cE">参考电压</label><input type="range" id="cE" min="0" max="15" step="0.5" value="8"><output for="cE"></output></div>
+<div class="fig"><svg id="clipw1" class="wide" viewBox="0 0 640 260" role="img" aria-label="单向限幅波形"></svg></div>
+<div class="cap">虚线：\(u_i\)；实线：\(u_o\)。超过参考电压的部分被“削掉”。</div>
+</div>
+</div>
+<div class="tab">
+<div class="grid2">
+<div class="panel fig"><svg id="clip2" viewBox="0 0 330 220" role="img" aria-label="双向限幅电路"></svg></div>
+<div class="panel"><p>已知 \(u_i=18\sin\omega t\ \mathrm{V}\)，二极管理想：</p>
+<p>\(u_i>3\,\mathrm{V}\)：D1 导通，\(u_o=+3\,\mathrm{V}\)<br>\(u_i\lt -3\,\mathrm{V}\)：D2 导通，\(u_o=-3\,\mathrm{V}\)<br>\(-3\le u_i\le 3\)：都截止，\(u_o=u_i\)</p></div>
+</div>
+<div class="panel fig"><svg id="clipw2" class="wide" viewBox="0 0 640 260" role="img" aria-label="双向限幅波形"></svg></div>
+</div>
+</div>
+
+<h3>应用 3：整流电路 <a class="src" data-s="73"></a>–<a class="src" data-s="76"></a></h3>
+<p>整流就是利用单向导电性，把交流电变成单方向的脉动电压。</p>
+<div class="tabs" id="rectTabs">
+<div class="tabbar"><button>半波整流</button><button>桥式整流：正半周</button><button>桥式整流：负半周</button></div>
+<div class="tab"><div class="panel fig"><svg id="half" viewBox="0 0 420 200" role="img" aria-label="半波整流"></svg>
+<p>正半周 \(V_a>V_b\)，D 导通，电流经 \(R_L\)；负半周 D 截止，\(u_o=0\)。只利用了半个周期。</p></div></div>
+<div class="tab"><div class="panel fig"><svg id="bridgeP" viewBox="0 0 470 300" role="img" aria-label="桥式整流正半周"></svg>
+<p>正半周：上端为正，电流路径 <b>D1 → \(R_L\) → D4</b>（绿色高亮），\(R_L\) 上电流<b>从上往下</b>。</p></div></div>
+<div class="tab"><div class="panel fig"><svg id="bridgeN" viewBox="0 0 470 300" role="img" aria-label="桥式整流负半周"></svg>
+<p>负半周：下端为正，电流路径 <b>D2 → \(R_L\) → D3</b>（红色高亮），\(R_L\) 上电流<b>仍然从上往下</b>。两个半周都利用上了。</p></div></div>
+</div>
+<div class="panel fig"><svg id="rectw" class="wide" viewBox="0 0 640 220" role="img" aria-label="整流波形"></svg>
+<div class="cap">上：输入 \(u_2\)；中：半波整流输出；下：桥式（全波）整流输出。整流电路的参数计算课件放到第 10 章讲 <a class="src" data-s="77"></a>。</div></div>
+
+<!-- ================= 1.5 ================= -->
+<h2 id="special"><span class="n">1.5</span>特殊二极管</h2>
+<h3>稳压二极管 <a class="src" data-s="79"></a> <a class="src" data-s="80"></a></h3>
+<p>稳压管专门工作在<b>反向击穿区</b>：击穿后电流变化很大，但两端电压几乎不变，所以能稳压。和普通二极管不同，它的击穿是可逆的，只要电流不超过 \(I_{ZM}\) 就不会损坏。</p>
+<div class="grid2">
+<div class="panel fig"><svg id="zIV" viewBox="0 0 320 260" role="img" aria-label="稳压管伏安特性"></svg></div>
+<div class="panel fig"><svg id="zCir" viewBox="0 0 320 220" role="img" aria-label="稳压电路"></svg></div>
+</div>
+<ul>
+<li><b>稳定电压 \(U_Z\)</b>：反向击穿时管子两端的电压；</li>
+<li><b>稳定电流 \(I_Z\)</b> 与 <b>最大稳定电流 \(I_{ZM}\)</b>：电流在 \(I_{Z\min}\sim I_{ZM}\) 之间才能稳压；</li>
+<li><b>最大耗散功率</b> \(P_{ZM}=U_Z I_{ZM}\)。</li>
+</ul>
+<div class="warn"><b>两条使用规则：</b>① 稳压管加<b>反向</b>电压（阴极接高电位）；② 必须串<b>限流电阻</b> R，否则击穿电流太大会烧坏。</div>
+<div class="ex">
+<div class="exh"><span class="tag">补充例题</span>稳压电路电流计算</div>
+<p>上图中 \(U_I=12\,\mathrm{V}\)，\(R=500\,\Omega\)，\(U_Z=6\,\mathrm{V}\)，\(R_L=1\,\mathrm{k\Omega}\)，求 \(I_R\)、\(I_L\)、\(I_Z\)。<span class="muted">（此题为讲义补充，非课件原题）</span></p>
+<div class="reveal">
+<div class="rs">先判断稳压管是否击穿：断开稳压管，\(R_L\) 上分压 \(12\times\frac{1}{0.5+1}=8\,\mathrm{V}>U_Z\)，所以稳压管反向击穿，\(U_o=U_Z=6\,\mathrm{V}\)。</div>
+<div class="rs">\[I_R=\frac{U_I-U_Z}{R}=\frac{12-6}{0.5\,\mathrm{k\Omega}}=12\,\mathrm{mA},\qquad I_L=\frac{U_Z}{R_L}=\frac{6}{1}=6\,\mathrm{mA}\]</div>
+<div class="rs">由 KCL：\(I_Z=I_R-I_L=12-6=6\,\mathrm{mA}\)。只要 \(I_{Z\min}\lt 6\,\mathrm{mA}\lt I_{ZM}\)，输出就稳定在 6V。</div>
+</div>
+</div>
+<h3>其他特殊二极管 <a class="src" data-s="82"></a>–<a class="src" data-s="85"></a></h3>
+<div class="tbl"><table>
+<thead><tr><th>名称</th><th>工作方式</th><th>特点与用途</th></tr></thead>
+<tbody>
+<tr><td>发光二极管 LED</td><td>正偏</td><td>有正向电流时发光；正向压降 1.5～3V，工作电流几～几十 mA</td></tr>
+<tr><td>光电二极管</td><td>反偏</td><td>反向电流随光照强度增大而上升，用于光检测</td></tr>
+<tr><td>变容二极管</td><td>反偏</td><td>结电容随反向电压改变，用于电子调谐（改变谐振频率）</td></tr>
+<tr><td>肖特基二极管</td><td>正偏</td><td>电容效应小、速度快，适合高频和开关电路</td></tr>
+</tbody></table></div>
+
+<h2 id="hw"><span class="n">习题</span>课后习题（课件附带）</h2>
+<p>课件最后几页是本章习题，点标签看原题。建议学完 1.4 节后自己做，有不会的把题号告诉我，我们画图一起拆。</p>
+<div class="tbl"><table>
+<thead><tr><th>题号</th><th>内容</th><th>用到的知识</th></tr></thead>
+<tbody>
+<tr><td>1.10 <a class="src" data-s="86"></a></td><td>锯齿波输入的二极管电路，画输出波形</td><td>理想模型、分段判断导通</td></tr>
+<tr><td>1.11 <a class="src" data-s="87"></a></td><td>两个稳压管不同接法求 \(U_o\)</td><td>稳压管正向 0.7V / 反向 \(U_Z\)</td></tr>
+<tr><td>1.12 <a class="src" data-s="88"></a></td><td>画电压传输特性和输出波形</td><td>限幅电路（1.4.3）</td></tr>
+<tr><td>1.13 <a class="src" data-s="89"></a></td><td>二极管门电路，不同输入求 \(V_Y\)</td><td>多管并联优先导通（与门）</td></tr>
+<tr><td>1.14 <a class="src" data-s="90"></a></td><td>两个稳压管串联，正弦输入画波形</td><td>稳压管 + 限幅</td></tr>
+<tr><td>1.15 <a class="src" data-s="91"></a></td><td>稳压电路求限流电阻范围</td><td>\(I_{Z\min}\le I_Z\le I_{Z\max}\) 两个极端情况</td></tr>
+</tbody></table></div>
+
+<!-- ================= 小结 ================= -->
+<h2 id="sum"><span class="n">小结</span>本章小结与自测</h2>
+<div class="tbl"><table><tbody>
+<tr><td><b>半导体</b></td><td>N 型多子是电子，P 型多子是空穴；整体电中性</td></tr>
+<tr><td><b>PN 结</b></td><td>扩散 → 离子 → 内电场（N→P）→ 漂移 → 平衡；正偏变窄导通，反偏变宽截止</td></tr>
+<tr><td><b>二极管方程</b></td><td>\(i_D=I_S(e^{v_D/V_T}-1)\)，\(V_T\approx26\,\mathrm{mV}\)</td></tr>
+<tr><td><b>关键数字</b></td><td>硅：死区 0.5V，导通 0.7V；锗：死区 0.1V，导通 0.2～0.3V</td></tr>
+<tr><td><b>解题方法</b></td><td>断开 → 求开路电压 → 判导通 → 换模型 → KVL；多管并联电压最大者先导通</td></tr>
+<tr><td><b>稳压管</b></td><td>反向击穿区工作，必须串限流电阻</td></tr>
+</tbody></table></div>
+
+<div class="q" data-a="1"><div class="qt">1. N 型半导体自由电子特别多，所以整体带负电。对吗？</div><div class="opts"><button>对</button><button>不对</button></div>
+<div class="qex">✓ 正确。每多一个自由电子就有一个磷正离子，正负抵消，整体电中性。</div></div>
+<div class="q" data-a="1"><div class="qt">2. PN 结内电场的方向是？</div><div class="opts"><button>P → N</button><button>N → P</button></div>
+<div class="qex">✓ 正确。N 侧留下正离子，P 侧留下负离子，电场从正指向负。</div></div>
+<div class="q" data-a="1" data-hint="外电场和内电场方向是相同还是相反？"><div class="qt">3. 给 PN 结加正向电压，空间电荷区会？</div><div class="opts"><button>变宽</button><button>变窄</button><button>不变</button></div>
+<div class="qex">✓ 正确。外电场 P→N 与内电场 N→P 相反，削弱内电场，PN 结变窄。可以回到 1.2 节拖滑块验证。</div></div>
+<div class="q" data-a="1"><div class="qt">4. 硅二极管两端加正向 0.3V，导通吗？</div><div class="opts"><button>导通</button><button>不导通</button></div>
+<div class="qex">✓ 正确。硅管死区电压约 0.5V，0.3V 还在死区内。</div></div>
+<div class="q" data-a="2" data-hint="先断开二极管，算阳极和阴极电位。"><div class="qt">5. 把例 1.4.1 中的 6V 电池反过来（正极朝上），用理想模型 \(U_{AB}\) 等于多少？</div><div class="opts"><button>−6V</button><button>−12V</button><button>+6V</button><button>0V</button></div>
+<div class="qex">✓ 正确。阳极 +6V，阴极开路时 −12V，开路电压 18V > 0，导通，理想模型 \(U_{AB}=+6\,\mathrm{V}\)。</div></div>
+<div class="q" data-a="0"><div class="qt">6. 桥式整流电路中，正、负半周流过负载 \(R_L\) 的电流方向？</div><div class="opts"><button>相同</button><button>相反</button></div>
+<div class="qex">✓ 正确。两组二极管轮流导通，负载电流方向始终相同，所以输出是单方向的。</div></div>
+
+<details class="gallery"><summary>浏览本章全部课件页（91 页，点击放大）</summary></details>
+</article>
+</div>
+
+<script src="assets/katex/katex.min.js"></script>
+<script src="assets/katex/auto-render.min.js"></script>
+<script src="assets/common.js"></script>
+<script>
+(function(){
+/* ---------- signals ---------- */
+var p1 = new Plot('sigs', {x:30, y:30, w:270, h:110}, [0, 4 * Math.PI], [-1.3, 1.3]);
+p1.axes({xl:'t', yl:'u'}); p1.fn(function(t){ return Math.sin(t) * 0.7 + 0.35 * Math.sin(2.3 * t); }, 'cv');
+p1.text(0.2, 1.25, '模拟信号：连续变化', 't');
+var p2 = new Plot('sigs', {x:380, y:30, w:270, h:110}, [0, 8], [-0.3, 1.3]);
+p2.axes({xl:'t', yl:'u', xAtBottom:true});
+p2.poly([[0,0],[1,0],[1,1],[2.5,1],[2.5,0],[3.5,0],[3.5,1],[4,1],[4,0],[5.5,0],[5.5,1],[7,1],[7,0],[8,0]], 'cv2');
+p2.text(0.2, 1.25, '数字信号：只有 0 和 1', 't');
+
+/* ---------- amplifier model ---------- */
+var s = new Sch('ampModel');
+s.box(215, 30, 270, 180); s.text(350, 24, '放大电路', 'ts', 'middle');
+s.vs(50, 95, 50, 150, {lab:'v_s', side:'l'});
+s.wire(50, 95, 50, 60, 70, 60); s.R(70, 60, 150, 60, {lab:'R_s'}); s.wire(150, 60, 240, 60);
+s.wire(50, 150, 50, 185, 600, 185);
+s.R(240, 60, 240, 185, {lab:'R_i'});
+s.term(190, 60); s.term(190, 185); s.pm(180, 80, '+'); s.pm(180, 168, '-'); s.text(170, 128, 'v_i', 't', 'end');
+s.ccvs(330, 95, 330, 150, {lab:'A_{vo}v_i'});
+s.wire(330, 95, 330, 60, 360, 60); s.R(360, 60, 440, 60, {lab:'R_o'}); s.wire(440, 60, 600, 60); s.wire(330, 150, 330, 185);
+s.R(600, 60, 600, 185, {lab:'R_L'});
+s.term(510, 60); s.term(510, 185); s.pm(522, 80, '+'); s.pm(522, 168, '-'); s.text(530, 128, 'v_o', 't');
+s.node(240, 185); s.node(330, 185); s.gnd(330, 185);
+function fmtR(e){ var r = Math.pow(10, e); return r >= 1000 ? (r / 1000).toFixed(r >= 10000 ? 0 : 1) + ' MΩ' : r >= 1 ? r.toFixed(r >= 100 ? 0 : 1) + ' kΩ' : (r * 1000).toFixed(0) + ' Ω'; }
+var bars = document.getElementById('ampBars');
+bindSliders(['mRs', 'mRi', 'mRo', 'mRL'], {mRs:fmtR, mRi:fmtR, mRo:fmtR, mRL:fmtR}, function(v){
+  var Rs = Math.pow(10, v.mRs), Ri = Math.pow(10, v.mRi), Ro = Math.pow(10, v.mRo), RL = Math.pow(10, v.mRL);
+  var kin = Ri / (Rs + Ri), kout = RL / (Ro + RL), Av = 100 * kout, Avs = Av * kin;
+  bars.innerHTML = '';
+  var rows = [['输入端保留 v_i/v_s', kin, (kin * 100).toFixed(1) + '%'], ['输出端保留 R_L/(R_o+R_L)', kout, (kout * 100).toFixed(1) + '%'], ['总增益 A_{vs}=v_o/v_s', Avs / 100, Avs.toFixed(1) + '（理想100）']];
+  rows.forEach(function(r, i){ var y = 12 + i * 36;
+    rtext(bars, 0, y + 14, r[0], 't');
+    mk('rect', {x:230, y:y, width:270, height:20, class:'zone', rx:3}, bars);
+    mk('rect', {x:230, y:y, width:Math.max(1, 270 * r[1]), height:20, rx:3, style:'fill:var(' + (i === 2 ? '--accent' : '--blue') + ')'}, bars);
+    rtext(bars, 508, y + 15, r[2], 'tval'); });
+});
+
+/* ---------- lattice ---------- */
+var L = document.getElementById('lattice'), Lm = addMarkers(L);
+var xs = [120, 240, 360, 480], ys = [50, 130, 210];
+ys.forEach(function(y){ for (var i = 0; i < 3; i++){ mk('line', {x1:xs[i] + 22, y1:y - 5, x2:xs[i + 1] - 22, y2:y - 5, class:'bond'}, L); mk('line', {x1:xs[i] + 22, y1:y + 5, x2:xs[i + 1] - 22, y2:y + 5, class:'bond'}, L); } });
+xs.forEach(function(x){ for (var j = 0; j < 2; j++){ mk('line', {x1:x - 5, y1:ys[j] + 22, x2:x - 5, y2:ys[j + 1] - 22, class:'bond'}, L); mk('line', {x1:x + 5, y1:ys[j] + 22, x2:x + 5, y2:ys[j + 1] - 22, class:'bond'}, L); } });
+ys.forEach(function(y){ for (var i = 0; i < 3; i++){ var m = (xs[i] + xs[i + 1]) / 2;
+  mk('circle', {cx:m - 6, cy:y, r:3.5, class:'elec'}, L);
+  if (y === 130 && i === 1) mk('circle', {cx:m + 6, cy:y, r:6, class:'hole'}, L); else mk('circle', {cx:m + 6, cy:y, r:3.5, class:'elec'}, L); } });
+xs.forEach(function(x){ for (var j = 0; j < 2; j++){ var m = (ys[j] + ys[j + 1]) / 2; mk('circle', {cx:x, cy:m - 6, r:3.5, class:'elec'}, L); mk('circle', {cx:x, cy:m + 6, r:3.5, class:'elec'}, L); } });
+xs.forEach(function(x){ ys.forEach(function(y){ mk('circle', {cx:x, cy:y, r:20, class:'atom'}, L); rtext(L, x, y + 5, 'Si', 't', 'middle'); }); });
+mk('circle', {cx:565, cy:95, r:6, class:'elec'}, L);
+mk('path', {d:'M310,122 Q430,60 553,92', class:'arr-blue', 'stroke-dasharray':'5 4', 'marker-end':Lm.blue}, L);
+rtext(L, 540, 78, '自由电子', 'tblue'); rtext(L, 300, 160, '空穴', 'tred', 'middle');
+rtext(L, 20, 245, '每条双线 = 一个共价键（两个原子共用一对电子）', 'ts');
+
+function mini(id, kind){
+  var g = document.getElementById(id), pts = [[40,35],[100,35],[160,35],[40,95],[100,95],[160,95]];
+  [[0,1],[1,2],[3,4],[4,5],[0,3],[1,4],[2,5]].forEach(function(e){ mk('line', {x1:pts[e[0]][0], y1:pts[e[0]][1], x2:pts[e[1]][0], y2:pts[e[1]][1], class:'bond'}, g); });
+  pts.forEach(function(p, i){ var cls = 'atom', lab = 'Si';
+    if (i === 4 && kind === 'n'){ cls = 'atom-p'; lab = 'P'; } if (i === 4 && kind === 'p'){ cls = 'atom-b'; lab = 'B'; }
+    mk('circle', {cx:p[0], cy:p[1], r:15, class:cls}, g); rtext(g, p[0], p[1] + 5, lab, 't', 'middle'); });
+  if (kind === 'i'){ mk('circle', {cx:130, cy:65, r:4, class:'elec'}, g); mk('circle', {cx:70, cy:65, r:5, class:'hole'}, g); rtext(g, 100, 150, '电子 : 空穴 = 1 : 1', 'ts', 'middle'); }
+  if (kind === 'n'){ mk('circle', {cx:122, cy:120, r:5, class:'elec'}, g); rtext(g, 132, 124, '多余电子', 'tblue'); rtext(g, 100, 155, '电子多，空穴少', 'ts', 'middle'); }
+  if (kind === 'p'){ mk('circle', {cx:130, cy:95, r:6, class:'hole'}, g); rtext(g, 130, 126, '空穴', 'tred', 'middle'); rtext(g, 100, 155, '空穴多，电子少', 'ts', 'middle'); }
+}
+mini('mini-i', 'i'); mini('mini-n', 'n'); mini('mini-p', 'p');
+
+/* ---------- PN junction ---------- */
+var PC = [50, 110, 170, 230, 290], NC = [350, 410, 470, 530, 590];
+function ion(cx, cy, pos, g){ mk('circle', {cx:cx, cy:cy, r:9, class:'ion'}, g); mk('line', {x1:cx - 5, y1:cy, x2:cx + 5, y2:cy, class:'ionmark'}, g); if (pos) mk('line', {x1:cx, y1:cy - 5, x2:cx, y2:cy + 5, class:'ionmark'}, g); }
+function block(g, y0, w){
+  mk('rect', {x:20, y:y0, width:300, height:190, class:'p-reg'}, g); mk('rect', {x:320, y:y0, width:300, height:190, class:'n-reg'}, g);
+  if (w > 0) mk('rect', {x:320 - w, y:y0, width:2 * w, height:190, class:'dep'}, g);
+  mk('line', {x1:320, y1:y0, x2:320, y2:y0 + 190, class:'junc'}, g);
+  [30, 75, 120, 165].forEach(function(dy, ri){ var cy = y0 + dy;
+    PC.forEach(function(cx){ ion(cx - 6, cy, false, g); if (Math.abs(cx - 320) > w) mk('circle', {cx:cx + 14, cy:cy + (ri % 2 ? -10 : 10), r:5, class:'hole'}, g); });
+    NC.forEach(function(cx){ ion(cx + 6, cy, true, g); if (Math.abs(cx - 320) > w) mk('circle', {cx:cx - 14, cy:cy + (ri % 2 ? 10 : -10), r:4.5, class:'elec'}, g); }); });
+}
+var form = document.getElementById('form'), fm = addMarkers(form), fg = mk('g', {}, form), fcur = 0;
+var fsteps = [{w:0, diff:true}, {w:62, diff:true}, {w:62, field:true}, {w:62, field:true, br:true}];
+var fcaps = document.querySelectorAll('#fcaps .fcap');
+function drawForm(){
+  fg.innerHTML = ''; var st = fsteps[fcur];
+  rtext(fg, 170, 22, 'P 型区', 'tb', 'middle'); rtext(fg, 470, 22, 'N 型区', 'tb', 'middle');
+  block(fg, 34, st.w);
+  if (st.diff){ [70, 160].forEach(function(y){
+    mk('line', {x1:282, y1:34 + y, x2:372, y2:34 + y, class:'arr-red', 'marker-end':fm.red}, fg);
+    mk('line', {x1:358, y1:56 + y, x2:268, y2:56 + y, class:'arr-blue', 'marker-end':fm.blue}, fg); });
+    rtext(fg, 30, 250, '空穴 → 向 N 区扩散', 'tred'); rtext(fg, 610, 250, '电子 ← 向 P 区扩散', 'tblue', 'end'); }
+  if (st.field){ mk('line', {x1:320 + st.w + 30, y1:250, x2:320 - st.w - 30, y2:250, class:'arr-amber', 'marker-end':fm.amber}, fg); rtext(fg, 320, 274, '内电场 E（N → P）', 'tamber', 'middle'); }
+  if (st.br){ var a = 320 - st.w, b = 320 + st.w; mk('path', {d:'M' + a + ',282 L' + a + ',290 L' + b + ',290 L' + b + ',282', class:'w'}, fg); rtext(fg, b + 8, 294, '空间电荷区 = PN 结', 't'); }
+  fcaps.forEach(function(c, i){ c.hidden = i !== fcur; });
+  document.getElementById('fprev').disabled = fcur === 0;
+  document.getElementById('fnext').textContent = fcur === 3 ? '从头再看' : '下一步';
+  document.getElementById('fidx').textContent = (fcur + 1) + ' / 4';
+}
+document.getElementById('fprev').onclick = function(){ if (fcur > 0){ fcur--; drawForm(); } };
+document.getElementById('fnext').onclick = function(){ fcur = fcur === 3 ? 0 : fcur + 1; drawForm(); };
+drawForm();
+
+/* bias + IV */
+var IS = 1e-14, VT = 0.026, VBR = -5;
+function cur(V){ return V <= VBR ? -(VBR - V) * 0.04 - IS : IS * (Math.exp(V / VT) - 1); }
+function fmtI(I){ var a = Math.abs(I), sg = I < 0 ? '−' : '';
+  if (a >= 1e-3) return sg + (a * 1e3).toFixed(a >= 1e-2 ? 1 : 2) + ' mA'; if (a >= 1e-6) return sg + (a * 1e6).toFixed(1) + ' μA';
+  if (a >= 1e-9) return sg + (a * 1e9).toFixed(1) + ' nA'; return '≈ 0'; }
+function stOf(V){ if (V <= VBR) return ['反向击穿', 'var(--bad)']; if (V < 0) return ['反向截止', 'var(--muted)'];
+  if (V < 0.5) return ['死区（未导通）', 'var(--muted)']; if (V < 0.6) return ['开始导通', 'var(--amber)']; return ['正向导通', 'var(--ok)']; }
+var bS = document.getElementById('biasSvg'), bm = addMarkers(bS), bg = mk('g', {}, bS);
+var iv = document.getElementById('ivSvg'), ivm = addMarkers(iv), X0 = 274;
+function xOf(V){ return V < 0 ? X0 + (V / 6) * 224 : X0 + (V / 0.9) * 336; }
+var Y0 = 180; function yOf(i){ return Y0 - i / 12 * 150; }
+(function(){ var g = mk('g', {}, iv);
+  mk('rect', {x:xOf(0), y:30, width:xOf(0.5) - xOf(0), height:300, class:'zone'}, g); rtext(g, xOf(0.25), 48, '死区', 'ts', 'middle');
+  [-6, -4, -2].forEach(function(v){ mk('line', {x1:xOf(v), y1:30, x2:xOf(v), y2:330, class:'grid'}, g); rtext(g, xOf(v), Y0 + 18, String(v), 'ts', 'middle'); });
+  [0.2, 0.4, 0.6, 0.8].forEach(function(v){ mk('line', {x1:xOf(v), y1:30, x2:xOf(v), y2:330, class:'grid'}, g); rtext(g, xOf(v), Y0 + 18, v.toFixed(1), 'ts', 'middle'); });
+  [-10, -5, 5, 10].forEach(function(i){ mk('line', {x1:50, y1:yOf(i), x2:620, y2:yOf(i), class:'grid'}, g); rtext(g, X0 - 6, yOf(i) + 4, i + ' mA', 'ts', 'end'); });
+  mk('line', {x1:44, y1:Y0, x2:626, y2:Y0, class:'axis', 'marker-end':ivm.ink}, g); mk('line', {x1:X0, y1:338, x2:X0, y2:22, class:'axis', 'marker-end':ivm.ink}, g);
+  rtext(g, 620, Y0 - 8, 'v_D / V', 't', 'end'); rtext(g, X0 + 8, 30, 'i_D', 't');
+  var d = ''; for (var V = -5.3; V <= 0.725; V += 0.005){ var I = cur(V) * 1e3; if (Math.abs(I) > 12.5){ if (V < 0) continue; else break; } d += (d ? 'L' : 'M') + xOf(V).toFixed(1) + ',' + yOf(I).toFixed(1); }
+  mk('path', {d:d, class:'cv'}, g);
+  mk('line', {x1:xOf(VBR), y1:Y0, x2:xOf(VBR), y2:330, class:'cvdash'}, g); rtext(g, xOf(VBR) + 6, 322, '击穿电压 U_{(BR)}', 'tred');
+  rtext(g, xOf(-3), Y0 - 10, '反向：电流几乎为 0', 'ts', 'middle'); rtext(g, xOf(0.53), 72, '导通后电压基本', 'ts', 'end'); rtext(g, xOf(0.53), 88, '停在 0.6~0.7V', 'ts', 'end'); })();
+var ivd = mk('g', {}, iv);
+function upd(V){
+  V = +V; var I = cur(V), st = stOf(V);
+  document.querySelector('output[for="bias"]').textContent = (V >= 0 ? '+' : '−') + Math.abs(V).toFixed(2) + ' V';
+  document.getElementById('readout').innerHTML = '<span>I = ' + fmtI(I) + '</span><span class="state" style="color:' + st[1] + '">' + st[0] + '</span>';
+  bg.innerHTML = ''; var w = Math.min(175, 62 * Math.sqrt(Math.max(0, (0.75 - V) / 0.75))), fwd = V >= 0;
+  mk('polyline', {points:'20,100 20,30 300,30', class:'w'}, bg); mk('polyline', {points:'340,30 620,30 620,100', class:'w'}, bg);
+  var xl = fwd ? 314 : 326, xsh = fwd ? 326 : 314;
+  mk('line', {x1:xl, y1:12, x2:xl, y2:48, class:'w'}, bg); mk('line', {x1:xsh, y1:21, x2:xsh, y2:39, class:'w2'}, bg);
+  mk('line', {x1:300, y1:30, x2:Math.min(xl, xsh), y2:30, class:'w'}, bg); mk('line', {x1:Math.max(xl, xsh), y1:30, x2:340, y2:30, class:'w'}, bg);
+  rtext(bg, fwd ? 298 : 342, 16, '+', 'pm', 'middle'); rtext(bg, fwd ? 342 : 298, 16, '−', 'pm', 'middle');
+  rtext(bg, 360, 62, '|V| = ' + Math.abs(V).toFixed(2) + ' V', 'ts'); rtext(bg, 40, 62, fwd ? 'P 接正 → 正偏' : 'P 接负 → 反偏', 't');
+  block(bg, 100, w); rtext(bg, 170, 92, 'P', 'tb', 'middle'); rtext(bg, 470, 92, 'N', 'tb', 'middle');
+  if (w > 20) mk('line', {x1:320 + w - 8, y1:110, x2:320 - w + 8, y2:110, class:'arr-amber', 'marker-end':bm.amber}, bg);
+  rtext(bg, 620, 316, 'PN 结宽度 ≈ ' + (2 * w / 124).toFixed(2) + ' × 平衡时', 'ts', 'end');
+  var a = Math.abs(I);
+  if (a > 1e-6){ var sw = Math.max(1.5, Math.min(9, 1.5 + Math.log10(a / 1e-6) * 1.6)), dir = I > 0;
+    mk('line', {x1:dir ? 40 : 250, y1:305, x2:dir ? 250 : 40, y2:305, style:'stroke:var(--accent);stroke-width:' + sw, 'marker-end':bm.acc}, bg);
+    rtext(bg, 40, 296 - sw, dir ? '电流 P → N' : '电流 N → P（击穿）', 'tval'); }
+  else rtext(bg, 40, 310, '几乎没有电流', 'ts');
+  ivd.innerHTML = ''; var Im = Math.max(-12, Math.min(12, I * 1e3));
+  mk('line', {x1:xOf(V), y1:Y0, x2:xOf(V), y2:yOf(Im), class:'cvdash'}, ivd); mk('circle', {cx:xOf(V), cy:yOf(Im), r:7, class:'dot'}, ivd);
+  document.querySelectorAll('#presets button').forEach(function(b){ b.classList.toggle('on', Math.abs(+b.dataset.v - V) < 0.001); });
+}
+var sl = document.getElementById('bias');
+sl.addEventListener('input', function(e){ upd(e.target.value); });
+document.querySelectorAll('#presets button').forEach(function(b){ b.onclick = function(){ sl.value = b.dataset.v; upd(b.dataset.v); }; });
+upd(sl.value);
+
+/* ---------- diode symbol ---------- */
+var ds = new Sch('dsym');
+mk('rect', {x:40, y:40, width:120, height:60, class:'p-reg'}, ds.g); mk('rect', {x:160, y:40, width:120, height:60, class:'n-reg'}, ds.g);
+mk('line', {x1:160, y1:40, x2:160, y2:100, class:'junc'}, ds.g);
+ds.text(100, 77, 'P', 'tb', 'middle'); ds.text(220, 77, 'N', 'tb', 'middle');
+ds.line(10, 70, 40, 70); ds.line(280, 70, 310, 70);
+ds.text(40, 125, '阳极 A（+）', 'ts'); ds.text(280, 125, '阴极 K（−）', 'ts', 'end');
+ds.text(332, 76, '=', 'tb', 'middle');
+ds.D(360, 70, 600, 70); ds.text(360, 125, '阳极', 'ts'); ds.text(600, 125, '阴极', 'ts', 'end');
+ds.arrow(430, 30, 530, 30, '', 'acc'); ds.text(480, 20, '电流只能这样走', 'tval', 'middle');
+
+/* ---------- three models ---------- */
+function modelPanel(id, kind){
+  var p = new Plot(id, {x:25, y:15, w:180, h:105}, [-1, 1.2], [-0.2, 1.2]);
+  p.axes({xl:'u_D', yl:'i_D', xt:[], yt:[]});
+  if (kind === 1) p.poly([[-1, 0], [0, 0], [0, 1.15]], 'cv');
+  if (kind === 2){ p.poly([[-1, 0], [0.7, 0], [0.7, 1.15]], 'cv'); p.text(0.7, -0.15, '0.7V', 'tval', 'middle'); }
+  if (kind === 3){ p.poly([[-1, 0], [0.5, 0], [1.1, 1.15]], 'cv'); p.text(0.5, -0.15, '0.5V', 'tval', 'middle'); p.text(0.95, 0.5, '斜率 1/r_d', 'ts', 'end'); }
+  p.fn(function(v){ return 1e-9 * (Math.exp(v / 0.035) - 1); }, 'cvdash', -1, 1.2);
+  var s = new Sch(id);
+  s.text(10, 160, '导通时等效为：', 'ts');
+  if (kind === 1){ s.wire(30, 195, 190, 195); s.text(110, 185, '导线（短路）', 'tval', 'middle'); }
+  if (kind === 2){ s.bat(40, 195, 110, 195, {val:'0.7V'}); s.line(110, 195, 130, 195); s.D(130, 195, 180, 195, {open:true}); s.line(180, 195, 200, 195); }
+  if (kind === 3){ s.bat(20, 195, 75, 195, {val:'0.5V'}); s.R(75, 195, 140, 195, {lab:'r_d'}); s.D(150, 195, 200, 195, {open:true}); s.line(140, 195, 150, 195); }
+  if (kind !== 1) s.text(110, 225, '（理想二极管只管方向）', 'ts', 'middle');
+}
+modelPanel('m1', 1); modelPanel('m2', 2); modelPanel('m3', 3);
+
+/* ---------- ex1.4.1 ---------- */
+function ex141(id, mode){
+  var s = new Sch(id);
+  s.bat(60, 190, 60, 110, {lab:'6V', side:'l'});
+  s.wire(60, 110, 60, 50, 140, 50);
+  if (mode === 'cv'){ s.bat(140, 50, 200, 50, {val:'0.7V'}); }
+  else s.D(140, 50, 200, 50, {lab:'VD'});
+  s.wire(200, 50, 360, 50); s.node(260, 50);
+  s.R(260, 50, 260, 115, {lab:'R', val:'3kΩ'}); s.line(260, 115, 260, 135);
+  s.bat(260, 190, 260, 135, {lab:'12V', side:'l'});
+  s.wire(60, 190, 360, 190); s.node(260, 190); s.gnd(260, 190);
+  s.term(360, 50); s.term(360, 190); s.text(372, 55, 'A', 'tb'); s.text(372, 195, 'B', 'tb');
+  s.pm(360, 70, '+'); s.pm(360, 172, '-'); s.text(372, 125, 'U_{AB}', 't');
+  if (mode === 'cv'){
+    s.text(60, 40, '−6V', 'tblue', 'middle'); s.text(230, 40, '−6.7V', 'tblue', 'middle'); s.text(205, 150, '−12V', 'tblue', 'end');
+    s.arrow(300, 70, 300, 110, 'I_D ≈ 1.77mA', 'red', 306, 95);
+  } else { s.text(60, 40, 'P：−6V', 'tblue', 'middle'); s.text(205, 150, '−12V', 'tblue', 'end'); }
+}
+ex141('ex1'); ex141('ex1b', 'cv');
+
+/* ---------- practice ---------- */
+var e2 = new Sch('ex2');
+e2.bat(60, 70, 60, 160, {lab:'5V', side:'l'});
+e2.wire(60, 70, 60, 40, 110, 40); e2.R(110, 40, 210, 40, {lab:'', val:'10kΩ'}); e2.wire(210, 40, 380, 40);
+e2.D(250, 40, 250, 180, {lab:'D', side:'l'}); e2.R(320, 40, 320, 180, {val:'1kΩ'});
+e2.wire(60, 160, 60, 180, 380, 180); e2.node(250, 40); e2.node(320, 40); e2.node(250, 180); e2.node(320, 180);
+e2.term(380, 40); e2.term(380, 180); e2.pm(392, 60, '+'); e2.pm(392, 160, '-'); e2.text(392, 115, 'U_o', 't');
+
+/* ---------- two diodes ---------- */
+var e3 = new Sch('ex3');
+e3.wire(40, 210, 40, 40, 160, 40); e3.D(160, 40, 220, 40, {lab:'D_2'}); e3.wire(220, 40, 300, 40, 300, 95);
+e3.bat(100, 210, 100, 140, {lab:'6V', side:'l'});
+e3.wire(100, 140, 100, 95, 160, 95); e3.D(160, 95, 220, 95, {lab:'D_1'}); e3.wire(220, 95, 400, 95); e3.node(300, 95);
+e3.R(300, 95, 300, 150, {lab:'R', val:'3kΩ'}); e3.line(300, 150, 300, 160); e3.bat(300, 210, 300, 160, {lab:'12V', side:'l'});
+e3.wire(40, 210, 400, 210); e3.node(100, 210); e3.node(300, 210); e3.gnd(300, 210);
+e3.term(400, 95); e3.term(400, 210); e3.text(410, 100, 'A', 'tb'); e3.text(410, 215, 'B', 'tb'); e3.text(410, 158, 'U_{AB}', 't');
+e3.text(160, 28, '阳极 0V', 'tblue', 'middle'); e3.text(140, 85, '阳极 −6V', 'tblue', 'end');
+
+/* ---------- AND gate ---------- */
+var gA = 0, gB = 0, gs = document.getElementById('gate');
+function drawGate(){
+  gs.innerHTML = ''; var s = new Sch(gs);
+  var onA = gA === 0 || (gA === 5 && gB === 5), onB = gB === 0 || (gA === 5 && gB === 5), uo = Math.min(gA, gB);
+  if (onA) s.hl([[260, 30], [260, 120], [200, 120], [60, 120]]);
+  if (onB) s.hl([[260, 30], [260, 120], [260, 200], [200, 200], [60, 200]], 'path-hl2');
+  s.text(260, 20, '+V_{CC} = 10V', 't', 'middle'); s.term(260, 28);
+  s.R(260, 30, 260, 100, {lab:'4.7kΩ'}); s.line(260, 100, 260, 200);
+  s.D(200, 120, 120, 120, {lab:'VD_1'}); s.D(200, 200, 120, 200, {lab:'VD_2'});
+  s.line(200, 120, 260, 120); s.line(200, 200, 260, 200); s.line(120, 120, 60, 120); s.line(120, 200, 60, 200);
+  s.node(260, 120); s.term(60, 120); s.term(60, 200); s.line(260, 120, 400, 120); s.term(400, 120);
+  s.text(50, 125, 'u_{I1} = ' + gA + 'V', 'tb', 'end'); s.text(50, 205, 'u_{I2} = ' + gB + 'V', 'tb', 'end');
+  s.text(410, 125, 'u_o = ' + uo + 'V', 'tval');
+  s.text(160, 145, onA ? '导通' : '截止', onA ? 'tval' : 'ts', 'middle'); s.text(160, 225, onB ? '导通' : '截止', onB ? 'tred' : 'ts', 'middle');
+  document.getElementById('gA').textContent = 'u_I1 = ' + gA + 'V（点击切换）'; document.getElementById('gB').textContent = 'u_I2 = ' + gB + 'V（点击切换）';
+  document.getElementById('gateOut').innerHTML = '<span>输出 u_o = ' + uo + ' V</span><span>' + (uo ? '两个输入都是高电平，二极管都导通但不拉低，输出为 5V' : '有输入为 0V，对应二极管导通，输出被钳在 0V') + '</span>';
+}
+document.getElementById('gA').onclick = function(){ gA = gA ? 0 : 5; drawGate(); };
+document.getElementById('gB').onclick = function(){ gB = gB ? 0 : 5; drawGate(); };
+drawGate();
+
+/* ---------- clippers ---------- */
+var c1 = new Sch('clip1');
+c1.term(20, 50); c1.R(20, 50, 130, 50, {lab:'R'}); c1.wire(130, 50, 280, 50); c1.node(170, 50); c1.term(280, 50);
+c1.D(170, 50, 170, 110, {lab:'D', side:'l'}); c1.bat(170, 125, 170, 175, {lab:'8V', side:'l'}); c1.line(170, 110, 170, 125);
+c1.term(20, 185); c1.wire(20, 185, 280, 185); c1.node(170, 185); c1.term(280, 185); c1.line(170, 175, 170, 185);
+c1.text(14, 120, 'u_i', 't', 'end'); c1.text(290, 120, 'u_o', 't'); c1.pm(20, 70, '+'); c1.pm(20, 165, '-'); c1.pm(280, 70, '+'); c1.pm(280, 165, '-');
+var cw1 = new Plot('clipw1', {x:50, y:20, w:560, h:210}, [0, 4 * Math.PI], [-21, 21]);
+cw1.axes({xl:'ωt', yl:'u / V', yt:[-20, -10, 10, 20], xt:[]});
+bindSliders(['cA', 'cE'], {cA:function(v){ return v + ' V'; }, cE:function(v){ return v + ' V'; }}, function(v){
+  var d = cw1.clear();
+  cw1.fn(function(t){ return v.cA * Math.sin(t); }, 'cvdash', 0, 4 * Math.PI, 300, d);
+  cw1.fn(function(t){ return Math.min(v.cA * Math.sin(t), v.cE); }, 'cv', 0, 4 * Math.PI, 300, d);
+  cw1.hline(v.cE, 'cv4', d); cw1.text(4 * Math.PI, v.cE + 1.5, '参考 ' + v.cE + 'V', 'tamber', 'end', d);
+});
+var c2 = new Sch('clip2');
+c2.term(20, 40); c2.R(20, 40, 110, 40, {lab:'R'}); c2.wire(110, 40, 310, 40); c2.node(160, 40); c2.node(250, 40); c2.term(310, 40);
+c2.D(160, 40, 160, 100, {lab:'D_1', side:'l'}); c2.line(160, 100, 160, 120); c2.bat(160, 120, 160, 170, {lab:'3V', side:'l'});
+c2.D(250, 100, 250, 40, {lab:'D_2'}); c2.line(250, 100, 250, 120); c2.bat(250, 170, 250, 120, {lab:'3V'});
+c2.term(20, 195); c2.wire(20, 195, 310, 195); c2.line(160, 170, 160, 195); c2.line(250, 170, 250, 195); c2.node(160, 195); c2.node(250, 195); c2.term(310, 195);
+c2.text(14, 122, 'u_i', 't', 'end'); c2.text(318, 122, 'u_o', 't');
+var cw2 = new Plot('clipw2', {x:50, y:20, w:560, h:210}, [0, 4 * Math.PI], [-20, 20]);
+cw2.axes({xl:'ωt', yl:'u / V', yt:[-18, -3, 3, 18], xt:[]});
+cw2.fn(function(t){ return 18 * Math.sin(t); }, 'cvdash'); cw2.fn(function(t){ return Math.max(-3, Math.min(3, 18 * Math.sin(t))); }, 'cv');
+cw2.text(0.3, 17, 'u_i = 18 sin ωt（虚线）', 'ts'); cw2.text(Math.PI / 2, 5, 'u_o 被限制在 ±3V', 'tval', 'middle');
+
+/* ---------- rectifiers ---------- */
+var h = new Sch('half');
+h.vs(50, 70, 50, 140, {lab:'u_2', side:'l'}); h.wire(50, 70, 50, 40, 140, 40); h.D(140, 40, 220, 40, {lab:'D'}); h.wire(220, 40, 320, 40);
+h.R(320, 40, 320, 170, {lab:'R_L'}); h.wire(50, 140, 50, 170, 320, 170); h.text(60, 30, 'a', 'tb'); h.text(60, 190, 'b', 'tb');
+h.pm(345, 60, '+'); h.pm(345, 155, '-'); h.text(355, 110, 'u_o', 't');
+function bridge(id, pos){
+  var s = new Sch(id), T = [220, 60], B = [220, 240], Lv = [150, 150], R = [290, 150];
+  if (pos) s.hl([[50, 95], [50, 30], [220, 30], T, R, [340, 150], [340, 100], [390, 100], [390, 200], [390, 280], [110, 280], [110, 150], Lv, B, [220, 260], [50, 260], [50, 205]]);
+  else s.hl([[50, 205], [50, 260], [220, 260], B, R, [340, 150], [340, 100], [390, 100], [390, 200], [390, 280], [110, 280], [110, 150], Lv, T, [220, 30], [50, 30], [50, 95]], 'path-hl2');
+  s.vs(50, 95, 50, 205, {lab:'u_2', side:'l'});
+  s.wire(50, 95, 50, 30, 220, 30, 220, 60); s.wire(50, 205, 50, 260, 220, 260, 220, 240);
+  s.D(220, 60, 290, 150); s.D(220, 240, 290, 150); s.D(150, 150, 220, 60); s.D(150, 150, 220, 240);
+  s.text(266, 95, 'D_1', 't'); s.text(266, 215, 'D_2', 't'); s.text(170, 95, 'D_3', 't', 'end'); s.text(170, 215, 'D_4', 't', 'end');
+  s.wire(290, 150, 340, 150, 340, 100, 390, 100); s.R(390, 100, 390, 200, {lab:'R_L'}); s.wire(390, 200, 390, 280, 110, 280, 110, 150, 150, 150);
+  s.node(220, 60); s.node(220, 240); s.node(150, 150); s.node(290, 150);
+  s.arrow(420, 120, 420, 175, 'i_o', pos ? 'acc' : 'red', 426, 152);
+  s.text(40, 70, pos ? '+' : '−', 'pm', 'end'); s.text(40, 235, pos ? '−' : '+', 'pm', 'end');
+}
+bridge('bridgeP', true); bridge('bridgeN', false);
+var rw = document.getElementById('rectw');
+[[0, '输入 u_2', function(t){ return Math.sin(t); }, 'cvthin'], [1, '半波', function(t){ return Math.max(0, Math.sin(t)); }, 'cv2'], [2, '桥式', function(t){ return Math.abs(Math.sin(t)); }, 'cv']].forEach(function(r){
+  var p = new Plot(rw, {x:80, y:12 + r[0] * 70, w:540, h:50}, [0, 4 * Math.PI], [-1.1, 1.1]);
+  p.axes({xt:[], yt:[], grid:false}); p.fn(r[2], r[3]); rtext(rw, 70, 42 + r[0] * 70, r[1], 't', 'end'); });
+
+/* ---------- zener ---------- */
+var zp = new Plot('zIV', {x:20, y:20, w:280, h:200}, [-8, 1.2], [-30, 12]);
+zp.axes({xl:'u', yl:'i', xt:[], yt:[], grid:false});
+zp.fn(function(v){ if (v >= 0) return 1e-9 * (Math.exp(v / 0.035) - 1); if (v > -6) return -0.2; return -0.2 - (-6 - v) * 60; }, 'cv', -8, 1.2, 600);
+zp.vline(-6, 'cvdash'); zp.text(-6, 4, 'U_Z', 'tval', 'middle');
+zp.hline(-5, 'cvdash'); zp.hline(-26, 'cvdash'); zp.text(-7.9, -3.5, 'I_{Zmin}', 'ts'); zp.text(-7.9, -24.5, 'I_{ZM}', 'ts');
+zp.text(-3, -12, '电流变化很大，', 'ts', 'middle'); zp.text(-3, -16, '电压几乎不变 →', 'ts', 'middle');
+var zc = new Sch('zCir');
+zc.term(20, 50); zc.R(20, 50, 130, 50, {lab:'R', val:'限流'}); zc.wire(130, 50, 290, 50); zc.node(180, 50); zc.node(250, 50); zc.term(290, 50);
+zc.Z(180, 170, 180, 50, {lab:'D_Z', side:'l'}); zc.R(250, 50, 250, 170, {lab:'R_L', side:'l'});
+zc.term(20, 170); zc.wire(20, 170, 290, 170); zc.node(180, 170); zc.node(250, 170); zc.term(290, 170);
+zc.text(14, 115, 'U_I', 't', 'end'); zc.text(296, 115, 'U_o', 't');
+zc.arrow(55, 72, 100, 72, 'I_R', 'red', 70, 90); zc.arrow(198, 85, 198, 125, 'I_Z', 'red', 204, 140); zc.arrow(272, 85, 272, 125, 'I_L', 'red', 278, 145);
+zc.text(160, 205, '阴极接高电位（反接）', 'ts', 'middle');
+
+initPage(1);
+})();
+</script>
+</body>
+</html>

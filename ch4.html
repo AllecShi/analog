@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第4章 频率响应 · 模电讲义</title>
+<link rel="stylesheet" href="assets/katex/katex.min.css">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="本章目录"></nav>
+<article>
+<div class="eyebrow">第 4 章 · 课件 28 页</div>
+<h1>放大电路的频率响应</h1>
+<p class="lead">前几章算增益时，电容要么当开路、要么当短路，结果和频率无关。真实电路里，频率太低时耦合电容“不够短路”，频率太高时管子内部的结电容“开始短路”，增益都会下降。本章回答：增益在哪个频率开始掉、掉多快。</p>
+<div class="key"><b>本章学习目标</b> <a class="src" data-s="1"></a><br>① 理解 RC 频率响应与波特图（<b>重点</b>）　② 理解 BJT 的高频小信号模型　③ 掌握基本放大电路的幅频、相频特性分析（<b>难点：高低频等效电路</b>）</div>
+
+<h2 id="overview"><span class="n">4.0</span>全景：放大电路的频率特性长什么样</h2>
+<div class="panel fig"><svg id="full" class="wide" viewBox="0 0 640 260" role="img" aria-label="全频段幅频特性"></svg>
+<div class="cap">横轴是对数刻度的频率。中频区增益平坦；低于 \(f_L\)（下限频率）时被<b>耦合电容、旁路电容</b>拖下来；高于 \(f_H\)（上限频率）时被<b>管子的结电容</b>拖下来。\(f_L\)、\(f_H\) 都定义在增益下降 3dB（即 \(0.707\) 倍）处，通频带 \(BW=f_H-f_L\approx f_H\)。</div></div>
+<div class="tbl"><table>
+<thead><tr><th>频段</th><th>耦合/旁路电容（μF 级）</th><th>结电容（pF 级）</th><th>用什么等效电路</th></tr></thead>
+<tbody>
+<tr><td>低频</td><td><b>容抗不可忽略</b></td><td>开路</td><td>低频等效电路</td></tr>
+<tr><td>中频</td><td>短路</td><td>开路</td><td>第 2、3 章的小信号模型</td></tr>
+<tr><td>高频</td><td>短路</td><td><b>容抗不可忽略</b></td><td>混合 π 模型</td></tr>
+</tbody></table></div>
+
+<h2 id="rc"><span class="n">4.1</span>单时间常数 RC 电路：一切的原型</h2>
+<p>放大电路的高频响应本质上是 RC <b>低通</b>，低频响应本质上是 RC <b>高通</b>。先把这两个最简单的电路彻底弄懂 <a class="src" data-s="3"></a>–<a class="src" data-s="5"></a>。</p>
+<div class="grid2">
+<div class="panel"><h4>RC 低通（高频响应的原型）</h4><svg id="lpC" viewBox="0 0 300 150" role="img" aria-label="RC低通"></svg>
+\[\dot A_V=\frac{\dot V_o}{\dot V_i}=\frac{1/(j\omega C)}{R+1/(j\omega C)}=\frac{1}{1+j\,f/f_H},\quad f_H=\frac{1}{2\pi RC}\]</div>
+<div class="panel"><h4>RC 高通（低频响应的原型）</h4><svg id="hpC" viewBox="0 0 300 150" role="img" aria-label="RC高通"></svg>
+\[\dot A_V=\frac{R}{R+1/(j\omega C)}=\frac{1}{1-j\,f_L/f},\quad f_L=\frac{1}{2\pi RC}\]</div>
+</div>
+<div class="tbl"><table>
+<thead><tr><th></th><th>低通</th><th>高通</th></tr></thead>
+<tbody>
+<tr><td>幅频响应</td><td>\(|\dot A_V|=\dfrac{1}{\sqrt{1+(f/f_H)^2}}\)</td><td>\(|\dot A_V|=\dfrac{1}{\sqrt{1+(f_L/f)^2}}\)</td></tr>
+<tr><td>相频响应</td><td>\(\varphi=-\arctan(f/f_H)\)（输出滞后）</td><td>\(\varphi=\arctan(f_L/f)\)（输出超前）</td></tr>
+<tr><td>在转折频率处</td><td colspan="2">增益 \(=1/\sqrt2\approx0.707\)，即 <b>−3 dB</b>；相移 <b>∓45°</b></td></tr>
+</tbody></table></div>
+<h3>波特图：用折线近似 <a class="src" data-s="4"></a></h3>
+<p>纵轴用分贝 \(20\lg|\dot A_V|\)，横轴用对数频率，曲线就可以用几段直线近似：</p>
+<ul>
+<li><b>幅频</b>：\(f\ll f_H\) 时 0 dB 水平线；\(f\gg f_H\) 时斜率 <b>−20 dB/十倍频</b>的斜线；两线交于 \(f_H\)，最大误差 3 dB。</li>
+<li><b>相频</b>：\(0.1f_H\) 以下取 0°，\(10f_H\) 以上取 −90°，中间是斜率 −45°/十倍频的直线，最大误差约 5.7°。</li>
+</ul>
+<div class="panel">
+<div class="tabs" id="rcTabs"><div class="tabbar"><button>低通</button><button>高通</button></div><div class="tab"></div><div class="tab"></div></div>
+<div class="ctl"><label for="rcR">\(R\)</label><input type="range" id="rcR" min="2" max="5" step="0.01" value="3"><output for="rcR"></output></div>
+<div class="ctl"><label for="rcC">\(C\)</label><input type="range" id="rcC" min="-10" max="-6" step="0.01" value="-8"><output for="rcC"></output></div>
+<div class="ctl"><label for="rcF">信号频率 \(f\)</label><input type="range" id="rcF" min="0" max="7" step="0.01" value="3"><output for="rcF"></output></div>
+<div class="readout" id="rcOut"></div>
+<div class="fig"><svg id="bode" class="wide" viewBox="0 0 640 400" role="img" aria-label="RC波特图"></svg></div>
+<div class="cap">实线：精确曲线；虚线：折线近似；红点：当前频率。</div>
+</div>
+
+<h2 id="hybrid"><span class="n">4.2</span>BJT 的高频小信号模型（混合 π 模型）</h2>
+<p>高频时必须考虑两个 PN 结的结电容 <a class="src" data-s="6"></a> <a class="src" data-s="7"></a>：发射结电容 \(C_{b'e}\)、集电结电容 \(C_{b'c}\)。把 \(r_{be}\) 拆成基区体电阻 \(r_{bb'}\) 和发射结电阻 \(r_{b'e}\)，中间点记作 \(b'\)：</p>
+<div class="panel fig"><svg id="pi" class="wide" viewBox="0 -12 640 232" role="img" aria-label="混合π模型"></svg>
+<div class="cap">受控源由 \(i_b\) 控制改为由 \(\dot U_{b'e}\) 控制：\(g_m\dot U_{b'e}\)。\(r_{b'c}\)、\(r_{ce}\) 很大，简化模型中略去。</div></div>
+<div class="formula">\[ g_m=\frac{I_{EQ}}{V_T},\qquad r_{b'e}=(1+\beta_0)\frac{V_T}{I_{EQ}}\approx\frac{\beta_0}{g_m},\qquad r_{be}=r_{bb'}+r_{b'e} \]</div>
+<p>低频时混合 π 模型与第 2 章的 h 参数模型等价：\(g_m\dot U_{b'e}=g_m r_{b'e}\dot I_b=\beta_0\dot I_b\) <a class="src" data-s="8"></a> <a class="src" data-s="9"></a>。</p>
+<h3>β 的频率响应 <a class="src" data-s="10"></a> <a class="src" data-s="11"></a></h3>
+<p>频率升高，\(C_{b'e}\) 分走越来越多的基极电流，\(\beta\) 随之下降，它本身就是一个低通：</p>
+<div class="formula boxed">\[ \dot\beta\approx\frac{\beta_0}{1+j\omega(C_{b'e}+C_{b'c})r_{b'e}}=\frac{\beta_0}{1+j\,f/f_\beta},\qquad f_\beta=\frac{1}{2\pi(C_{b'e}+C_{b'c})r_{b'e}} \]</div>
+<div class="formula">\[ f_T=\beta_0f_\beta=\frac{g_m}{2\pi(C_{b'e}+C_{b'c})}\approx\frac{g_m}{2\pi C_{b'e}} \]</div>
+<div class="panel fig"><svg id="betaB" class="wide" viewBox="0 0 640 230" role="img" aria-label="β波特图"></svg>
+<div class="cap">\(f_\beta\)：共射截止频率，\(|\dot\beta|\) 降到 \(0.707\beta_0\)；\(f_T\)：特征频率，\(|\dot\beta|\) 降到 1（0 dB）。手册一般给出 \(f_T\)，由它反求 \(C_{b'e}\approx g_m/(2\pi f_T)\)。</div></div>
+<p class="muted">共基极电路 <a class="src" data-s="12"></a> 的输入端是发射极，\(C_{b'c}\) 不跨接在输入输出之间，没有下面要讲的密勒放大效应，所以上限频率比共射电路高得多。</p>
+
+<h2 id="high"><span class="n">4.3.1</span>共射电路的高频响应</h2>
+<h3>难点：\(C_{b'c}\) 跨在输入和输出之间 → 密勒定理 <a class="src" data-s="13"></a>–<a class="src" data-s="16"></a></h3>
+<p>在高频等效电路里，\(C_{b'c}\) 一端接 \(b'\)（输入侧），一端接 c（输出侧），电路不好直接算。<b>密勒定理</b>把它拆成输入侧和输出侧各一个电容：</p>
+<div class="panel fig"><svg id="miller" class="wide" viewBox="0 0 640 200" role="img" aria-label="密勒定理"></svg></div>
+<div class="formula">\[ \dot K=\frac{\dot U_{ce}}{\dot U_{b'e}}=-g_mR_L',\qquad C_{M1}=(1-\dot K)C_{b'c}=(1+g_mR_L')C_{b'c},\qquad C_{M2}=\left(1-\frac1{\dot K}\right)C_{b'c}\approx C_{b'c} \]</div>
+<p>\(C_{b'c}\) 只有几 pF，但折算到输入端被放大了 \((1+g_mR_L')\) 倍，可能变成几百 pF，这就是<b>密勒效应</b>。输出侧 \(C_{M2}\) 的时间常数远小于输入侧，可以忽略 <a class="src" data-s="16"></a>。</p>
+<div class="panel">
+<b>感受密勒效应：</b>\(C_{b'c}=2\,\mathrm{pF}\)，\(C_{b'e}=20\,\mathrm{pF}\)，输入回路等效电阻 \(R=0.77\,\mathrm{k\Omega}\)。
+<div class="ctl"><label for="gmRL">\(g_mR_L'\)</label><input type="range" id="gmRL" min="1" max="200" step="1" value="77"><output for="gmRL"></output></div>
+<div class="fig"><svg id="mBars" viewBox="0 0 640 130" role="img" aria-label="密勒电容条形图"></svg></div>
+<div class="cap">增益 \(g_mR_L'\) 越大，\(C_{M1}\) 越大，\(f_H\) 越低。“增益”和“带宽”此消彼长。</div>
+</div>
+<h3>上限频率 <a class="src" data-s="17"></a> <a class="src" data-s="18"></a></h3>
+<p>输入回路用戴维宁定理化简后，就是一个 RC 低通：</p>
+<div class="panel fig"><svg id="hEq" class="wide" viewBox="0 0 640 180" role="img" aria-label="高频简化等效电路"></svg></div>
+<div class="formula boxed">\[ C=C_{b'e}+(1+g_mR_L')C_{b'c},\qquad R=(R_s/\!/R_b+r_{bb'})/\!/r_{b'e},\qquad f_H=\frac{1}{2\pi RC} \]</div>
+<div class="formula">\[ \dot A_{usH}=\frac{\dot A_{usm}}{1+j\,f/f_H},\qquad \dot A_{usm}=-g_mR_L'\cdot\frac{r_{b'e}}{r_{be}}\cdot\frac{R_b/\!/r_{be}}{R_s+R_b/\!/r_{be}}=-\frac{\beta_0R_L'}{r_{be}}\cdot\frac{R_b/\!/r_{be}}{R_s+R_b/\!/r_{be}} \]</div>
+<p class="muted">\(\dot A_{usm}\) 就是第 2 章的中频源电压增益。高频响应曲线和 RC 低通形状完全相同，只是整体抬高了 \(20\lg|\dot A_{usm}|\) dB，相位从 −180° 开始 <a class="src" data-s="19"></a>。</p>
+<h3>增益–带宽积 <a class="src" data-s="20"></a></h3>
+<p>当 \(R_b\gg R_s\)、\(R_b\gg r_{be}\) 时：</p>
+<div class="formula">\[ |\dot A_{usm}\cdot f_H|\approx\frac{g_mR_L'}{2\pi(r_{bb'}+R_s)\left[C_{b'e}+(1+g_mR_L')C_{b'c}\right]} \]</div>
+<div class="key"><b>结论：</b>管子和信号源一旦确定，<b>增益带宽积基本为常数</b>。想提高增益，带宽就会变窄，反之亦然。</div>
+
+<h2 id="low"><span class="n">4.3.1</span>共射电路的低频响应</h2>
+<p>低频时只需考虑外接的大电容（\(C_{b1}, C_{b2}, C_e\)），结电容容抗极大，当作开路 <a class="src" data-s="21"></a>。</p>
+<div class="panel fig"><svg id="lowC" class="wide" viewBox="0 0 640 230" role="img" aria-label="低频等效电路"></svg>
+<div class="cap">旁路电容 \(C_e\) 折算到基极回路时要除以 \((1+\beta)\)，再和 \(C_{b1}\) 串联 <a class="src" data-s="22"></a>：\(C_1=\dfrac{C_{b1}C_e}{(1+\beta)C_{b1}+C_e}\approx\dfrac{C_e}{1+\beta}\)。</div></div>
+<p>输入侧和输出侧各是一个 RC 高通 <a class="src" data-s="23"></a> <a class="src" data-s="24"></a>：</p>
+<div class="formula boxed">\[ f_{L1}=\frac{1}{2\pi C_1(R_s+r_{be})},\qquad f_{L2}=\frac{1}{2\pi C_{b2}(R_c+R_L)} \]
+\[ \dot A_{usL}=\frac{\dot A_{usM}}{\left[1-j\dfrac{f_{L1}}{f}\right]\left[1-j\dfrac{f_{L2}}{f}\right]},\qquad \dot A_{usM}=-\frac{\beta R_L'}{R_s+r_{be}} \]</div>
+<p>若 \(f_{L1}>4f_{L2}\)，下限频率由较大的那个决定：\(f_L\approx f_{L1}\)。相频：\(\varphi=-180^\circ+\arctan(f_{L1}/f)\)。</p>
+
+<div class="ex">
+<div class="exh"><span class="tag">补充例题</span>求一个共射电路的 \(f_L\)、\(f_H\)，画波特图</div>
+<p>BJT：\(I_{EQ}=1\,\mathrm{mA}, \beta_0=100, r_{bb'}=100\,\Omega, C_{b'c}=2\,\mathrm{pF}, f_T=300\,\mathrm{MHz}\)。电路：\(R_s=1\,\mathrm{k\Omega}\)，\(R_b\) 很大，\(R_c=R_L=4\,\mathrm{k\Omega}\)，\(C_{b1}=C_{b2}=10\,\mu\mathrm F, C_e=100\,\mu\mathrm F\)。<span class="muted">（讲义补充，用来把本章公式串一遍）</span></p>
+<div class="reveal">
+<div class="rs"><b>模型参数：</b>\(g_m=\frac{1\,\mathrm{mA}}{26\,\mathrm{mV}}\approx38.5\,\mathrm{mS}\)，\(r_{b'e}=101\times26\approx2.6\,\mathrm{k\Omega}\)，\(r_{be}=2.7\,\mathrm{k\Omega}\)，\(C_{b'e}\approx\frac{g_m}{2\pi f_T}=\frac{0.0385}{2\pi\times3\times10^8}\approx20.4\,\mathrm{pF}\)</div>
+<div class="rs"><b>中频增益：</b>\(R_L'=4/\!/4=2\,\mathrm{k\Omega}\)，\[\dot A_{usM}=-\frac{\beta R_L'}{R_s+r_{be}}=-\frac{100\times2}{1+2.7}\approx-54\ \ (\approx34.7\,\mathrm{dB})\]</div>
+<div class="rs"><b>上限频率：</b>\(C=20.4+(1+38.5\times2)\times2\approx176\,\mathrm{pF}\)，\(R=(1+0.1)/\!/2.6\approx0.77\,\mathrm{k\Omega}\)
+\[f_H=\frac{1}{2\pi\times770\times176\times10^{-12}}\approx1.17\,\mathrm{MHz}\]
+<span class="muted">注意 \(C_{M1}=156\,\mathrm{pF}\)，比 \(C_{b'e}\) 大得多：密勒效应占主导。</span></div>
+<div class="rs"><b>下限频率：</b>\(C_1=\frac{10\times100}{101\times10+100}\approx0.90\,\mu\mathrm F\)
+\[f_{L1}=\frac{1}{2\pi\times0.90\times10^{-6}\times3.7\times10^3}\approx48\,\mathrm{Hz},\qquad f_{L2}=\frac{1}{2\pi\times10^{-5}\times8\times10^3}\approx2\,\mathrm{Hz}\]
+\(f_{L1}>4f_{L2}\)，所以 \(f_L\approx48\,\mathrm{Hz}\)。</div>
+<div class="rs"><b>结果：</b>通频带约 48 Hz ～ 1.17 MHz。完整波特图见下方。</div>
+</div>
+<div class="fig"><svg id="exB" class="wide" viewBox="0 0 640 360" role="img" aria-label="例题波特图"></svg></div>
+</div>
+
+<h2 id="improve"><span class="n">4.3.2</span>频率响应的要求与改善 <a class="src" data-s="25"></a></h2>
+<ul>
+<li>通频带要覆盖信号的全部频率：\(f_L\) 低于信号最低频率，\(f_H\) 高于信号最高频率，否则产生<b>频率失真</b>（不同频率分量放大倍数不同、相移不同）。</li>
+<li>改善低频：加大耦合、旁路电容，或采用<b>直接耦合</b>（没有耦合电容，\(f_L=0\)，第 5 章会讲它带来的零点漂移问题）。</li>
+<li>改善高频：选 \(f_T\) 高、\(C_{b'c}\) 小的管子，减小 \(R_s\)、\(r_{bb'}\)；受增益带宽积约束。</li>
+</ul>
+
+<h2 id="multi"><span class="n">4.3.3</span>多级放大电路的频率响应 <a class="src" data-s="26"></a>–<a class="src" data-s="28"></a></h2>
+<div class="formula">\[ \dot A_u=\dot A_{u1}\dot A_{u2}\cdots\dot A_{un},\qquad 20\lg|\dot A_u|=\sum_k20\lg|\dot A_{uk}|,\qquad \varphi=\sum_k\varphi_k \]</div>
+<p>波特图直接相加。两级相同时，单级在 \(f_{H1}\) 处已降到 0.707 倍，两级就降到 \(0.707^2=0.5\) 倍（−6 dB），所以总的 −3 dB 点向里收缩：<b>级数越多，总增益越高，通频带越窄</b>。</p>
+<div class="panel">
+<div class="ctl"><label for="nst">级数 \(n\)</label><input type="range" id="nst" min="1" max="4" step="1" value="2"><output for="nst"></output></div>
+<div class="fig"><svg id="mult" class="wide" viewBox="0 0 640 300" role="img" aria-label="多级频率响应"></svg></div>
+<div class="readout" id="multOut"></div>
+</div>
+<p>估算公式 <a class="src" data-s="28"></a>：</p>
+<div class="formula">\[ f_L\approx1.1\sqrt{f_{L1}^2+f_{L2}^2+\cdots+f_{Ln}^2},\qquad \frac1{f_H}\approx1.1\sqrt{\frac1{f_{H1}^2}+\frac1{f_{H2}^2}+\cdots+\frac1{f_{Hn}^2}} \]</div>
+
+<h2 id="sum"><span class="n">小结</span>本章小结与自测</h2>
+<div class="tbl"><table><tbody>
+<tr><td><b>RC 低通</b></td><td>\(f_H=1/(2\pi RC)\)，−20 dB/十倍频，−45° @ \(f_H\)</td></tr>
+<tr><td><b>RC 高通</b></td><td>\(f_L=1/(2\pi RC)\)，+20 dB/十倍频，+45° @ \(f_L\)</td></tr>
+<tr><td><b>混合 π</b></td><td>\(g_m=I_{EQ}/V_T\)，\(f_\beta=1/[2\pi(C_{b'e}+C_{b'c})r_{b'e}]\)，\(f_T=\beta_0f_\beta\)</td></tr>
+<tr><td><b>密勒电容</b></td><td>\(C_{M1}=(1+g_mR_L')C_{b'c}\)</td></tr>
+<tr><td><b>上限频率</b></td><td>\(f_H=1/(2\pi RC)\)，\(C=C_{b'e}+C_{M1}\)，\(R=(R_s/\!/R_b+r_{bb'})/\!/r_{b'e}\)</td></tr>
+<tr><td><b>下限频率</b></td><td>\(f_{L1}=1/[2\pi C_1(R_s+r_{be})]\)，\(C_1\approx C_e/(1+\beta)\)</td></tr>
+</tbody></table></div>
+<div class="q" data-a="1"><div class="qt">1. RC 低通在 \(f=10f_H\) 处，增益约为多少 dB？</div><div class="opts"><button>−3 dB</button><button>−20 dB</button><button>−40 dB</button></div>
+<div class="qex">✓ 正确。超过 \(f_H\) 后每十倍频下降 20 dB。</div></div>
+<div class="q" data-a="0"><div class="qt">2. 共射电路高频响应变差的主要原因是？</div><div class="opts"><button>\(C_{b'c}\) 的密勒效应</button><button>耦合电容太小</button><button>\(r_{bb'}\) 太大</button></div>
+<div class="qex">✓ 正确。\(C_{b'c}\) 被放大 \((1+g_mR_L')\) 倍折算到输入端。</div></div>
+<div class="q" data-a="2"><div class="qt">3. 为什么低频等效电路中 \(C_e\) 要除以 \((1+\beta)\)？</div><div class="opts"><button>因为 \(C_e\) 很大</button><button>因为 \(C_e\) 在输出回路</button><button>\(C_e\) 中流的是 \(i_e=(1+\beta)i_b\)，折算到基极回路阻抗乘 \((1+\beta)\)，电容就除以 \((1+\beta)\)</button></div>
+<div class="qex">✓ 正确。和第 2 章“\(R_e\) 折算到基极乘 \((1+\beta)\)”是同一个道理。</div></div>
+<div class="q" data-a="1"><div class="qt">4. 两级相同的放大电路级联，总带宽比单级？</div><div class="opts"><button>更宽</button><button>更窄</button><button>相同</button></div>
+<div class="qex">✓ 正确。</div></div>
+
+<details class="gallery"><summary>浏览本章全部课件页（28 页，点击放大）</summary></details>
+</article>
+</div>
+
+<script src="assets/katex/katex.min.js"></script>
+<script src="assets/katex/auto-render.min.js"></script>
+<script src="assets/common.js"></script>
+<script>
+(function(){
+function lg(x){ return Math.log10(x); }
+function fmtF(f){ return f >= 1e6 ? (f / 1e6).toPrecision(3) + ' MHz' : f >= 1e3 ? (f / 1e3).toPrecision(3) + ' kHz' : f.toPrecision(3) + ' Hz'; }
+function decF(v){ var f = Math.pow(10, v); return f >= 1e6 ? f / 1e6 + 'M' : f >= 1e3 ? f / 1e3 + 'k' : String(f); }
+
+/* ---------- overview ---------- */
+var fp = new Plot('full', {x:60, y:20, w:540, h:190}, [0, 8], [-25, 45]);
+fp.axes({xl:'f（对数）', yl:'20lg|A_u| / dB', xt:[0, 2, 4, 6, 8], xf:function(v){ return decF(v); }, yt:[0, 20, 40], xAtBottom:true});
+var AM = 40, fL = 100, fH = 1e6;
+fp.fn(function(x){ var f = Math.pow(10, x); return AM - 10 * lg(1 + Math.pow(fL / f, 2)) - 10 * lg(1 + Math.pow(f / fH, 2)); }, 'cv');
+fp.hline(37, 'cvdash'); fp.vline(2, 'cvdash'); fp.vline(6, 'cvdash');
+fp.text(2, -20, 'f_L', 'tval', 'middle'); fp.text(6, -20, 'f_H', 'tval', 'middle'); fp.text(4, 42, '中频区：增益平坦', 't', 'middle');
+fp.text(0.9, 10, '低频区', 'tblue', 'middle'); fp.text(7.2, 10, '高频区', 'tred', 'middle'); fp.text(8, 33, '−3dB', 'ts', 'end');
+mk('line', {x1:fp.X(2), y1:fp.Y(25), x2:fp.X(6), y2:fp.Y(25), class:'arr-acc', 'marker-end':fp.mk.acc, 'marker-start':fp.mk.acc}, fp.g); fp.text(4, 27, '通频带 BW', 'tval', 'middle');
+
+/* ---------- RC circuits ---------- */
+var lc = new Sch('lpC'); lc.term(20, 40); lc.R(20, 40, 150, 40, {lab:'R'}); lc.wire(150, 40, 260, 40); lc.node(190, 40); lc.C(190, 40, 190, 120, {lab:'C'}); lc.wire(20, 120, 260, 120); lc.term(20, 120); lc.term(260, 40); lc.term(260, 120); lc.node(190, 120);
+lc.text(14, 85, 'V_i', 't', 'end'); lc.text(266, 85, 'V_o', 't');
+var hc = new Sch('hpC'); hc.term(20, 40); hc.C(20, 40, 150, 40, {lab:'C'}); hc.wire(150, 40, 260, 40); hc.node(190, 40); hc.R(190, 40, 190, 120, {lab:'R'}); hc.wire(20, 120, 260, 120); hc.term(20, 120); hc.term(260, 40); hc.term(260, 120); hc.node(190, 120);
+hc.text(14, 85, 'V_i', 't', 'end'); hc.text(266, 85, 'V_o', 't');
+
+/* ---------- RC Bode interactive ---------- */
+var bs = document.getElementById('bode'), mode = 0;
+var pm = new Plot(bs, {x:60, y:15, w:540, h:170}, [0, 7], [-60, 5]);
+pm.axes({yl:'20lg|A_V| / dB', xt:[0, 1, 2, 3, 4, 5, 6, 7], xf:function(v){ return decF(v); }, yt:[-60, -40, -20, 0]});
+var pp = new Plot(bs, {x:60, y:225, w:540, h:140}, [0, 7], [-95, 95]);
+pp.axes({xl:'f / Hz', yl:'φ', xt:[0, 1, 2, 3, 4, 5, 6, 7], xf:function(v){ return decF(v); }, yt:[-90, -45, 45, 90], yf:function(v){ return v + '°'; }});
+function fmtR(v){ var r = Math.pow(10, v); return r >= 1e3 ? (r / 1e3).toPrecision(3) + ' kΩ' : r.toPrecision(3) + ' Ω'; }
+function fmtC(v){ var c = Math.pow(10, v); return c >= 1e-6 ? (c * 1e6).toPrecision(3) + ' μF' : c >= 1e-9 ? (c * 1e9).toPrecision(3) + ' nF' : (c * 1e12).toPrecision(3) + ' pF'; }
+var rcRun = bindSliders(['rcR', 'rcC', 'rcF'], {rcR:fmtR, rcC:fmtC, rcF:function(v){ return fmtF(Math.pow(10, v)); }}, function(v){
+  var R = Math.pow(10, v.rcR), C = Math.pow(10, v.rcC), fc = 1 / (2 * Math.PI * R * C), xc = lg(fc), f = Math.pow(10, v.rcF), lp = mode === 0;
+  function mag(x){ var r = Math.pow(10, x) / fc; return lp ? -10 * lg(1 + r * r) : -10 * lg(1 + 1 / (r * r)); }
+  function ph(x){ var r = Math.pow(10, x) / fc; return lp ? -Math.atan(r) * 180 / Math.PI : Math.atan(1 / r) * 180 / Math.PI; }
+  var d1 = pm.clear(), d2 = pp.clear();
+  pm.fn(mag, 'cv', 0, 7, 300, d1);
+  if (lp) pm.poly([[0, 0], [xc, 0], [Math.min(7, xc + 3), -20 * Math.min(3, 7 - xc)]], 'cvdash', d1); else pm.poly([[Math.max(0, xc - 3), -20 * Math.min(3, xc)], [xc, 0], [7, 0]], 'cvdash', d1);
+  pp.fn(ph, 'cv2', 0, 7, 300, d2);
+  if (lp) pp.poly([[0, 0], [xc - 1, 0], [xc + 1, -90], [7, -90]], 'cvdash', d2); else pp.poly([[0, 90], [xc - 1, 90], [xc + 1, 0], [7, 0]], 'cvdash', d2);
+  pm.vline(xc, 'cvthin', d1); pp.vline(xc, 'cvthin', d2);
+  pm.text(xc, -57, (lp ? 'f_H' : 'f_L') + ' = ' + fmtF(fc), 'tval', 'middle', d1);
+  pm.dot(v.rcF, mag(v.rcF), d1); pp.dot(v.rcF, ph(v.rcF), d2);
+  var m = mag(v.rcF);
+  document.getElementById('rcOut').innerHTML = '<span>' + (lp ? 'f_H' : 'f_L') + ' = 1/(2πRC) = ' + fmtF(fc) + '</span><span>f = ' + fmtF(f) + '</span><span>|A_V| = ' + Math.pow(10, m / 20).toFixed(3) + '（' + m.toFixed(1) + ' dB）</span><span>φ = ' + ph(v.rcF).toFixed(1) + '°</span>';
+});
+document.getElementById('rcTabs').__on = function(i){ mode = i; rcRun(); };
+
+/* ---------- hybrid pi ---------- */
+var pi = new Sch('pi');
+pi.term(30, 50); pi.text(20, 55, 'b', 'tb', 'end'); pi.R(30, 50, 140, 50, {lab:'r_{bb\'}'}); pi.node(160, 50); pi.line(140, 50, 160, 50); pi.text(160, 38, 'b\'', 'tb', 'middle');
+pi.R(160, 50, 160, 170, {lab:'r_{b\'e}', side:'l'}); pi.wire(160, 50, 230, 50); pi.C(230, 50, 230, 170, {lab:'C_{b\'e}'}); pi.node(230, 50);
+pi.wire(230, 50, 290, 50, 290, 20, 330, 20); pi.C(330, 20, 410, 20, {lab:'C_{b\'c}'}); pi.wire(410, 20, 470, 20, 470, 50); pi.node(470, 50);
+pi.ccs(470, 50, 470, 170, {lab:'g_mU_{b\'e}', side:'l'}); pi.wire(470, 50, 600, 50); pi.R(540, 50, 540, 170, {lab:'r_{ce}'}); pi.node(540, 50);
+pi.wire(30, 170, 600, 170); pi.term(30, 170); pi.term(600, 50); pi.term(600, 170); pi.text(610, 55, 'c', 'tb'); pi.text(320, 195, 'e', 'tb', 'middle');
+pi.node(160, 170); pi.node(230, 170); pi.node(470, 170); pi.node(540, 170);
+pi.pm(195, 75, '+'); pi.pm(195, 150, '-'); pi.text(205, 115, 'U_{b\'e}', 'ts');
+
+/* ---------- beta bode ---------- */
+var bp = new Plot('betaB', {x:70, y:15, w:520, h:180}, [3, 10], [-10, 50]);
+bp.axes({xl:'f / Hz', yl:'20lg|β| / dB', xt:[3, 4, 5, 6, 7, 8, 9, 10], xf:function(v){ return decF(v); }, yt:[0, 20, 40]});
+var b0 = 100, fb = 3e6;
+bp.fn(function(x){ var r = Math.pow(10, x) / fb; return 20 * lg(b0) - 10 * lg(1 + r * r); }, 'cv');
+bp.poly([[3, 40], [lg(fb), 40], [lg(fb) + 2.5, -10]], 'cvdash');
+bp.vline(lg(fb), 'cvthin'); bp.vline(lg(fb * b0), 'cvthin'); bp.text(lg(fb) + 0.1, 6, 'f_β', 'tval', 'start'); bp.text(lg(fb * b0) + 0.1, 6, 'f_T = β_0 f_β', 'tval', 'start');
+bp.text(3.2, 44, '20lg β_0', 'ts'); bp.text(7.9, 25, '−20 dB/十倍频', 'ts');
+
+/* ---------- miller ---------- */
+var ml = new Sch('miller');
+ml.term(40, 100); ml.text(30, 105, '1', 'tb', 'end'); ml.wire(40, 100, 80, 100, 80, 40, 120, 40); ml.C(120, 40, 200, 40, {lab:'C_{b\'c}'}); ml.wire(200, 40, 240, 40, 240, 100, 280, 100); ml.term(280, 100); ml.text(290, 105, '2', 'tb');
+mk('rect', {x:110, y:80, width:100, height:50, class:'body', rx:6}, ml.g); ml.text(160, 110, 'K = U_2/U_1', 't', 'middle'); ml.line(80, 100, 110, 100); ml.line(210, 100, 240, 100);
+ml.arrow(300, 100, 350, 100, '', 'acc'); ml.text(325, 88, '等效', 'tval', 'middle');
+ml.term(380, 60); ml.text(370, 65, '1', 'tb', 'end'); ml.C(390, 60, 390, 160, {lab:'C_{M1}'}); ml.line(380, 60, 390, 60); ml.line(380, 160, 390, 160); ml.gnd(390, 160);
+mk('rect', {x:470, y:80, width:60, height:50, class:'body', rx:6}, ml.g); ml.text(500, 110, 'K', 't', 'middle'); ml.wire(390, 60, 450, 60, 450, 105, 470, 105); ml.wire(530, 105, 560, 105, 560, 60);
+ml.C(560, 60, 560, 160, {lab:'C_{M2}', side:'l'}); ml.gnd(560, 160); ml.line(560, 60, 600, 60); ml.term(600, 60); ml.text(610, 65, '2', 'tb');
+
+/* miller bars */
+var mb = document.getElementById('mBars');
+bindSliders(['gmRL'], {gmRL:function(v){ return v; }}, function(v){
+  var Cbc = 2, Cbe = 20, CM1 = (1 + v.gmRL) * Cbc, C = Cbe + CM1, fH = 1 / (2 * Math.PI * 770 * C * 1e-12);
+  mb.innerHTML = '';
+  var max = 20 + 201 * 2;
+  rtext(mb, 0, 24, 'C_{b\'e} = 20 pF', 't'); mk('rect', {x:170, y:10, width:400 * Cbe / max, height:20, style:'fill:var(--blue)'}, mb);
+  rtext(mb, 0, 60, 'C_{M1} = ' + CM1.toFixed(0) + ' pF', 't'); mk('rect', {x:170, y:46, width:400 * CM1 / max, height:20, style:'fill:var(--red)'}, mb);
+  rtext(mb, 0, 96, '总 C = ' + C.toFixed(0) + ' pF', 'tb'); mk('rect', {x:170, y:82, width:400 * C / max, height:20, style:'fill:var(--accent)'}, mb);
+  rtext(mb, 0, 124, '→ f_H = ' + fmtF(fH) + '，|A| ≈ ' + v.gmRL + '，增益×带宽 ≈ ' + fmtF(fH * v.gmRL), 'tval');
+});
+
+/* high-f equivalent */
+var he = new Sch('hEq');
+he.vs(60, 70, 60, 140, {lab:'U\'_s', side:'l'}); he.wire(60, 70, 60, 40, 100, 40); he.R(100, 40, 200, 40, {lab:'R'}); he.wire(200, 40, 260, 40); he.node(240, 40);
+he.C(240, 40, 240, 150, {lab:'C', side:'l'}); he.text(262, 100, 'U_{b\'e}', 't'); he.wire(60, 140, 60, 150, 560, 150); he.node(240, 150);
+he.ccs(400, 40, 400, 150, {lab:'g_mU_{b\'e}', side:'l'}); he.wire(400, 40, 560, 40); he.R(500, 40, 500, 150, {lab:'R\'_L'}); he.node(500, 40); he.node(400, 150); he.node(500, 150);
+he.term(560, 40); he.term(560, 150); he.text(568, 100, 'U_o', 't'); he.text(150, 175, '输入回路 = RC 低通', 'tval', 'middle');
+
+/* low-f equivalent */
+var lw = new Sch('lowC');
+lw.vs(40, 90, 40, 170, {lab:'U_s', side:'l'}); lw.wire(40, 90, 40, 50, 60, 50); lw.R(60, 50, 120, 50, {lab:'R_s'}); lw.C(120, 50, 180, 50, {lab:'C_1'}); lw.wire(180, 50, 220, 50);
+lw.R(220, 50, 220, 190, {lab:'r_{be}'}); lw.node(220, 50);
+lw.ccs(340, 50, 340, 190, {lab:'βi_b', side:'l'}); lw.wire(340, 50, 420, 50); lw.R(420, 50, 420, 190, {lab:'R_c', side:'l'}); lw.node(420, 50);
+lw.C(420, 50, 500, 50, {lab:'C_{b2}'}); lw.wire(500, 50, 560, 50); lw.R(560, 50, 560, 190, {lab:'R_L'});
+lw.wire(40, 170, 40, 190, 560, 190); lw.node(220, 190); lw.node(340, 190); lw.node(420, 190);
+lw.arrow(230, 66, 230, 90, 'i_b', 'red', 236, 84);
+lw.box(30, 25, 220, 185); lw.box(330, 25, 260, 185); lw.text(140, 220, '输入侧：f_{L1}', 'tblue', 'middle'); lw.text(460, 220, '输出侧：f_{L2}', 'tblue', 'middle');
+
+/* example full Bode */
+var eb = document.getElementById('exB');
+var em = new Plot(eb, {x:60, y:15, w:540, h:160}, [0, 8], [0, 40]);
+em.axes({yl:'|A_{us}| / dB', xt:[0, 1, 2, 3, 4, 5, 6, 7, 8], xf:decF, yt:[0, 10, 20, 30, 40], xAtBottom:true});
+var eph = new Plot(eb, {x:60, y:210, w:540, h:120}, [0, 8], [-280, -80]);
+eph.axes({xl:'f / Hz', yl:'φ', xt:[0, 1, 2, 3, 4, 5, 6, 7, 8], xf:decF, yt:[-270, -180, -90], yf:function(v){ return v + '°'; }, xAtBottom:true});
+var A0 = 54, f1 = 48, f2 = 2, fh = 1.17e6;
+function exMag(x){ var f = Math.pow(10, x); return 20 * lg(A0) - 10 * lg(1 + Math.pow(f1 / f, 2)) - 10 * lg(1 + Math.pow(f2 / f, 2)) - 10 * lg(1 + Math.pow(f / fh, 2)); }
+function exPh(x){ var f = Math.pow(10, x); return -180 + (Math.atan(f1 / f) + Math.atan(f2 / f) - Math.atan(f / fh)) * 180 / Math.PI; }
+em.fn(exMag, 'cv'); eph.fn(exPh, 'cv2');
+em.vline(lg(f1)); em.vline(lg(fh)); em.text(lg(f1), 3, 'f_L ≈ 48Hz', 'tval', 'middle'); em.text(lg(fh), 3, 'f_H ≈ 1.17MHz', 'tval', 'middle');
+em.text(4, 37, '中频 34.7 dB', 't', 'middle'); eph.text(4, -170, '中频相位 −180°（反相）', 'ts', 'middle');
+
+/* multistage */
+var mp = new Plot('mult', {x:60, y:15, w:540, h:240}, [4, 8], [-10, 130]);
+mp.axes({xl:'f / Hz', yl:'dB', xt:[4, 5, 6, 7, 8], xf:decF, yt:[0, 40, 80, 120]});
+bindSliders(['nst'], {nst:function(v){ return v + ' 级'; }}, function(v){
+  var d = mp.clear(), A1 = 30, fH1 = 1e6;
+  for (var n = 1; n <= 4; n++){ (function(n){ mp.fn(function(x){ var r = Math.pow(10, x) / fH1; return n * (A1 - 10 * lg(1 + r * r)); }, n === v.nst ? 'cv' : 'cvthin', 4, 8, 300, d); })(n); }
+  var fHn = fH1 * Math.sqrt(Math.pow(2, 1 / v.nst) - 1);
+  mp.vline(lg(fHn), 'cv4', d); mp.dot(lg(fHn), v.nst * A1 - 3, d);
+  document.getElementById('multOut').innerHTML = '<span>中频增益 = ' + v.nst * A1 + ' dB</span><span>单级 f_H1 = 1 MHz</span><span>总 f_H = f_H1·√(2^{1/n}−1) ≈ ' + fmtF(fHn) + '</span>';
+});
+
+initPage(4);
+})();
+</script>
+</body>
+</html>

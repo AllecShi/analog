@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第3章 场效应管及其放大电路 · 模电讲义</title>
+<link rel="stylesheet" href="assets/katex/katex.min.css">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="本章目录"></nav>
+<article>
+<div class="eyebrow">第 3 章 · 课件 47 页</div>
+<h1>场效应晶体管及其放大电路</h1>
+<p class="lead">BJT 用基极<b>电流</b>控制集电极电流；场效应管（FET）用栅极<b>电压</b>控制漏极电流，栅极几乎不取电流。学会了 BJT，FET 的分析思路完全一样：先求 Q 点，再用小信号模型求增益。</p>
+<div class="key"><b>本章学习目标</b> <a class="src" data-s="1"></a><br>① 理解 FET 的结构、工作原理、特性曲线及参数（<b>重点：特性方程</b>）　② 掌握 FET 放大电路的图解法和小信号分析法</div>
+
+<h2 id="cls"><span class="n">3.0</span>分类：先认清家族成员</h2>
+<div class="panel fig"><svg id="tree" class="wide" viewBox="0 0 640 210" role="img" aria-label="场效应管分类"></svg>
+<div class="cap"><b>增强型</b>：不加栅源电压时没有导电沟道；<b>耗尽型</b>：不加电压时已有导电沟道 <a class="src" data-s="3"></a>。JFET 都是耗尽型。</div></div>
+<div class="tbl"><table>
+<thead><tr><th></th><th>BJT</th><th>FET</th></tr></thead>
+<tbody>
+<tr><td>控制方式</td><td>电流控制电流（CCCS）\(i_C=\beta i_B\)</td><td>电压控制电流（VCCS）\(i_D=f(u_{GS})\)</td></tr>
+<tr><td>输入电阻</td><td>较小（\(r_{be}\) 约 kΩ）</td><td>极大（MOSFET 达 \(10^9\sim10^{15}\,\Omega\)）</td></tr>
+<tr><td>载流子</td><td>电子和空穴（双极型）</td><td>只有一种（单极型）</td></tr>
+<tr><td>电极对应</td><td>b、e、c</td><td>g（栅）、s（源）、d（漏）</td></tr>
+</tbody></table></div>
+
+<h2 id="jfet"><span class="n">3.1</span>结型场效应管 JFET</h2>
+<p>N 沟道 JFET：一根 N 型半导体条（沟道），两侧做成 P⁺ 区并连在一起作栅极 <a class="src" data-s="4"></a>。栅极和沟道之间是 PN 结，正常工作时加<b>反偏</b>电压（\(u_{GS}\le0\)）。</p>
+<div class="panel">
+<b>拖动两个电压，看沟道怎么变化（N 沟道，\(U_{PN}=-4\,\mathrm{V}\)，\(I_{DSS}=4\,\mathrm{mA}\)）：</b>
+<div class="ctl"><label for="jg">\(u_{GS}\)</label><input type="range" id="jg" min="-4.5" max="0" step="0.05" value="-1"><output for="jg"></output></div>
+<div class="ctl"><label for="jd">\(u_{DS}\)</label><input type="range" id="jd" min="0" max="8" step="0.05" value="1"><output for="jd"></output></div>
+<div class="readout" id="jOut"></div>
+<div class="fig"><svg id="jfetS" class="wide" viewBox="0 0 640 260" role="img" aria-label="JFET沟道"></svg></div>
+<div class="cap">白色是耗尽层（不导电），蓝色是剩下的导电沟道。① \(u_{GS}\) 越负，PN 结反偏越深，耗尽层越厚，沟道越窄 <a class="src" data-s="6"></a>；② \(u_{DS}\) 增大时，靠近漏极的反偏电压更大，沟道呈<b>楔形</b>；③ 当 \(u_{GD}=u_{GS}-u_{DS}=U_{PN}\) 时漏极端<b>预夹断</b>，之后 \(i_D\) 基本不变 <a class="src" data-s="7"></a> <a class="src" data-s="8"></a>。</div>
+</div>
+<h3>特性方程 <a class="src" data-s="9"></a> <a class="src" data-s="10"></a></h3>
+<div class="formula boxed">\[ i_D=I_{DSS}\left(1-\frac{u_{GS}}{U_{PN}}\right)^2\qquad (U_{PN}\le u_{GS}\le0,\ \ u_{DS}\ge u_{GS}-U_{PN}) \]</div>
+<p>\(U_{PN}\)（也写作 \(U_{GS(off)}\)）是<b>夹断电压</b>，N 沟道为负值；\(I_{DSS}\) 是 \(u_{GS}=0\) 时的<b>饱和漏极电流</b>。三个区：截止区（\(u_{GS}\le U_{PN}\)）、可变电阻区（预夹断前）、放大区（饱和区，预夹断后）。</p>
+<div class="grid2">
+<div class="panel"><h4>转移特性 \(i_D=f(u_{GS})\)</h4><svg id="jTr" viewBox="0 0 320 230" role="img" aria-label="JFET转移特性"></svg></div>
+<div class="panel"><h4>输出特性 \(i_D=f(u_{DS})\)</h4><svg id="jOutC" viewBox="0 0 320 230" role="img" aria-label="JFET输出特性"></svg></div>
+</div>
+<p class="muted">主要参数 <a class="src" data-s="11"></a>：直流参数 \(U_{PN}, I_{DSS}, R_{GS}\)；交流参数 低频互导 \(g_m\)、输出电阻 \(r_{ds}\)；极限参数 \(I_{DM}, U_{(BR)DS}, U_{(BR)GS}, P_{DM}\)。</p>
+
+<h2 id="mos"><span class="n">3.2</span>N 沟道增强型 MOSFET</h2>
+<p>结构 <a class="src" data-s="12"></a>：P 型衬底上做两个 N⁺ 区作源极 s 和漏极 d，表面覆盖一层很薄的 SiO₂ 绝缘层，上面是金属栅极 g。栅极与沟道之间隔着绝缘层，所以<b>栅极电流为零</b>。</p>
+<div class="panel">
+<b>拖动电压，看导电沟道（\(U_{TN}=1\,\mathrm{V}\)，\(K_n=0.5\,\mathrm{mA/V^2}\)）：</b>
+<div class="ctl"><label for="mg">\(u_{GS}\)</label><input type="range" id="mg" min="0" max="5" step="0.05" value="3"><output for="mg"></output></div>
+<div class="ctl"><label for="md">\(u_{DS}\)</label><input type="range" id="md" min="0" max="8" step="0.05" value="1"><output for="md"></output></div>
+<div class="btns" id="mPre"><button type="button" data-v="0.5,1">u_GS &lt; U_TN</button><button type="button" data-v="3,0.6">可变电阻区</button><button type="button" data-v="3,2">预夹断</button><button type="button" data-v="3,5">饱和区</button></div>
+<div class="readout" id="mOut"></div>
+<div class="fig"><svg id="mosS" class="wide" viewBox="0 0 640 280" role="img" aria-label="MOSFET结构与沟道"></svg></div>
+<div class="fig"><svg id="mosC" class="wide" viewBox="0 0 640 300" role="img" aria-label="MOSFET输出特性"></svg></div>
+<div class="cap">① \(u_{GS}\lt U_{TN}\)：没有沟道，\(i_D=0\) <a class="src" data-s="14"></a>；② \(u_{GS}>U_{TN}\)：栅极电场把衬底中的电子吸到表面，形成 N 型<b>反型层</b>（感生沟道），\(U_{TN}\) 叫<b>开启电压</b>；③ \(u_{DS}\) 增大，沟道变成楔形，\(u_{GD}=U_{TN}\) 时预夹断 <a class="src" data-s="15"></a>，之后 \(i_D\) 基本不变 <a class="src" data-s="16"></a>。</div>
+</div>
+<h3>特性方程（必背）<a class="src" data-s="17"></a>–<a class="src" data-s="19"></a></h3>
+<div class="tbl"><table>
+<thead><tr><th>区域</th><th>条件</th><th>方程</th></tr></thead>
+<tbody>
+<tr><td>截止区</td><td>\(u_{GS}\lt U_{TN}\)</td><td>\(i_D=0\)</td></tr>
+<tr><td>可变电阻区</td><td>\(u_{GS}\ge U_{TN},\ u_{DS}\le u_{GS}-U_{TN}\)</td><td>\(i_D=K_n\left[2(u_{GS}-U_{TN})u_{DS}-u_{DS}^2\right]\)</td></tr>
+<tr><td><b>饱和区（放大区）</b></td><td>\(u_{GS}\ge U_{TN},\ u_{DS}\ge u_{GS}-U_{TN}\)</td><td>\(i_D=K_n(u_{GS}-U_{TN})^2\)</td></tr>
+</tbody></table></div>
+<div class="formula">\[ K_n=\frac{\mu_nC_{ox}W}{2L}\quad(\text{电导常数，单位 }\mathrm{mA/V^2})\qquad r_{dso}=\frac{1}{2K_n(u_{GS}-U_{TN})}\ \ (u_{DS}\text{ 很小时}) \]</div>
+<p class="muted">可变电阻区里，\(u_{DS}\) 很小时 \(i_D\) 与 \(u_{DS}\) 近似成正比，管子像一个受 \(u_{GS}\) 控制的电阻。放大电路要用的是<b>饱和区</b>（注意：MOS 的“饱和区”对应 BJT 的“放大区”，名字容易混）。</p>
+<div class="ex">
+<div class="exh"><span class="tag">例题</span>求饱和区电流 <a class="src" data-s="20"></a></div>
+<p>N 沟道增强型 MOS 管，\(W=20\,\mu\mathrm m, L=2\,\mu\mathrm m, \mu_n=650\,\mathrm{cm^2/(V\cdot s)}, C_{ox}=76.7\times10^{-9}\,\mathrm{F/cm^2}\)，\(U_{TN}=0.75\,\mathrm V\)，\(u_{GS}=2U_{TN}\)，工作在饱和区，求 \(i_D\)。</p>
+<div class="reveal">
+<div class="rs">\[K_n=\frac{\mu_nC_{ox}W}{2L}=\frac{650\times76.7\times10^{-9}\times20}{2\times2}\approx2.49\times10^{-4}\,\mathrm{A/V^2}=0.249\,\mathrm{mA/V^2}\]</div>
+<div class="rs">\(u_{GS}=2U_{TN}=1.5\,\mathrm V\)，代入饱和区方程：
+\[i_D=K_n(u_{GS}-U_{TN})^2=0.249\times(1.5-0.75)^2\approx0.14\,\mathrm{mA}\]</div>
+</div>
+</div>
+
+<h3>耗尽型 NMOS 与 P 沟道 MOS <a class="src" data-s="22"></a>–<a class="src" data-s="24"></a></h3>
+<p><b>耗尽型</b>：SiO₂ 中掺入大量正离子，\(u_{GS}=0\) 时就已经有沟道，正负 \(u_{GS}\) 都能工作。方程和 JFET 相同：\(i_D=I_{DSS}(1-u_{GS}/U_{PN})^2\)。<b>P 沟道</b>：所有电压、电流的方向反过来。</p>
+<div class="grid2" id="four"></div>
+<h3>沟道长度调制效应与参数 <a class="src" data-s="25"></a>–<a class="src" data-s="27"></a></h3>
+<p>实际饱和区曲线略微上翘，用沟道长度调制系数 \(\lambda\) 修正：</p>
+<div class="formula">\[ i_D=K_n(u_{GS}-U_{TN})^2(1+\lambda u_{DS}),\qquad r_{ds}=\frac{1}{\lambda I_{DQ}}\quad(\lambda=0\ \Rightarrow\ r_{ds}\to\infty) \]</div>
+<p><b>低频互导</b> \(g_m\)：转移特性在 Q 点的斜率，衡量 \(u_{GS}\) 控制 \(i_D\) 的能力（单位 mS）：</p>
+<div class="formula boxed">\[ g_m=\left.\frac{\partial i_D}{\partial u_{GS}}\right|_Q=2K_n(U_{GSQ}-U_{TN})=2\sqrt{K_nI_{DQ}} \]</div>
+<p class="muted">\(g_m\) 在 FET 里的地位，相当于 BJT 里的 \(\beta\)（更准确地说是 \(\beta/r_{be}\)）。</p>
+
+<h2 id="dc"><span class="n">3.3.1</span>直流分析：假设 → 求解 → 验证</h2>
+<div class="key"><b>固定套路</b> <a class="src" data-s="29"></a> <a class="src" data-s="33"></a><br>① 画直流通路，栅极无电流，用分压求 \(U_G\)；② <b>假设工作在饱和区</b>，联立 \(i_D\) 方程和栅源回路方程；③ 解出 \(I_D\)（二次方程取合理的根）；④ <b>验证</b> \(U_{DS}\ge U_{GS}-U_{TN}\)（JFET：\(U_{DS}\ge U_{GS}-U_{PN}\)）。不满足就改用可变电阻区方程重解。</div>
+
+<div class="ex">
+<div class="exh"><span class="tag">例 1</span>分压偏置 NMOS 共源电路 <a class="src" data-s="34"></a></div>
+<p>\(R_{g1}=60\,\mathrm{k\Omega}, R_{g2}=40\,\mathrm{k\Omega}, R_d=15\,\mathrm{k\Omega}, V_{DD}=5\,\mathrm V, U_{TN}=1\,\mathrm V, K_n=0.2\,\mathrm{mA/V^2}\)，求 \(I_{DQ}\) 和 \(U_{DSQ}\)。</p>
+<div class="fig"><svg id="dc1" viewBox="0 0 420 270" role="img" aria-label="例1电路"></svg></div>
+<div class="reveal">
+<div class="rs">栅极电流为零，\(R_{g1}, R_{g2}\) 纯分压：\[U_{GS}=\frac{R_{g2}}{R_{g1}+R_{g2}}V_{DD}=\frac{40}{100}\times5=2\,\mathrm V\]</div>
+<div class="rs"><b>假设饱和区：</b>\[I_D=K_n(U_{GS}-U_{TN})^2=0.2\times(2-1)^2=0.2\,\mathrm{mA}\]</div>
+<div class="rs">\[U_{DS}=V_{DD}-I_DR_d=5-0.2\times15=2\,\mathrm V\]</div>
+<div class="rs"><b>验证：</b>\(U_{DS}=2\,\mathrm V\ \ge\ U_{GS}-U_{TN}=1\,\mathrm V\)，确实工作在饱和区。</div>
+</div>
+</div>
+
+<div class="ex">
+<div class="exh"><span class="tag">例 2</span>带源极电阻、双电源 <a class="src" data-s="36"></a></div>
+<p>\(U_{TN}=1\,\mathrm V, K_n=0.5\,\mathrm{mA/V^2}, V_{DD}=5\,\mathrm V, -V_{SS}=-5\,\mathrm V, R_d=10\,\mathrm{k\Omega}, R=0.5\,\mathrm{k\Omega}, R_{g1}=155\,\mathrm{k\Omega}, R_{g2}=45\,\mathrm{k\Omega}\)，求 \(I_D\)。</p>
+<div class="fig"><svg id="dc2" viewBox="0 0 440 300" role="img" aria-label="例2电路"></svg></div>
+<div class="reveal">
+<div class="rs">分压电阻跨接在 \(V_{DD}\) 和 \(-V_{SS}\) 之间（总电压 10V）。以 \(-V_{SS}\) 为参考：\(U_G=\frac{45}{155+45}\times10=2.25\,\mathrm V\)，源极 \(U_S=I_DR\)，所以
+\[U_{GS}=2.25-0.5I_D\]</div>
+<div class="rs"><b>假设饱和区：</b>\[I_D=0.5(U_{GS}-1)^2=0.5(1.25-0.5I_D)^2\ \Rightarrow\ I_D^2-13I_D+6.25=0\]</div>
+<div class="rs">两个根 \(I_D=0.5\,\mathrm{mA}\) 或 \(12.5\,\mathrm{mA}\)。后者使 \(U_{GS}=2.25-6.25=-4\,\mathrm V\lt U_{TN}\)，管子会截止，矛盾，舍去。所以 \(I_D=0.5\,\mathrm{mA}\)，\(U_{GS}=2\,\mathrm V\)。</div>
+<div class="rs"><b>验证：</b>\[U_{DS}=(V_{DD}+V_{SS})-I_D(R_d+R)=10-0.5\times10.5=4.75\,\mathrm V>U_{GS}-U_{TN}=1\,\mathrm V\]工作在饱和区。</div>
+</div>
+</div>
+
+<div class="ex">
+<div class="exh"><span class="tag">例 3</span>电流源偏置 <a class="src" data-s="37"></a></div>
+<p>\(U_{TN}=1\,\mathrm V, K_n=160\,\mu\mathrm{A/V^2}, V_{DD}=V_{SS}=5\,\mathrm V, R_d=10\,\mathrm{k\Omega}\)，静态时测得 \(V_S=-2.25\,\mathrm V\)，求 \(I_D, U_{DS}\)。</p>
+<div class="reveal">
+<div class="rs">静态 \(u_i=0\)，栅极经 \(R_g\) 接地：\(V_G=0\)，所以 \(U_{GS}=V_G-V_S=2.25\,\mathrm V\)。</div>
+<div class="rs"><b>假设饱和区：</b>\(I_{DQ}=0.16\times(2.25-1)^2=0.25\,\mathrm{mA}\)</div>
+<div class="rs">\(U_{DSQ}=V_{DD}-I_DR_d-V_S=5-0.25\times10-(-2.25)=4.75\,\mathrm V>1.25\,\mathrm V\)，饱和区成立。</div>
+</div>
+</div>
+
+<div class="ex">
+<div class="exh"><span class="tag">例 4</span>JFET 分压式偏置 <a class="src" data-s="31"></a></div>
+<p>\(R_{g3}=10\,\mathrm{M\Omega}, R_{g1}=1950\,\mathrm{k\Omega}, R_{g2}=50\,\mathrm{k\Omega}, R_d=30\,\mathrm{k\Omega}, R=2\,\mathrm{k\Omega}, V_{DD}=16\,\mathrm V\)，\(U_{PN}=-1\,\mathrm V, I_{DSS}=0.5\,\mathrm{mA}, \lambda=0\)，求静态工作点。</p>
+<div class="fig"><svg id="dc4" viewBox="0 0 440 290" role="img" aria-label="JFET例题电路"></svg></div>
+<div class="reveal">
+<div class="rs">\(R_{g3}\) 中无电流，只起隔离作用。\[U_{GS}=\frac{R_{g2}}{R_{g1}+R_{g2}}V_{DD}-I_DR=\frac{50\times16}{2000}-2I_D=0.4-2I_D\]</div>
+<div class="rs"><b>假设饱和区：</b>\[I_D=I_{DSS}\left(1-\frac{U_{GS}}{U_{PN}}\right)^2=0.5(1+0.4-2I_D)^2\]</div>
+<div class="rs">解得 \(I_D\approx0.31\,\mathrm{mA}\)（另一根 1.59mA 使 \(U_{GS}\approx-2.8\,\mathrm V\lt U_{PN}\)，舍去），\(U_{GSQ}\approx-0.22\,\mathrm V\)。</div>
+<div class="rs">\[U_{DSQ}=V_{DD}-I_D(R_d+R)=16-0.31\times32\approx6.08\,\mathrm V\]<b>验证：</b>\(6.08>U_{GSQ}-U_{PN}=0.78\,\mathrm V\)，确认工作于饱和区。</div>
+</div>
+</div>
+<p class="muted">图解分析法 <a class="src" data-s="38"></a> <a class="src" data-s="39"></a>：和 BJT 一样，在输出特性上画负载线 \(u_{DS}=V_{DD}-i_DR_d\)，与对应 \(u_{GS}\) 曲线的交点即 Q 点。</p>
+
+<h2 id="ac"><span class="n">3.3.3</span>小信号模型与交流分析</h2>
+<p>在饱和区 Q 点附近，FET 可以替换成：g-s 之间<b>开路</b>（栅极无电流），d-s 之间是受控电流源 \(g_mu_{gs}\) 并联 \(r_{ds}\) <a class="src" data-s="28"></a> <a class="src" data-s="40"></a>。</p>
+<div class="panel fig"><svg id="fetSS" class="wide" viewBox="0 0 620 190" role="img" aria-label="FET小信号模型"></svg></div>
+
+<div class="ex">
+<div class="exh"><span class="tag">例 5</span>共源放大电路（带源极电阻）<a class="src" data-s="44"></a> <a class="src" data-s="45"></a></div>
+<p>即例 2 的电路，加上 \(R_L=10\,\mathrm{k\Omega}\)、信号源内阻 \(R_s=4\,\mathrm{k\Omega}\)，\(\lambda=0\)。求 \(A_u\)、\(A_{us}\)、\(R_i\)、\(R_o\)。</p>
+<div class="fig"><svg id="cs" class="wide" viewBox="0 0 640 240" role="img" aria-label="共源小信号电路"></svg></div>
+<div class="reveal">
+<div class="rs"><b>静态（例 2 已求）：</b>\(I_{DQ}=0.5\,\mathrm{mA}, U_{GSQ}=2\,\mathrm V\)。\[g_m=2K_n(U_{GSQ}-U_{TN})=2\times0.5\times(2-1)=1\,\mathrm{mS},\qquad \lambda=0\Rightarrow r_{ds}=\infty\]</div>
+<div class="rs"><b>输出：</b>\(u_o=-g_mu_{gs}(R_d/\!/R_L)\)。<b>输入：</b>R 中流过 \(g_mu_{gs}\)，所以 \(u_i=u_{gs}+g_mu_{gs}R=u_{gs}(1+g_mR)\)。</div>
+<div class="rs">\[A_u=\frac{u_o}{u_i}=-\frac{g_m(R_d/\!/R_L)}{1+g_mR}=-\frac{1\times5}{1+1\times0.5}\approx-3.33\]</div>
+<div class="rs">\[R_i=R_{g1}/\!/R_{g2}=155/\!/45\approx34.9\,\mathrm{k\Omega},\qquad R_o\approx R_d=10\,\mathrm{k\Omega}\]</div>
+<div class="rs">\[A_{us}=A_u\frac{R_i}{R_i+R_s}=-3.33\times\frac{34.875}{34.875+4}\approx-2.99\]
+<span class="muted">对比 BJT 带 \(R_e\) 的共射电路：分母里的 \((1+g_mR)\) 和 BJT 的 \(r_{be}+(1+\beta)R_e\) 是同一个道理：源极（发射极）电阻会降低增益。</span></div>
+</div>
+</div>
+
+<div class="ex">
+<div class="exh"><span class="tag">例</span>考虑沟道长度调制（\(\lambda\ne0\)）的共源增益 <a class="src" data-s="43"></a></div>
+<p>\(V_{DD}=5\,\mathrm V, R_d=4\,\mathrm{k\Omega}, U_{GS}=2\,\mathrm V, U_{TN}=1\,\mathrm V, K_n=0.6\,\mathrm{mA/V^2}, \lambda=0.02\,\mathrm V^{-1}\)，工作在饱和区，求 \(A_u\)。</p>
+<div class="reveal">
+<div class="rs"><b>静态：</b>\(I_{DQ}\approx K_n(U_{GS}-U_{TN})^2=0.6\,\mathrm{mA}\)，\(U_{DSQ}=V_{DD}-I_{DQ}R_d=5-0.6\times4=2.6\,\mathrm V\)</div>
+<div class="rs">\[g_m=2K_n(U_{GS}-U_{TN})=1.2\,\mathrm{mS},\qquad r_{ds}=\frac{1}{\lambda K_n(U_{GS}-U_{TN})^2}=\frac{1}{0.02\times0.6}\approx83.3\,\mathrm{k\Omega}\]</div>
+<div class="rs">\(r_{ds}\) 与 \(R_d\) 并联：\[A_u=-g_m(r_{ds}/\!/R_d)=-1.2\times(83.3/\!/4)\approx-4.58\]<span class="muted">若忽略 \(r_{ds}\)，\(A_u=-1.2\times4=-4.8\)；\(r_{ds}\gg R_d\) 时影响不大。</span></div>
+</div>
+</div>
+
+<div class="ex">
+<div class="exh"><span class="tag">例 6</span>共漏放大电路（源极跟随器）<a class="src" data-s="46"></a> <a class="src" data-s="47"></a></div>
+<p>输出从源极取出，漏极交流接地。求 \(A_u\)、\(R_i\)、\(R_o\)。</p>
+<div class="fig"><svg id="cd" class="wide" viewBox="0 0 640 220" role="img" aria-label="共漏小信号电路"></svg></div>
+<div class="reveal">
+<div class="rs">\(u_o=g_mu_{gs}(R/\!/r_{ds})\)，\(u_i=u_{gs}+u_o=u_{gs}\left[1+g_m(R/\!/r_{ds})\right]\)</div>
+<div class="rs">\[A_u=\frac{g_m(R/\!/r_{ds})}{1+g_m(R/\!/r_{ds})}\approx1\quad(\text{同相、略小于 }1\text{，所以叫“跟随器”})\]</div>
+<div class="rs">\(R_i=R_{g1}/\!/R_{g2}\)（很大）。求 \(R_o\)：\(u_s\) 置零，在输出端加测试电压 \(u_t\)，此时 \(u_{gs}=-u_t\)：
+\[R_o=\frac{u_t}{i_t}=\frac{1}{\frac1R+\frac1{r_{ds}}+g_m}=R/\!/r_{ds}/\!/\frac1{g_m}\quad(\text{很小})\]</div>
+<div class="rs"><b>结论：</b>输入电阻大、输出电阻小、电压增益约为 1，常用作<b>缓冲级</b>。</div>
+</div>
+</div>
+<div class="tbl"><table>
+<thead><tr><th>组态</th><th>\(A_u\)</th><th>\(R_i\)</th><th>\(R_o\)</th><th>相位</th></tr></thead>
+<tbody>
+<tr><td>共源 CS（≈ BJT 共射）</td><td>\(-g_mR_L'\)（无源极电阻时）</td><td>由偏置电阻决定，大</td><td>\(\approx R_d\)</td><td>反相</td></tr>
+<tr><td>共漏 CD（≈ BJT 共集）</td><td>\(\approx1\)</td><td>大</td><td>\(\approx R/\!/\frac1{g_m}\)，小</td><td>同相</td></tr>
+</tbody></table></div>
+
+<h2 id="sum"><span class="n">小结</span>本章小结与自测</h2>
+<div class="tbl"><table><tbody>
+<tr><td><b>JFET / 耗尽型</b></td><td>\(i_D=I_{DSS}(1-u_{GS}/U_{PN})^2\)</td></tr>
+<tr><td><b>增强型 NMOS</b></td><td>饱和区 \(i_D=K_n(u_{GS}-U_{TN})^2\)；可变电阻区 \(i_D=K_n[2(u_{GS}-U_{TN})u_{DS}-u_{DS}^2]\)</td></tr>
+<tr><td><b>饱和区条件</b></td><td>\(u_{GS}\ge U_{TN}\) 且 \(u_{DS}\ge u_{GS}-U_{TN}\)</td></tr>
+<tr><td><b>直流分析</b></td><td>假设饱和 → 解二次方程（舍去不合理的根）→ 验证</td></tr>
+<tr><td><b>交流分析</b></td><td>\(g_m=2K_n(U_{GSQ}-U_{TN})\)；g-s 开路，d-s 为 \(g_mu_{gs}\)/\(r_{ds}\)</td></tr>
+</tbody></table></div>
+<div class="q" data-a="1"><div class="qt">1. 增强型 NMOS，\(U_{TN}=1\,\mathrm V\)，\(U_{GS}=0.8\,\mathrm V\)，它工作在？</div><div class="opts"><button>饱和区</button><button>截止区</button><button>可变电阻区</button></div>
+<div class="qex">✓ 正确。\(U_{GS}\lt U_{TN}\)，沟道还没形成。</div></div>
+<div class="q" data-a="2" data-hint="先比较 U_DS 和 U_GS − U_TN。"><div class="qt">2. NMOS \(U_{TN}=1\,\mathrm V\)，测得 \(U_{GS}=3\,\mathrm V, U_{DS}=1.5\,\mathrm V\)，它工作在？</div><div class="opts"><button>饱和区</button><button>截止区</button><button>可变电阻区</button></div>
+<div class="qex">✓ 正确。\(U_{GS}-U_{TN}=2\,\mathrm V>U_{DS}=1.5\,\mathrm V\)，还没预夹断。</div></div>
+<div class="q" data-a="0"><div class="qt">3. 解二次方程得到两个 \(I_D\)，怎么取舍？</div><div class="opts"><button>代回求 \(U_{GS}\)，舍去使管子截止（\(U_{GS}\lt U_{TN}\)）的根</button><button>总是取较大的根</button><button>总是取较小的根</button></div>
+<div class="qex">✓ 正确。通常是较小的那个，但判断依据是物理上是否合理。</div></div>
+<div class="q" data-a="1"><div class="qt">4. \(K_n=0.5\,\mathrm{mA/V^2}\)，\(I_{DQ}=2\,\mathrm{mA}\)，\(g_m=\)？</div><div class="opts"><button>1 mS</button><button>2 mS</button><button>4 mS</button></div>
+<div class="qex">✓ 正确。\(g_m=2\sqrt{K_nI_{DQ}}=2\sqrt{0.5\times2}=2\,\mathrm{mS}\)。</div></div>
+
+<details class="gallery"><summary>浏览本章全部课件页（47 页，点击放大）</summary></details>
+</article>
+</div>
+
+<script src="assets/katex/katex.min.js"></script>
+<script src="assets/katex/auto-render.min.js"></script>
+<script src="assets/common.js"></script>
+<script>
+(function(){
+/* ---------- tree ---------- */
+var tr = document.getElementById('tree'), tg = mk('g', {}, tr);
+function box(x, y, w, t, cls){ mk('rect', {x:x - w / 2, y:y - 16, width:w, height:32, rx:6, class:'body'}, tg); rtext(tg, x, y + 5, t, cls || 't', 'middle'); }
+function ln(x1, y1, x2, y2){ mk('polyline', {points:x1 + ',' + y1 + ' ' + x1 + ',' + ((y1 + y2) / 2) + ' ' + x2 + ',' + ((y1 + y2) / 2) + ' ' + x2 + ',' + y2, class:'wthin'}, tg); }
+box(320, 24, 160, '场效应管 FET', 'tb');
+ln(320, 40, 140, 80); ln(320, 40, 470, 80);
+box(140, 96, 200, '结型 JFET（耗尽型）'); box(470, 96, 220, '绝缘栅型 MOSFET');
+ln(140, 112, 90, 160); ln(140, 112, 190, 160); ln(470, 112, 400, 160); ln(470, 112, 545, 160);
+box(90, 176, 90, 'N 沟道', 'tblue'); box(190, 176, 90, 'P 沟道', 'tred');
+box(400, 176, 130, '增强型 N / P', 'tval'); box(545, 176, 130, '耗尽型 N / P', 'tamber');
+
+/* ---------- JFET interactive ---------- */
+var UPN = -4, IDSS = 4, js = document.getElementById('jfetS');
+function jI(g, d){ if (g <= UPN) return 0; var ov = g - UPN; if (d < ov) return IDSS * (2 * (1 - g / UPN) * (d / -UPN) - (d / UPN) * (d / UPN)); return IDSS * Math.pow(1 - g / UPN, 2); }
+bindSliders(['jg', 'jd'], {jg:function(v){ return v.toFixed(2) + ' V'; }, jd:function(v){ return v.toFixed(2) + ' V'; }}, function(v){
+  js.innerHTML = ''; var s = new Sch(js), X0 = 120, X1 = 520, top = 70, bot = 190, half = 60, mid = 130;
+  mk('rect', {x:X0, y:top, width:X1 - X0, height:bot - top, class:'n-reg'}, s.g);
+  mk('rect', {x:200, y:40, width:240, height:30, class:'p-reg', stroke:'none'}, s.g); mk('rect', {x:200, y:190, width:240, height:30, class:'p-reg'}, s.g);
+  rtext(s.g, 320, 60, 'P^{+} 栅区', 'tred', 'middle'); rtext(s.g, 320, 211, 'P^{+} 栅区', 'tred', 'middle');
+  var up = [], dn = [];
+  for (var k = 0; k <= 40; k++){ var x = 200 + k * 6, f = k / 40, r = Math.max(0, -v.jg + v.jd * f) / -UPN, dep = Math.min(half, half * Math.sqrt(r));
+    up.push([x, top + dep]); dn.push([x, bot - dep]); }
+  mk('polygon', {points:[[200, top]].concat(up, [[440, top]]).map(function(p){ return p.join(','); }).join(' '), class:'dep'}, s.g);
+  mk('polygon', {points:[[200, bot]].concat(dn, [[440, bot]]).map(function(p){ return p.join(','); }).join(' '), class:'dep'}, s.g);
+  s.line(X0, mid, 40, mid); s.term(40, mid); s.text(30, mid + 5, 's', 'tb', 'end');
+  s.line(X1, mid, 600, mid); s.term(600, mid); s.text(610, mid + 5, 'd', 'tb');
+  s.wire(320, 40, 320, 20, 560, 20); s.wire(320, 220, 320, 240, 560, 240, 560, 20); s.text(570, 25, 'g', 'tb');
+  rtext(s.g, 160, mid + 5, 'N 沟道', 'tblue', 'middle');
+  var I = jI(v.jg, v.jd), pinch = v.jd >= v.jg - UPN, cut = v.jg <= UPN;
+  var reg = cut ? ['截止（沟道全夹断）', 'var(--muted)'] : pinch ? ['饱和区（预夹断后，恒流）', 'var(--blue)'] : ['可变电阻区', 'var(--amber)'];
+  if (pinch && !cut) rtext(s.g, 440, mid - 8, '预夹断点', 'tred', 'end');
+  document.getElementById('jOut').innerHTML = '<span>u_GD = ' + (v.jg - v.jd).toFixed(2) + ' V</span><span>i_D = ' + I.toFixed(2) + ' mA</span><span class="state" style="color:' + reg[1] + '">' + reg[0] + '</span>';
+  if (window.__jdot){ __jdot(v.jg, v.jd, I); }
+});
+var jt = new Plot('jTr', {x:50, y:20, w:250, h:170}, [-4.5, 0.5], [0, 4.5]);
+jt.axes({xl:'u_{GS}/V', yl:'i_D/mA', xt:[-4, -2], yt:[2, 4]}); jt.fn(function(g){ return g < UPN ? 0 : IDSS * Math.pow(1 - g / UPN, 2); }, 'cv', -4.5, 0);
+jt.text(-4, -0.5, 'U_{PN}', 'tval', 'middle'); jt.text(0.1, 4.2, 'I_{DSS}', 'tval');
+var jo = new Plot('jOutC', {x:50, y:20, w:250, h:170}, [0, 8], [0, 4.5]);
+jo.axes({xl:'u_{DS}/V', yl:'i_D/mA', xt:[2, 4, 6, 8], yt:[2, 4]});
+[0, -1, -2, -3].forEach(function(g){ jo.fn(function(d){ return jI(g, d); }, 'cvthin'); jo.text(8, jI(g, 8) + 0.15, 'u_{GS}=' + g + 'V', 'ts', 'end'); });
+jo.fn(function(d){ return IDSS * Math.pow(d / UPN, 2); }, 'cvdash', 0, 4); jo.text(3.6, 3.6, '预夹断轨迹', 'ts', 'end');
+window.__jdot = function(g, d, I){ var L1 = jt.clear(), L2 = jo.clear(); if (d >= g - UPN && g > UPN) jt.dot(g, I, L1); else jt.text(-2, 4.2, '未进入饱和区，点不在转移特性上', 'ts', 'middle', L1); if (d <= 8) jo.dot(d, I, L2); jo.fn(function(x){ return jI(g, x); }, 'cv', 0, 8, 200, L2); };
+document.getElementById('jg').dispatchEvent(new Event('input'));
+
+/* ---------- MOSFET interactive ---------- */
+var UTN = 1, KN = 0.5, ms = document.getElementById('mosS');
+function mI(g, d){ if (g < UTN) return 0; var ov = g - UTN; return d < ov ? KN * (2 * ov * d - d * d) : KN * ov * ov; }
+var mc = new Plot('mosC', {x:60, y:20, w:540, h:240}, [0, 8], [0, 8.5]);
+mc.axes({xl:'u_{DS}/V', yl:'i_D/mA', xt:[2, 4, 6, 8], yt:[2, 4, 6, 8]});
+[2, 3, 4, 5].forEach(function(g){ mc.fn(function(d){ return mI(g, d); }, 'cvthin'); mc.text(8, mI(g, 8) + 0.2, 'u_{GS}=' + g + 'V', 'ts', 'end'); });
+mc.fn(function(d){ return KN * d * d; }, 'cvdash', 0, 4.2); mc.text(2.2, 6.6, '可变电阻区', 'tamber', 'middle'); mc.text(6, 1.2, '饱和区（恒流区）', 'tblue', 'middle');
+mc.text(4.2, 8.3, 'u_{DS} = u_{GS} − U_{TN}', 'ts', 'start');
+function mosDraw(g, d){
+  ms.innerHTML = ''; var s = new Sch(ms);
+  mk('rect', {x:40, y:120, width:560, height:130, class:'p-reg'}, s.g); rtext(s.g, 320, 235, 'P 型衬底', 'tred', 'middle');
+  mk('rect', {x:80, y:120, width:120, height:50, class:'n-reg', rx:10}, s.g); mk('rect', {x:440, y:120, width:120, height:50, class:'n-reg', rx:10}, s.g);
+  rtext(s.g, 140, 152, 'N^{+}', 'tblue', 'middle'); rtext(s.g, 500, 152, 'N^{+}', 'tblue', 'middle');
+  mk('rect', {x:200, y:100, width:240, height:20, class:'oxide'}, s.g); rtext(s.g, 320, 115, 'SiO_2', 'tamber', 'middle');
+  mk('rect', {x:200, y:84, width:240, height:16, class:'metal'}, s.g);
+  mk('rect', {x:110, y:108, width:60, height:12, class:'metal'}, s.g); mk('rect', {x:470, y:108, width:60, height:12, class:'metal'}, s.g);
+  var ov = g - UTN;
+  if (ov > 0){ var pts = [], k, pinchX = 440;
+    for (k = 0; k <= 48; k++){ var f = k / 48, x = 200 + f * 240, loc = ov - Math.min(d, ov) * f; pts.push([x, 120 + Math.max(0, loc) * 9]); }
+    mk('polygon', {points:[[200, 120]].concat(pts, [[440, 120]]).map(function(p){ return p.join(','); }).join(' '), class:'chan'}, s.g);
+    for (k = 0; k < 14; k++){ var xx = 210 + k * 16.5, f2 = (xx - 200) / 240, th = Math.max(0, ov - Math.min(d, ov) * f2) * 9; if (th > 5) mk('circle', {cx:xx, cy:120 + th / 2, r:2.6, class:'elec'}, s.g); }
+    if (d >= ov) rtext(s.g, 440, 192, '预夹断', 'tred', 'end');
+  }
+  s.line(140, 108, 140, 40); s.term(140, 40); s.text(140, 30, 's', 'tb', 'middle');
+  s.line(320, 84, 320, 40); s.term(320, 40); s.text(320, 30, 'g', 'tb', 'middle');
+  s.line(500, 108, 500, 40); s.term(500, 40); s.text(500, 30, 'd', 'tb', 'middle');
+  s.line(320, 250, 320, 268); s.text(330, 272, 'B（衬底，接 s）', 'ts');
+  s.text(330, 62, 'u_{GS} = ' + g.toFixed(2) + ' V', 'tval'); s.text(510, 62, 'u_{DS} = ' + d.toFixed(2) + ' V', 'tval');
+  var I = mI(g, d), reg = g < UTN ? ['截止：无沟道', 'var(--muted)'] : d < ov ? ['可变电阻区', 'var(--amber)'] : ['饱和区（放大区）', 'var(--blue)'];
+  document.getElementById('mOut').innerHTML = '<span>u_GS − U_TN = ' + ov.toFixed(2) + ' V</span><span>i_D = ' + I.toFixed(2) + ' mA</span><span class="state" style="color:' + reg[1] + '">' + reg[0] + '</span>';
+  var L = mc.clear(); if (g >= UTN) mc.fn(function(x){ return mI(g, x); }, 'cv', 0, 8, 200, L); mc.dot(d, Math.min(8.4, I), L);
+}
+var mrun = bindSliders(['mg', 'md'], {mg:function(v){ return v.toFixed(2) + ' V'; }, md:function(v){ return v.toFixed(2) + ' V'; }}, function(v){ mosDraw(v.mg, v.md); });
+document.querySelectorAll('#mPre button').forEach(function(b){ b.onclick = function(){ var q = b.dataset.v.split(','); document.getElementById('mg').value = q[0]; document.getElementById('md').value = q[1]; mrun(); }; });
+
+/* ---------- four types ---------- */
+var four = document.getElementById('four');
+[['N 沟道增强型', 1, false], ['N 沟道耗尽型', 1, true], ['P 沟道增强型', -1, false], ['P 沟道耗尽型', -1, true]].forEach(function(t, i){
+  var pn = document.createElement('div'); pn.className = 'panel';
+  pn.innerHTML = '<h4>' + t[0] + '</h4><svg id="f' + i + '" viewBox="0 0 300 170"></svg>'; four.appendChild(pn);
+  var s = new Sch('f' + i), sym = s.fet(60, 85, {dep:t[2], p:t[1] < 0});
+  s.line(sym.g[0], sym.g[1], sym.g[0] - 14, sym.g[1]); s.text(sym.g[0] - 18, sym.g[1] + 5, 'g', 'ts', 'end'); s.text(sym.d[0] + 6, sym.d[1] + 8, 'd', 'ts'); s.text(sym.s[0] + 6, sym.s[1], 's', 'ts');
+  var p = new Plot('f' + i, {x:140, y:20, w:140, h:120}, [-3, 3], [-1.2, 1.2]);
+  p.axes({xl:'u_{GS}', yl:'i_D', xt:[], yt:[], grid:false});
+  var sg = t[1], th = t[2] ? -1.5 * sg : 1 * sg;
+  p.fn(function(u){ var ov = (u - th) * sg; return ov <= 0 ? 0 : sg * Math.min(1.15, 0.25 * ov * ov); }, 'cv');
+  p.text(th, sg > 0 ? -0.35 : 0.25, t[2] ? 'U_{PN}' : 'U_{TN}', 'tval', 'middle');
+});
+
+/* ---------- DC example circuits ---------- */
+var d1 = new Sch('dc1'), m1 = d1.fet(240, 150, {lab:'T', pins:false});
+d1.wire(120, 40, 360, 40); d1.term(360, 40); d1.text(368, 45, 'V_{DD} 5V', 't');
+d1.R(120, 40, 120, 160, {lab:'R_{g1}', val:'60kΩ', side:'l'}); d1.R(120, 160, 120, 240, {lab:'R_{g2}', val:'40kΩ', side:'l'}); d1.node(120, 160);
+d1.line(120, 160, m1.g[0], m1.g[1]); d1.R(m1.d[0], 40, m1.d[0], m1.d[1], {lab:'R_d', val:'15kΩ'}); d1.node(m1.d[0], 40);
+d1.line(m1.s[0], m1.s[1], m1.s[0], 240); d1.wire(120, 240, m1.s[0], 240); d1.gnd(m1.s[0], 240);
+d1.text(m1.g[0] + 4, m1.g[1] - 8, 'g', 'ts'); d1.text(m1.d[0] + 6, m1.d[1] + 14, 'd', 'ts'); d1.text(m1.s[0] + 6, m1.s[1] - 2, 's', 'ts');
+d1.arrow(m1.d[0] - 12, 85, m1.d[0] - 12, 105, 'I_D', 'red', m1.d[0] - 38, 98); d1.text(150, 185, 'U_G = 2V', 'tval');
+
+var d2 = new Sch('dc2'), m2 = d2.fet(250, 140, {lab:'T'});
+d2.wire(120, 30, 380, 30); d2.term(380, 30); d2.text(388, 35, '+V_{DD} 5V', 't');
+d2.R(120, 30, 120, 150, {lab:'R_{g1}', val:'155kΩ', side:'l'}); d2.R(120, 150, 120, 270, {lab:'R_{g2}', val:'45kΩ', side:'l'}); d2.node(120, 150);
+d2.line(120, 150, m2.g[0], m2.g[1]); d2.R(m2.d[0], 30, m2.d[0], m2.d[1], {lab:'R_d', val:'10kΩ'}); d2.node(m2.d[0], 30);
+d2.R(m2.s[0], m2.s[1], m2.s[0], 270, {lab:'R', val:'0.5kΩ'}); d2.wire(120, 270, 380, 270); d2.term(380, 270); d2.text(388, 275, '−V_{SS} −5V', 't'); d2.node(m2.s[0], 270);
+d2.text(140, 140, 'U_G', 'tval');
+
+var d4 = new Sch('dc4'), j4 = d4.fet(270, 150, {jfet:true, lab:'T'});
+d4.wire(100, 30, 380, 30); d4.term(380, 30); d4.text(388, 35, 'V_{DD} 16V', 't');
+d4.R(100, 30, 100, 150, {lab:'R_{g1}', val:'1950kΩ', side:'l'}); d4.R(100, 150, 100, 260, {lab:'R_{g2}', val:'50kΩ', side:'l'}); d4.node(100, 150);
+d4.wire(100, 150, 180, 150); d4.R(180, 150, 180, 230, {lab:'R_{g3}', val:'10MΩ'}); d4.line(180, 150, 180, 150);
+d4.wire(180, 230, 215, 230, 215, j4.g[1], j4.g[0], j4.g[1]); d4.node(180, 150);
+d4.R(j4.d[0], 30, j4.d[0], j4.d[1], {lab:'R_d', val:'30kΩ'}); d4.node(j4.d[0], 30);
+d4.R(j4.s[0], j4.s[1], j4.s[0], 260, {lab:'R', val:'2kΩ'}); d4.wire(100, 260, j4.s[0], 260); d4.gnd(j4.s[0], 260);
+d4.text(50, 285, '（R_{g3} 下端接栅极；C_{b1}、C_{b2} 在直流通路中开路，已略去）', 'ts');
+
+/* ---------- small signal model ---------- */
+var fs = new Sch('fetSS'), fm = fs.fet(110, 90, {pins:true});
+fs.line(fm.g[0], fm.g[1], 40, fm.g[1]); fs.term(40, fm.g[1]); fs.line(fm.d[0], fm.d[1], fm.d[0], 30); fs.term(fm.d[0], 30); fs.line(fm.s[0], fm.s[1], fm.s[0], 160); fs.term(fm.s[0], 160);
+fs.arrow(220, 95, 280, 95, '', 'acc'); fs.text(250, 82, '小信号', 'tval', 'middle');
+fs.term(320, 50); fs.text(310, 55, 'g', 'tb', 'end'); fs.term(320, 150); fs.text(310, 155, 's', 'tb', 'end'); fs.pm(330, 70, '+'); fs.pm(330, 132, '-'); fs.text(336, 105, 'u_{gs}', 't');
+fs.text(360, 105, '（开路）', 'ts');
+fs.ccs(470, 50, 470, 150, {lab:'g_mu_{gs}', side:'l'}); fs.R(550, 50, 550, 150, {lab:'r_{ds}'}); fs.wire(470, 50, 590, 50); fs.wire(320, 150, 590, 150);
+fs.term(590, 50); fs.text(598, 55, 'd', 'tb'); fs.node(470, 150); fs.node(550, 150); fs.node(550, 50);
+
+/* ---------- CS small-signal ---------- */
+var cs = new Sch('cs');
+cs.vs(40, 100, 40, 170, {lab:'u_s', side:'l'}); cs.wire(40, 100, 40, 50, 60, 50); cs.R(60, 50, 130, 50, {lab:'R_s', val:'4k'}); cs.wire(130, 50, 250, 50); cs.term(150, 50);
+cs.R(200, 50, 200, 200, {lab:'R_{g1}//R_{g2}', side:'l'}); cs.node(200, 50); cs.term(250, 50); cs.text(250, 40, 'g', 'tb', 'middle');
+cs.term(250, 130); cs.text(240, 135, 's', 'tb', 'end'); cs.pm(258, 70, '+'); cs.pm(258, 112, '-'); cs.text(262, 95, 'u_{gs}', 't');
+cs.wire(250, 130, 360, 130); cs.R(360, 130, 360, 200, {lab:'R', val:'0.5k'}); cs.ccs(360, 130, 360, 50, {lab:'g_mu_{gs}', side:'l'}); cs.node(360, 130);
+cs.wire(360, 50, 560, 50); cs.R(470, 50, 470, 200, {lab:'R_d', val:'10k'}); cs.R(560, 50, 560, 200, {lab:'R_L', val:'10k'}); cs.node(470, 50); cs.node(470, 200);
+cs.wire(40, 170, 40, 200, 600, 200); cs.node(200, 200); cs.node(360, 200); cs.line(560, 50, 600, 50); cs.term(600, 50); cs.term(600, 200); cs.text(608, 130, 'u_o', 't');
+cs.text(150, 40, 'u_i', 't', 'middle'); cs.text(360, 225, 'R 上的电压 = g_mu_{gs}R，使 u_i = u_{gs}(1+g_mR)', 'ts', 'middle');
+
+var cd = new Sch('cd');
+cd.vs(40, 100, 40, 160, {lab:'u_s', side:'l'}); cd.wire(40, 100, 40, 50, 60, 50); cd.R(60, 50, 130, 50, {lab:'R_s'}); cd.wire(130, 50, 250, 50);
+cd.R(200, 50, 200, 190, {lab:'R_{g1}//R_{g2}', side:'l'}); cd.node(200, 50); cd.term(250, 50); cd.text(250, 40, 'g', 'tb', 'middle');
+cd.term(330, 50); cd.text(330, 40, 's', 'tb', 'middle'); cd.pm(262, 38, '+'); cd.pm(318, 38, '-'); cd.text(290, 30, 'u_{gs}', 't', 'middle');
+cd.wire(330, 50, 580, 50); cd.ccs(400, 190, 400, 50, {lab:'g_mu_{gs}', side:'l'}); cd.R(470, 50, 470, 190, {lab:'R'}); cd.R(540, 50, 540, 190, {lab:'r_{ds}'});
+cd.node(400, 50); cd.node(470, 50); cd.node(540, 50); cd.wire(40, 160, 40, 190, 580, 190); cd.node(200, 190); cd.node(400, 190); cd.node(470, 190); cd.node(540, 190);
+cd.term(580, 50); cd.term(580, 190); cd.text(588, 125, 'u_o', 't'); cd.text(400, 212, 'd（交流接地）', 'ts', 'middle');
+
+initPage(3);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第6章 集成运算放大器 · 模电讲义</title>
+<link rel="stylesheet" href="assets/katex/katex.min.css">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="本章目录"></nav>
+<article>
+<div class="eyebrow">第 6 章 · 课件 61 页</div>
+<h1>集成运算放大器</h1>
+<p class="lead">前五章学的差分级、共射级、恒流源、射极跟随器，组合起来封装进一块芯片就是集成运放。好消息是：用运放搭电路时，几乎不需要再管里面的三极管，只要记住“<b>虚短</b>”和“<b>虚断</b>”两条规则，再加上电路原理的 KCL，就能分析绝大多数运放电路。</p>
+<div class="key"><b>本章学习目标</b> <a class="src" data-s="1"></a><br>① 理解电压传输特性和“虚短虚断”原理（<b>重点</b>）　② 掌握基本运放电路的分析方法，熟记基本电路类型　③ 理解运放的非线性应用（<b>难点：线性与非线性应用的区分</b>）</div>
+
+<h2 id="intro"><span class="n">6.1</span>集成运放概述</h2>
+<p>集成运放是一种<b>高放大倍数的多级直接耦合放大电路</b> <a class="src" data-s="4"></a>。集成工艺的特点 <a class="src" data-s="5"></a>：元件参数一致性、对称性好（适合做差分）；大电阻用恒流源代替；电感、大电容难集成，所以只能直接耦合。</p>
+<div class="panel fig"><svg id="block" class="wide" viewBox="0 0 640 200" role="img" aria-label="运放方框图"></svg>
+<div class="cap">输入级：带恒流源的差分放大（第 5 章），输入电阻高、抑制零漂；中间级：带恒流源负载的共射电路，提供主要的电压增益；输出级：互补对称或射极输出器，输出电阻低、带负载能力强；偏置电路：各种恒流源 <a class="src" data-s="6"></a>。</div></div>
+<div class="grid2">
+<div class="panel"><h4>电路符号 <a class="src" data-s="7"></a></h4><svg id="sym" viewBox="0 0 300 160" role="img" aria-label="运放符号"></svg>
+<p class="muted">“−”是反相输入端，“+”是同相输入端，▷ 表示信号传输方向，∞ 表示理想运放的开环增益无穷大。</p></div>
+<div class="panel"><h4>电压传输特性 <a class="src" data-s="8"></a></h4><svg id="vtc" viewBox="0 0 300 200" role="img" aria-label="电压传输特性"></svg>
+<p class="muted">线性区 \(u_O=A_{od}(u_+-u_-)\)；超出后进入饱和区，\(u_O=\pm U_{om}\)（比电源电压低 1～2V）。</p></div>
+</div>
+<div class="panel">
+<b>线性区到底有多窄？</b>设 \(U_{om}=12\,\mathrm V\)。
+<div class="ctl"><label for="aod">\(A_{od}\)</label><input type="range" id="aod" min="2" max="6" step="0.1" value="5"><output for="aod"></output></div>
+<div class="readout" id="aodOut"></div>
+<div class="cap">实际运放 \(A_{od}\) 约 \(10^5\) 以上，线性区只有零点几毫伏。不加负反馈，一点点输入差就会让输出饱和。所以：<b>运放要工作在线性区，必须引入负反馈</b>。</div>
+</div>
+<p class="muted">主要参数 <a class="src" data-s="9"></a> <a class="src" data-s="10"></a>：最大输出电压 \(U_{OM}\)、开环差模增益 \(A_{od}\)、最大共模输入电压 \(U_{ICM}\)、输入失调电压 \(U_{IO}\)、输入失调电流 \(I_{IO}\)、输入偏置电流 \(I_{IB}\)（后三个越小越好）。</p>
+
+<h2 id="ideal"><span class="n">6.2</span>理想运放：虚短与虚断</h2>
+<p>分析时把运放看成理想的 <a class="src" data-s="12"></a>：\(A_{od}\to\infty\)，\(r_{id}\to\infty\)，\(r_o\to0\)，\(K_{CMR}\to\infty\)，\(f_H\to\infty\)，失调、漂移、噪声都为零。</p>
+<div class="panel fig"><svg id="states" class="wide" viewBox="0 0 660 190" role="img" aria-label="三种工作状态"></svg>
+<div class="cap">判断工作区的唯一依据：<b>有负反馈 → 线性区；开环或正反馈 → 非线性区</b> <a class="src" data-s="13"></a>。</div></div>
+<div class="grid2">
+<div class="panel"><h4>线性区：虚短 + 虚断 <a class="src" data-s="14"></a>–<a class="src" data-s="16"></a></h4>
+<p><b>虚短</b>：\(u_O\) 有限而 \(A_{od}\to\infty\)，所以 \(u_+-u_-=u_O/A_{od}\approx0\)：</p>\[u_+=u_-\]
+<p><b>虚断</b>：\(r_{id}\to\infty\)，输入端不取电流：</p>\[i_+=i_-=0\]
+<p class="muted">“虚”：两端电位相等但没有真的短接；电流为零但没有真的断开。</p></div>
+<div class="panel"><h4>非线性区 <a class="src" data-s="17"></a></h4>
+<p>输出只有两个值：</p>\[u_+>u_-\Rightarrow u_O=+U_{om},\qquad u_+\lt u_-\Rightarrow u_O=-U_{om}\]
+<p><b>虚断仍然成立</b>（\(i_+=i_-=0\)），但<b>不存在虚短</b>。</p></div>
+</div>
+
+<h2 id="prop"><span class="n">6.3.1</span>比例运算电路</h2>
+<h3>反相比例 <a class="src" data-s="19"></a> <a class="src" data-s="20"></a></h3>
+<div class="panel fig"><svg id="inv" class="wide" viewBox="0 0 560 240" role="img" aria-label="反相比例"></svg></div>
+<div class="reveal">
+<div class="rs"><b>虚断：</b>\(i_-=0\)，所以 \(i_1=i_F\)。<b>虚短：</b>同相端经 \(R_2\) 接地且无电流，\(u_+=0\)，所以 \(u_-=u_+=0\)，反相端是“<b>虚地</b>”。</div>
+<div class="rs">\[i_1=\frac{u_I-u_-}{R_1}=\frac{u_I}{R_1},\qquad i_F=\frac{u_--u_O}{R_F}=-\frac{u_O}{R_F}\]</div>
+<div class="rs">令 \(i_1=i_F\)：\[A_{uf}=\frac{u_O}{u_I}=-\frac{R_F}{R_1}\]</div>
+<div class="rs"><b>平衡电阻</b> \(R_2=R_1/\!/R_F\)，让静态时两个输入端对地电阻相同，减小偏置电流带来的误差。<b>输入电阻</b> \(r_i=R_1\)（较低）；反相端虚地，共模输入电压低。</div>
+</div>
+<div class="panel">
+<b>动手：</b>改变电阻和输入幅值，注意输出不能超过 \(\pm U_{om}=\pm12\,\mathrm V\)。
+<div class="ctl"><label for="r1">\(R_1\)</label><input type="range" id="r1" min="1" max="50" step="1" value="10"><output for="r1"></output></div>
+<div class="ctl"><label for="rf">\(R_F\)</label><input type="range" id="rf" min="1" max="200" step="1" value="50"><output for="rf"></output></div>
+<div class="ctl"><label for="ua">\(u_I\) 幅值</label><input type="range" id="ua" min="0.1" max="5" step="0.1" value="1"><output for="ua"></output></div>
+<div class="btns"><button type="button" id="mInv" class="on">反相比例</button><button type="button" id="mNon">同相比例</button></div>
+<div class="readout" id="propOut"></div>
+<div class="fig"><svg id="propW" class="wide" viewBox="0 0 640 230" role="img" aria-label="比例电路波形"></svg></div>
+</div>
+<h3>同相比例 <a class="src" data-s="21"></a>–<a class="src" data-s="23"></a></h3>
+<div class="panel fig"><svg id="non" class="wide" viewBox="0 0 560 240" role="img" aria-label="同相比例"></svg></div>
+<div class="reveal">
+<div class="rs"><b>虚断：</b>\(u_+=u_I\)；<b>虚短：</b>\(u_-=u_I\)（反相端<b>不是</b>虚地）。</div>
+<div class="rs">\(u_-\) 由 \(u_O\) 经 \(R_F, R_1\) 分压得到：\(u_-=\frac{R_1}{R_1+R_F}u_O=u_I\)</div>
+<div class="rs">\[A_{uf}=\frac{u_O}{u_I}=1+\frac{R_F}{R_1}\ \ (\ge1,\ \text{同相})\]输入电阻很高；但两输入端都有 \(u_I\)，共模输入电压较高。</div>
+</div>
+<div class="grid2">
+<div class="panel"><h4>电压跟随器 <a class="src" data-s="24"></a></h4><svg id="fol" viewBox="0 0 300 170" role="img" aria-label="电压跟随器"></svg>
+<p class="muted">\(R_1=\infty\)、\(R_F=0\) 时 \(u_O=u_I\)，\(A_{uf}=1\)。输入电阻高、输出电阻低，跟随性能比射极输出器更好。</p></div>
+<div class="panel"><h4>例：求 \(u_O\) <a class="src" data-s="24"></a></h4><svg id="ref" viewBox="0 0 300 200" role="img" aria-label="基准电压"></svg>
+<p class="muted">同相端 \(u_+=15\times\frac{15}{15+15}=7.5\,\mathrm V\)，跟随器 \(u_O=7.5\,\mathrm V\)。输出只与电源电压和分压有关，可作基准电压。</p></div>
+</div>
+
+<h2 id="sumsub"><span class="n">6.3.2</span>加法与减法</h2>
+<h3>反相求和 <a class="src" data-s="26"></a></h3>
+<div class="panel fig"><svg id="sumInv" class="wide" viewBox="0 0 560 240" role="img" aria-label="反相求和"></svg></div>
+<p>反相端虚地，各路电流独立：\(i_{I1}+i_{I2}=i_F\)，</p>
+<div class="formula">\[ u_O=-\left(\frac{R_F}{R_{11}}u_{I1}+\frac{R_F}{R_{12}}u_{I2}\right)\quad\xrightarrow{R_{11}=R_{12}=R_1}\quad u_O=-\frac{R_F}{R_1}(u_{I1}+u_{I2}) \]</div>
+<p class="muted">平衡电阻 \(R_2=R_{11}/\!/R_{12}/\!/R_F\)。</p>
+<h3>同相求和 <a class="src" data-s="27"></a>–<a class="src" data-s="29"></a></h3>
+<p>用叠加原理或先求 \(u_+\)（两路输入对同相端分压），再乘同相比例 \(1+R_F/R_1\)。</p>
+<div class="tbl"><table>
+<thead><tr><th></th><th>反相求和</th><th>同相求和</th></tr></thead>
+<tbody>
+<tr><td>输入电阻</td><td>低</td><td>高</td></tr>
+<tr><td>共模电压</td><td>低（虚地）</td><td>高</td></tr>
+<tr><td>改变某一路电阻</td><td>对其他路<b>无影响</b>，调节方便</td><td>对其他路<b>有影响</b></td></tr>
+</tbody></table></div>
+<h3>减法（差分输入）<a class="src" data-s="30"></a> <a class="src" data-s="31"></a></h3>
+<div class="panel fig"><svg id="sub" class="wide" viewBox="0 0 560 250" role="img" aria-label="减法电路"></svg></div>
+<p>看作反相比例与同相比例的叠加：</p>
+<div class="formula">\[ u_O=\left(1+\frac{R_F}{R_1}\right)\frac{R_3}{R_2+R_3}u_{I2}-\frac{R_F}{R_1}u_{I1}\quad\xrightarrow{R_1=R_2,\ R_3=R_F}\quad u_O=\frac{R_F}{R_1}(u_{I2}-u_{I1}) \]</div>
+<p class="muted">输出与两输入之差成正比，常用作测量放大电路。缺点：比例系数调节不方便，输入电阻较低。</p>
+
+<div class="ex">
+<div class="exh"><span class="tag">例 1</span>两级同相串联减法电路 <a class="src" data-s="32"></a></div>
+<div class="fig"><svg id="ex1" class="wide" viewBox="0 0 640 220" role="img" aria-label="同相串联减法"></svg></div>
+<div class="reveal">
+<div class="rs">A1 是同相比例：\[u_{O1}=\left(1+\frac{R_{F1}}{R_1}\right)u_{I1}\]</div>
+<div class="rs">A2 对 \(u_{O1}\) 是反相比例，对 \(u_{I2}\) 是同相比例，叠加：\[u_O=-\frac{R_{F2}}{R_2}u_{O1}+\left(1+\frac{R_{F2}}{R_2}\right)u_{I2}=-\frac{R_{F2}}{R_2}\left(1+\frac{R_{F1}}{R_1}\right)u_{I1}+\left(1+\frac{R_{F2}}{R_2}\right)u_{I2}\]</div>
+<div class="rs">两个输入都接同相端，所以<b>输入电阻极高</b>，又能实现两信号相减。</div>
+</div></div>
+
+<div class="ex">
+<div class="exh"><span class="tag">例 2</span>判断电路类型，求 \(u_O\) <a class="src" data-s="33"></a></div>
+<p>\(u_{I1}=0.5\,\mathrm V, u_{I2}=-2\,\mathrm V, u_{I3}=1\,\mathrm V\)。</p>
+<div class="fig"><svg id="ex2" class="wide" viewBox="0 0 640 230" role="img" aria-label="加法加减法"></svg></div>
+<div class="reveal">
+<div class="rs"><b>A1 是反相加法器</b>：\[u_{O1}=-\left[\frac{100}{20}\times0.5+\frac{100}{50}\times(-2)\right]=-(2.5-4)=1.5\,\mathrm V\]</div>
+<div class="rs"><b>A2 是差分（减法）电路</b>：同相端由两个 39kΩ 分压，\(u_+=u_{I3}/2=0.5\,\mathrm V\)。</div>
+<div class="rs">\[u_O=\left(1+\frac{60}{30}\right)\frac{u_{I3}}{2}-\frac{60}{30}u_{O1}=3\times0.5-2\times1.5=-1.5\,\mathrm V\]</div>
+</div></div>
+
+<h2 id="intdiff"><span class="n">6.3.4</span>积分与微分</h2>
+<h3>积分运算 <a class="src" data-s="34"></a> <a class="src" data-s="35"></a></h3>
+<div class="panel fig"><svg id="intC" class="wide" viewBox="0 0 560 220" role="img" aria-label="积分电路"></svg></div>
+<p>把反相比例的 \(R_F\) 换成电容 \(C_F\)。虚地：\(i_1=u_I/R_1\)；虚断：这个电流全部给电容充电，\(u_O=-u_C\)：</p>
+<div class="formula boxed">\[ u_O=-\frac{1}{R_1C_F}\int u_I\,\mathrm dt+u_O(t_0)\qquad\xrightarrow{u_I=U_I\ \text{恒定}}\qquad u_O=-\frac{U_I}{R_1C_F}t \]</div>
+<p>输入恒定时输出随时间<b>线性</b>变化，直到 \(-U_{om}\)（积分饱和）。方波输入得到三角波输出：</p>
+<div class="panel">
+<div class="ctl"><label for="tau">\(R_1C_F\)</label><input type="range" id="tau" min="0.2" max="3" step="0.05" value="1"><output for="tau"></output></div>
+<div class="fig"><svg id="intW" class="wide" viewBox="0 0 640 260" role="img" aria-label="积分波形"></svg></div>
+<div class="cap">输入方波 ±1V、周期 4ms（时间单位 ms，\(R_1C_F\) 单位 ms）。\(R_1C_F\) 太小，三角波幅值太大就会碰到 ±12V 被削平。</div>
+</div>
+<p><b>比例–积分（PI 调节器）</b> <a class="src" data-s="36"></a>：\(R_F\) 与 \(C_F\) 串联作反馈，\(u_O=-\left(\frac{R_F}{R_1}u_I+\frac{1}{R_1C_F}\int u_I\,\mathrm dt\right)\)，常用于自动控制系统。</p>
+<h3>微分运算 <a class="src" data-s="37"></a> <a class="src" data-s="38"></a></h3>
+<p>把输入电阻换成电容 \(C_1\)：\(i_1=C_1\frac{\mathrm du_I}{\mathrm dt}=i_F\)，</p>
+<div class="formula boxed">\[ u_O=-R_FC_1\frac{\mathrm du_I}{\mathrm dt} \]</div>
+<p class="muted">输出与输入的<b>变化率</b>成正比。干扰都是快速变化的高频信号，所以微分器抗干扰能力差。比例–微分（PD 调节器）：\(u_O=-\left(\frac{R_F}{R_1}u_I+R_FC_1\frac{\mathrm du_I}{\mathrm dt}\right)\)，能加快系统响应。</p>
+<h3>基本运算电路归纳 <a class="src" data-s="39"></a> <a class="src" data-s="40"></a></h3>
+<div class="tbl"><table>
+<thead><tr><th>电路</th><th>输出表达式</th><th>要点</th></tr></thead>
+<tbody>
+<tr><td>反相比例</td><td>\(u_O=-\frac{R_F}{R_1}u_I\)</td><td>虚地，\(r_i=R_1\)</td></tr>
+<tr><td>同相比例</td><td>\(u_O=\left(1+\frac{R_F}{R_1}\right)u_I\)</td><td>\(r_i\) 高，增益 ≥ 1</td></tr>
+<tr><td>电压跟随器</td><td>\(u_O=u_I\)</td><td>缓冲隔离</td></tr>
+<tr><td>反相求和</td><td>\(u_O=-R_F\sum\frac{u_{Ik}}{R_{1k}}\)</td><td>各路互不影响</td></tr>
+<tr><td>减法</td><td>\(u_O=\frac{R_F}{R_1}(u_{I2}-u_{I1})\)</td><td>\(R_1=R_2, R_3=R_F\)</td></tr>
+<tr><td>积分</td><td>\(u_O=-\frac{1}{R_1C_F}\int u_I\,\mathrm dt\)</td><td>方波→三角波</td></tr>
+<tr><td>微分</td><td>\(u_O=-R_FC_1\frac{\mathrm du_I}{\mathrm dt}\)</td><td>抗干扰差</td></tr>
+</tbody></table></div>
+<div class="key"><b>万能方法：</b>线性区运放电路全部用这三步：① 虚断 → 写出 \(u_+\)；② 虚短 → \(u_-=u_+\)；③ 对反相端列 KCL（流入 = 流出）→ 解出 \(u_O\)。输出与运放本身参数无关，只由外部元件决定。</div>
+
+<h2 id="comp"><span class="n">6.4</span>非线性应用：电压比较器</h2>
+<p>比较器比较输入电压与参考电压的大小，输出跳变为高电平或低电平 <a class="src" data-s="42"></a>。运放工作在<b>开环或正反馈</b>状态，输出只有 \(\pm U_{om}\)。它是“模拟输入、数字输出”的接口电路，用于越限报警、波形变换、模数转换等。</p>
+<h3>单门限比较器 <a class="src" data-s="43"></a>–<a class="src" data-s="48"></a></h3>
+<div class="grid2">
+<div class="panel fig"><svg id="cmp1" viewBox="0 0 300 180" role="img" aria-label="单门限比较器"></svg></div>
+<div class="panel"><p>输入接反相端，参考 \(U_R\) 接同相端：</p>\[u_I\lt U_R\Rightarrow u_O=+U_{om},\qquad u_I>U_R\Rightarrow u_O=-U_{om}\]<p class="muted">输出跳变时对应的输入电压叫<b>阈值电压（门限电平）</b>，这里就是 \(U_R\)。\(U_R=0\) 时叫<b>过零比较器</b>。输出端加稳压管可把输出限制在 \(\pm U_Z\) <a class="src" data-s="47"></a>。</p></div>
+</div>
+<h3>滞回比较器（施密特触发器）<a class="src" data-s="49"></a>–<a class="src" data-s="51"></a></h3>
+<p>单门限比较器有个毛病：输入在门限附近有噪声时，输出会来回乱跳。滞回比较器把输出经 \(R_F\) 引回<b>同相端</b>（正反馈），使门限电压随输出状态改变：</p>
+<div class="grid2">
+<div class="panel fig"><svg id="hys" viewBox="0 0 320 200" role="img" aria-label="滞回比较器"></svg></div>
+<div class="panel"><p>\(u_+=\frac{R_2}{R_2+R_F}u_O\)，而 \(u_O=\pm U_{om}\)：</p>
+\[U'_+=\frac{R_2}{R_2+R_F}U_{om},\qquad U''_+=-\frac{R_2}{R_2+R_F}U_{om}\]
+\[\text{回差 }\Delta U=U'_+-U''_+=\frac{2R_2}{R_2+R_F}U_{om}\]</div>
+</div>
+<div class="panel">
+<b>对比：</b>同一个带噪声的输入，单门限和滞回比较器的输出（\(U_{om}=\pm6\,\mathrm V\)）。
+<div class="btns"><button type="button" id="hOn" class="on">滞回比较器（门限 ±2V）</button><button type="button" id="hOff">单门限（门限 0V）</button></div>
+<div class="ctl"><label for="noise">噪声大小</label><input type="range" id="noise" min="0" max="1.5" step="0.05" value="0.8"><output for="noise"></output></div>
+<div class="fig"><svg id="hysW" class="wide" viewBox="0 0 640 330" role="img" aria-label="滞回比较器波形"></svg></div>
+<div class="readout" id="hysOut"></div>
+<div class="cap">回差越大，抗干扰能力越强；正反馈还使输出跳变更陡 <a class="src" data-s="51"></a>。</div>
+</div>
+
+<div class="ex">
+<div class="exh"><span class="tag">例 1</span>滞回比较器画输出波形 <a class="src" data-s="52"></a> <a class="src" data-s="53"></a></div>
+<p>\(R_F=20\,\mathrm{k\Omega}, R_2=10\,\mathrm{k\Omega}, \pm U_{OM}=\pm6\,\mathrm V\)，输入 \(u_i=3\sin314t\ \mathrm V\)，画 \(u_O\) 波形。</p>
+<div class="reveal">
+<div class="rs">\[U'_+=\frac{10}{10+20}\times6=2\,\mathrm V,\qquad U''_+=\frac{10}{10+20}\times(-6)=-2\,\mathrm V\]</div>
+<div class="rs"><b>传输特性：</b>输入接反相端。\(u_O=+6\,\mathrm V\) 时门限是 +2V，\(u_i\) 上升超过 2V 才翻转到 −6V；\(u_O=-6\,\mathrm V\) 时门限变成 −2V，\(u_i\) 下降低于 −2V 才翻回 +6V。
+<div class="fig"><svg id="ex1h" viewBox="0 0 320 220" role="img" aria-label="例1传输特性"></svg></div></div>
+<div class="rs"><b>波形：</b>
+<div class="fig"><svg id="ex1w" class="wide" viewBox="0 0 640 250" role="img" aria-label="例1波形"></svg></div>
+输出是与输入同频率的方波，跳变发生在 \(u_i=+2\,\mathrm V\)（下跳）和 \(u_i=-2\,\mathrm V\)（上跳）。</div>
+</div></div>
+
+<div class="ex">
+<div class="exh"><span class="tag">例 2</span>带参考电压的滞回比较器 <a class="src" data-s="54"></a>–<a class="src" data-s="56"></a></div>
+<p>\(R_2=10\,\mathrm{k\Omega}, R_F=20\,\mathrm{k\Omega}, U_{OM}=12\,\mathrm V, U_R=9\,\mathrm V\)，\(u_i\) 接反相端，参考电压经 \(R_2\) 接到同相端。</p>
+<div class="fig"><svg id="ex2c" viewBox="0 0 340 200" role="img" aria-label="例2电路"></svg></div>
+<div class="reveal">
+<div class="rs">同相端电位由 \(U_R\) 和 \(u_O\) 叠加（KVL / 叠加原理）：\[u_+=\frac{R_F}{R_2+R_F}U_R+\frac{R_2}{R_2+R_F}u_O\]</div>
+<div class="rs">\[U_{T+}=\frac{20}{30}\times9+\frac{10}{30}\times12=6+4=10\,\mathrm V,\qquad U_{T-}=6-4=2\,\mathrm V\]</div>
+<div class="rs">\(u_i\) 上升超过 10V 时 \(u_O\) 跳到 −12V；\(u_i\) 下降低于 2V 时跳回 +12V。
+<div class="fig"><svg id="ex2w" class="wide" viewBox="0 0 640 250" role="img" aria-label="例2波形"></svg></div></div>
+</div></div>
+
+<h3>同相滞回比较器 <a class="src" data-s="58"></a>–<a class="src" data-s="61"></a></h3>
+<p>把输入改接到同相端：\(u_i\) 经 \(R_1\) 接同相端，\(R_2\) 从同相端接到输出，反相端接地（或接 \(U_R\)）。同相端电位由 \(u_i\) 和 \(u_O\) 叠加：</p>
+<div class="formula">\[ u_+=\frac{R_2}{R_1+R_2}u_i+\frac{R_1}{R_1+R_2}u_O \]</div>
+<p>令 \(u_+=u_-=0\) 解出翻转时的 \(u_i\)：</p>
+<div class="formula">\[ U_{+H}=\frac{R_1}{R_2}U_{om},\qquad U_{+L}=-\frac{R_1}{R_2}U_{om} \]</div>
+<p>反相端接参考电压 \(U_R\) 时（令 \(u_+=U_R\)）：</p>
+<div class="formula">\[ U_{+H}=\frac{R_1}{R_2}U_{om}+\frac{R_1+R_2}{R_2}U_R,\qquad U_{+L}=-\frac{R_1}{R_2}U_{om}+\frac{R_1+R_2}{R_2}U_R \]</div>
+<div class="grid2">
+<div class="panel fig"><svg id="nhys" viewBox="0 0 320 200" role="img" aria-label="同相滞回比较器"></svg></div>
+<div class="panel fig"><svg id="nloop" viewBox="0 0 320 220" role="img" aria-label="同相滞回传输特性"></svg></div>
+</div>
+<p class="muted">和反相滞回比较器对比：同相接法 \(u_i\) 大时输出为 \(+U_{om}\)，传输特性回线方向相反；加参考电压只是把整条回线左右平移。</p>
+<h3>窗口比较器 <a class="src" data-s="57"></a></h3>
+<p>两个比较器（如 LM339 内部的两个）输出并联，参考电压 \(U_{REF1}\lt U_{REF2}\)：只有当 \(U_{REF1}\lt u_I\lt U_{REF2}\) 时输出高电平，否则输出低电平。用来判断输入是否落在一个“窗口”范围内，例如越限报警。</p>
+
+<h2 id="sum"><span class="n">小结</span>本章小结与自测</h2>
+<div class="tbl"><table><tbody>
+<tr><td><b>判断工作区</b></td><td>负反馈 → 线性（虚短 + 虚断）；开环 / 正反馈 → 非线性（只有虚断）</td></tr>
+<tr><td><b>线性电路</b></td><td>反相 \(-R_F/R_1\)，同相 \(1+R_F/R_1\)，跟随器 1；加、减、积分、微分</td></tr>
+<tr><td><b>平衡电阻</b></td><td>两输入端对地等效电阻相等，如 \(R_2=R_1/\!/R_F\)</td></tr>
+<tr><td><b>比较器</b></td><td>单门限：\(U_T=U_R\)；滞回：\(U_T=\pm\frac{R_2}{R_2+R_F}U_{om}\)（+ 参考电压项）</td></tr>
+</tbody></table></div>
+<div class="q" data-a="1"><div class="qt">1. 反相比例电路 \(R_1=10\,\mathrm{k\Omega}, R_F=100\,\mathrm{k\Omega}\)，\(u_I=0.2\,\mathrm V\)，\(u_O=\)？</div><div class="opts"><button>+2 V</button><button>−2 V</button><button>+2.2 V</button></div>
+<div class="qex">✓ 正确。\(u_O=-\frac{100}{10}\times0.2=-2\,\mathrm V\)。</div></div>
+<div class="q" data-a="2"><div class="qt">2. 同相比例电路 \(R_1=10\,\mathrm{k\Omega}, R_F=100\,\mathrm{k\Omega}\)，\(u_I=0.2\,\mathrm V\)，\(u_O=\)？</div><div class="opts"><button>+2 V</button><button>−2 V</button><button>+2.2 V</button></div>
+<div class="qex">✓ 正确。\(u_O=(1+10)\times0.2=2.2\,\mathrm V\)。</div></div>
+<div class="q" data-a="0"><div class="qt">3. 电压比较器中，“虚短”成立吗？</div><div class="opts"><button>不成立，只有虚断</button><button>成立</button><button>两者都不成立</button></div>
+<div class="qex">✓ 正确。比较器工作在非线性区，\(u_+\ne u_-\)，但输入电流仍为零。</div></div>
+<div class="q" data-a="1"><div class="qt">4. 积分电路输入恒定正电压 1V，\(R_1C_F=1\,\mathrm{ms}\)，2ms 后输出（初值 0）为？</div><div class="opts"><button>+2 V</button><button>−2 V</button><button>−1 V</button></div>
+<div class="qex">✓ 正确。\(u_O=-\frac{1}{1\,\mathrm{ms}}\times1\,\mathrm V\times2\,\mathrm{ms}=-2\,\mathrm V\)。</div></div>
+<div class="q" data-a="2"><div class="qt">5. 滞回比较器 \(R_2=10\,\mathrm{k\Omega}, R_F=40\,\mathrm{k\Omega}, U_{om}=10\,\mathrm V\)，回差电压是？</div><div class="opts"><button>2 V</button><button>2.5 V</button><button>4 V</button></div>
+<div class="qex">✓ 正确。门限 \(\pm\frac{10}{50}\times10=\pm2\,\mathrm V\)，回差 4V。</div></div>
+
+<details class="gallery"><summary>浏览本章全部课件页（61 页，点击放大）</summary></details>
+</article>
+</div>
+
+<script src="assets/katex/katex.min.js"></script>
+<script src="assets/katex/auto-render.min.js"></script>
+<script src="assets/common.js"></script>
+<script>
+(function(){
+/* ---------- block diagram ---------- */
+var b = new Sch('block');
+[['输入级', '差分放大', 70], ['中间级', '共射放大', 250], ['输出级', '互补/射随', 430]].forEach(function(k, i){
+  mk('rect', {x:k[2], y:50, width:130, height:64, rx:8, class:'body'}, b.g); b.text(k[2] + 65, 78, k[0], 'tb', 'middle'); b.text(k[2] + 65, 100, k[1], 'ts', 'middle');
+  if (i < 2) b.arrow(k[2] + 130, 82, k[2] + 178, 82, '', 'ink'); });
+b.arrow(560, 82, 610, 82, '', 'ink'); b.text(614, 87, 'u_o', 't');
+b.line(36, 68, 70, 68); b.line(36, 96, 70, 96); b.text(32, 72, 'u_−', 't', 'end'); b.text(32, 100, 'u_+', 't', 'end');
+mk('rect', {x:200, y:150, width:240, height:36, rx:8, class:'body'}, b.g); b.text(320, 173, '偏置电路（恒流源）', 't', 'middle');
+[135, 315, 495].forEach(function(x){ mk('line', {x1:x, y1:150, x2:x, y2:116, class:'cvdash'}, b.g); });
+
+/* ---------- symbol ---------- */
+var sy = new Sch('sym'), p = sy.opamp(110, 80);
+sy.line(p.m[0], p.m[1], 40, p.m[1]); sy.line(p.p[0], p.p[1], 40, p.p[1]); sy.line(p.o[0], p.o[1], 260, p.o[1]);
+sy.text(36, p.m[1] + 5, '反相输入 u_−', 'ts', 'end'); sy.text(36, p.p[1] + 5, '同相输入 u_+', 'ts', 'end');
+sy.text(264, p.o[1] + 5, 'u_O', 't'); sy.text(180, 140, 'u_O = A_{od}(u_+ − u_−)', 'tval', 'middle');
+sy.svg.setAttribute('viewBox', '-90 0 390 160');
+
+/* ---------- VTC ---------- */
+var vp = new Plot('vtc', {x:30, y:15, w:250, h:160}, [-1, 1], [-14, 14]);
+vp.axes({xl:'u_+−u_−', yl:'u_O', xt:[], yt:[-12, 12], yf:function(v){ return v > 0 ? '+U_{om}' : '−U_{om}'; }});
+vp.g.insertBefore(vp.rect(-0.12, -14, 0.12, 14, 'zone'), vp.g.firstChild); vp.poly([[-1, -12], [-0.12, -12], [0.12, 12], [1, 12]], 'cv');
+vp.text(0.5, 9, '饱和区', 'ts', 'middle'); vp.text(-0.5, -9, '饱和区', 'ts', 'middle'); vp.text(0.15, -3, '线性区', 'tval');
+bindSliders(['aod'], {aod:function(v){ return '10^' + v.toFixed(1) + ' ≈ ' + Math.round(Math.pow(10, v)).toLocaleString(); }}, function(v){
+  var w = 12 / Math.pow(10, v.aod); document.getElementById('aodOut').innerHTML = '<span>线性区宽度：|u_+ − u_−| &lt; ' + (w >= 1e-3 ? (w * 1e3).toPrecision(3) + ' mV' : (w * 1e6).toPrecision(3) + ' μV') + '</span>'; });
+
+/* ---------- 3 states ---------- */
+var st = new Sch('states');
+[['开环', 0, '非线性区', 'tred'], ['负反馈（接到 −）', 220, '线性区', 'tval'], ['正反馈（接到 +）', 440, '非线性区', 'tred']].forEach(function(k, i){
+  var a = st.opamp(k[1] + 60, 100); st.line(a.m[0], a.m[1], k[1] + 20, a.m[1]); st.line(a.p[0], a.p[1], k[1] + 20, a.p[1]); st.line(a.o[0], a.o[1], k[1] + 175, a.o[1]);
+  st.text(k[1] + 100, 30, k[0], 'tb', 'middle'); st.text(k[1] + 100, 175, k[2], k[3], 'middle');
+  if (i === 1) st.wire(k[1] + 160, 100, k[1] + 160, 50, k[1] + 35, 50, k[1] + 35, a.m[1]);
+  if (i === 2) st.wire(k[1] + 160, 100, k[1] + 160, 150, k[1] + 35, 150, k[1] + 35, a.p[1]);
+  if (i) st.node(k[1] + 160, 100);
+});
+
+/* ---------- op-amp circuits ---------- */
+function invAmp(id, o){
+  o = o || {}; var s = new Sch(id), a = s.opamp(300, 130), nx = 245;
+  s.term(80, a.m[1]); s.R(80, a.m[1], 200, a.m[1], {lab:o.r1 || 'R_1'}); s.wire(200, a.m[1], a.m[0], a.m[1]); s.node(nx, a.m[1]);
+  s.wire(nx, a.m[1], nx, 50, 330, 50); if (o.cap) s.C(330, 50, 400, 50, {lab:'C_F'}); else s.R(330, 50, 400, 50, {lab:o.rf || 'R_F'}); s.wire(400, 50, 420, 50, 420, 130); s.node(420, 130);
+  s.wire(a.o[0], a.o[1], 480, 130); s.term(480, 130); s.text(490, 135, 'u_O', 't');
+  s.R(a.p[0] - 20, a.p[1], a.p[0] - 20, 215, {lab:'R_2', side:'l'}); s.line(a.p[0] - 20, a.p[1], a.p[0], a.p[1]); s.gnd(a.p[0] - 20, 215);
+  s.text(70, a.m[1] + 5, 'u_I', 't', 'end');
+  if (!o.noArrows){ s.arrow(120, a.m[1] - 14, 160, a.m[1] - 14, o.cap ? 'i_1' : 'i_1', 'red', 128, a.m[1] - 20); s.arrow(370, 34, 330, 34, 'i_F', 'red', 340, 26); s.text(nx + 6, a.m[1] + 22, 'u_− = 0（虚地）', 'tval'); }
+  return {s:s, a:a};
+}
+invAmp('inv');
+var ns = new Sch('non'), na = ns.opamp(300, 130, {});
+ns.term(150, na.p[1]); ns.R(150, na.p[1], na.p[0], na.p[1], {lab:'R_2'}); ns.text(140, na.p[1] + 5, 'u_I', 't', 'end');
+ns.node(245, na.m[1]); ns.line(245, na.m[1], na.m[0], na.m[1]); ns.R(245, na.m[1], 245, 210, {lab:'R_1', side:'l'}); ns.gnd(245, 210);
+ns.wire(245, na.m[1], 245, 50, 330, 50); ns.R(330, 50, 400, 50, {lab:'R_F'}); ns.wire(400, 50, 420, 50, 420, 130); ns.node(420, 130); ns.wire(na.o[0], na.o[1], 480, 130); ns.term(480, 130); ns.text(490, 135, 'u_O', 't');
+ns.text(255, na.m[1] - 6, 'u_− = u_I', 'tval');
+var fo = new Sch('fol'), fa = fo.opamp(110, 90, {plusTop:false});
+fo.term(40, fa.p[1]); fo.line(40, fa.p[1], fa.p[0], fa.p[1]); fo.text(32, fa.p[1] + 5, 'u_I', 't', 'end');
+fo.wire(fa.m[0], fa.m[1], fa.m[0] - 10, fa.m[1], fa.m[0] - 10, 30, 210, 30, 210, 90); fo.node(210, 90); fo.line(fa.o[0], fa.o[1], 250, 90); fo.term(250, 90); fo.text(258, 95, 'u_O', 't');
+var rf = new Sch('ref'), ra = rf.opamp(150, 100);
+rf.text(40, 25, '+15V', 't', 'middle'); rf.term(40, 30); rf.R(40, 30, 40, 115, {val:'15kΩ', side:'l'}); rf.R(40, 115, 40, 185, {val:'15kΩ', side:'l'}); rf.gnd(40, 185); rf.node(40, 120);
+rf.wire(40, 120, ra.p[0], 120); rf.wire(ra.m[0], ra.m[1], ra.m[0] - 6, ra.m[1], ra.m[0] - 6, 40, 245, 40, 245, 100); rf.node(245, 100); rf.line(ra.o[0], 100, 280, 100); rf.term(280, 100); rf.text(270, 125, 'u_O = 7.5V', 'tval', 'end');
+
+/* proportional interactive */
+var pw = new Plot('propW', {x:60, y:15, w:540, h:190}, [0, 4 * Math.PI], [-14, 14]), propMode = 0;
+pw.axes({xl:'ωt', yl:'V', xt:[], yt:[-12, -6, 6, 12]}); pw.hline(12, 'cvdash'); pw.hline(-12, 'cvdash'); pw.text(4 * Math.PI, 12.8, '+U_{om}', 'ts', 'end'); pw.text(4 * Math.PI, -13.5, '−U_{om}', 'ts', 'end');
+var propRun = bindSliders(['r1', 'rf', 'ua'], {r1:function(v){ return v + ' kΩ'; }, rf:function(v){ return v + ' kΩ'; }, ua:function(v){ return v.toFixed(1) + ' V'; }}, function(v){
+  var A = propMode === 0 ? -v.rf / v.r1 : 1 + v.rf / v.r1, d = pw.clear();
+  pw.fn(function(t){ return v.ua * Math.sin(t); }, 'cvdash', 0, 4 * Math.PI, 300, d);
+  pw.fn(function(t){ return Math.max(-12, Math.min(12, A * v.ua * Math.sin(t))); }, 'cv', 0, 4 * Math.PI, 300, d);
+  var sat = Math.abs(A * v.ua) > 12;
+  document.getElementById('propOut').innerHTML = '<span>A_uf = ' + (propMode === 0 ? '−R_F/R_1' : '1 + R_F/R_1') + ' = ' + A.toFixed(2) + '</span><span>R_2 = R_1 // R_F = ' + (v.r1 * v.rf / (v.r1 + v.rf)).toFixed(2) + ' kΩ</span><span class="state" style="color:' + (sat ? 'var(--red)' : 'var(--ok)') + '">' + (sat ? '输出超过 ±12V，被削顶：已离开线性区' : (propMode === 0 ? '反相：输出与输入相位相反' : '同相：输出与输入相位相同')) + '</span>';
+});
+document.getElementById('mInv').onclick = function(){ propMode = 0; this.classList.add('on'); document.getElementById('mNon').classList.remove('on'); propRun(); };
+document.getElementById('mNon').onclick = function(){ propMode = 1; this.classList.add('on'); document.getElementById('mInv').classList.remove('on'); propRun(); };
+
+/* summing */
+var sm = new Sch('sumInv'), sa = sm.opamp(300, 130);
+sm.term(80, 80); sm.R(80, 80, 190, 80, {lab:'R_{11}'}); sm.term(80, sa.m[1]); sm.R(80, sa.m[1], 190, sa.m[1], {lab:'R_{12}', side:'b'});
+sm.wire(190, 80, 245, 80, 245, sa.m[1]); sm.line(190, sa.m[1], sa.m[0], sa.m[1]); sm.node(245, sa.m[1]);
+sm.text(70, 85, 'u_{I1}', 't', 'end'); sm.text(70, sa.m[1] + 5, 'u_{I2}', 't', 'end');
+sm.wire(245, 80, 245, 40, 330, 40); sm.R(330, 40, 400, 40, {lab:'R_F'}); sm.wire(400, 40, 420, 40, 420, 130); sm.node(420, 130); sm.node(245, 80);
+sm.wire(sa.o[0], 130, 480, 130); sm.term(480, 130); sm.text(490, 135, 'u_O', 't');
+sm.R(sa.p[0] - 20, sa.p[1], sa.p[0] - 20, 215, {lab:'R_2', side:'l'}); sm.line(sa.p[0] - 20, sa.p[1], sa.p[0], sa.p[1]); sm.gnd(sa.p[0] - 20, 215);
+
+/* subtractor */
+var sb = new Sch('sub'), ba = sb.opamp(300, 130);
+sb.term(80, ba.m[1]); sb.R(80, ba.m[1], 200, ba.m[1], {lab:'R_1'}); sb.line(200, ba.m[1], ba.m[0], ba.m[1]); sb.node(245, ba.m[1]); sb.text(70, ba.m[1] + 5, 'u_{I1}', 't', 'end');
+sb.wire(245, ba.m[1], 245, 50, 330, 50); sb.R(330, 50, 400, 50, {lab:'R_F'}); sb.wire(400, 50, 420, 50, 420, 130); sb.node(420, 130);
+sb.term(80, ba.p[1]); sb.R(80, ba.p[1], 200, ba.p[1], {lab:'R_2', side:'b'}); sb.line(200, ba.p[1], ba.p[0], ba.p[1]); sb.node(255, ba.p[1]); sb.text(70, ba.p[1] + 5, 'u_{I2}', 't', 'end');
+sb.R(255, ba.p[1], 255, 230, {lab:'R_3'}); sb.gnd(255, 230);
+sb.wire(ba.o[0], 130, 480, 130); sb.term(480, 130); sb.text(490, 135, 'u_O', 't');
+
+/* example 1: two-amp subtractor */
+var e1 = new Sch('ex1'), A1 = e1.opamp(200, 120, {plusTop:false}), A2 = e1.opamp(470, 110);
+e1.term(60, A1.p[1]); e1.R(60, A1.p[1], 150, A1.p[1], {lab:'R_3', side:'b'}); e1.line(150, A1.p[1], A1.p[0], A1.p[1]); e1.text(50, A1.p[1] + 5, 'u_{I1}', 'tblue', 'end');
+e1.node(160, A1.m[1]); e1.line(160, A1.m[1], A1.m[0], A1.m[1]); e1.R(160, A1.m[1], 90, A1.m[1], {lab:'R_1'}); e1.gnd(90, A1.m[1]);
+e1.wire(160, A1.m[1], 160, 45, 210, 45); e1.R(210, 45, 270, 45, {lab:'R_{F1}'}); e1.wire(270, 45, 300, 45, 300, 120); e1.node(300, 120);
+e1.wire(A1.o[0], 120, 330, 120, 330, A2.m[1]); e1.R(330, A2.m[1], 420, A2.m[1], {lab:'R_2'}); e1.line(420, A2.m[1], A2.m[0], A2.m[1]); e1.node(430, A2.m[1]);
+e1.text(318, 112, 'u_{O1}', 'tred', 'end');
+e1.wire(430, A2.m[1], 430, 30, 480, 30); e1.R(480, 30, 550, 30, {lab:'R_{F2}'}); e1.wire(550, 30, 570, 30, 570, 110); e1.node(570, 110);
+e1.term(360, A2.p[1] + 50); e1.R(360, A2.p[1] + 50, 440, A2.p[1] + 50, {lab:'R_4', side:'b'}); e1.wire(440, A2.p[1] + 50, 444, A2.p[1] + 50, 444, A2.p[1], A2.p[0], A2.p[1]);
+e1.text(350, A2.p[1] + 55, 'u_{I2}', 'tblue', 'end');
+e1.line(A2.o[0], 110, 610, 110); e1.term(610, 110); e1.text(615, 98, 'u_O', 't');
+
+/* example 2 */
+var e2 = new Sch('ex2'), B1 = e2.opamp(200, 110), B2 = e2.opamp(480, 120);
+e2.term(50, 60); e2.R(50, 60, 140, 60, {val:'20kΩ'}); e2.wire(140, 60, 160, 60, 160, B1.m[1]); e2.term(50, B1.m[1]); e2.R(50, B1.m[1], 140, B1.m[1], {val:'50kΩ', side:'b'}); e2.line(140, B1.m[1], B1.m[0], B1.m[1]); e2.node(160, B1.m[1]);
+e2.text(42, 65, 'u_{I1}', 't', 'end'); e2.text(42, B1.m[1] + 5, 'u_{I2}', 't', 'end');
+e2.wire(160, 60, 160, 25, 210, 25); e2.R(210, 25, 280, 25, {val:'100kΩ'}); e2.wire(280, 25, 300, 25, 300, 110); e2.node(300, 110); e2.node(160, 60);
+e2.R(B1.p[0] - 10, B1.p[1], B1.p[0] - 10, 190, {lab:'R_3', side:'l'}); e2.line(B1.p[0] - 10, B1.p[1], B1.p[0], B1.p[1]); e2.gnd(B1.p[0] - 10, 190);
+e2.wire(B1.o[0], 110, 330, 110, 330, B2.m[1]); e2.R(330, B2.m[1], 420, B2.m[1], {val:'30kΩ', side:'b'}); e2.line(420, B2.m[1], B2.m[0], B2.m[1]); e2.node(440, B2.m[1]); e2.text(325, 102, 'u_{O1}', 'tred', 'end');
+e2.wire(440, B2.m[1], 440, 45, 500, 45); e2.R(500, 45, 570, 45, {val:'60kΩ'}); e2.wire(570, 45, 590, 45, 590, 120); e2.node(590, 120);
+e2.term(330, B2.p[1]); e2.R(330, B2.p[1], 430, B2.p[1], {val:'39kΩ', side:'b'}); e2.line(430, B2.p[1], B2.p[0], B2.p[1]); e2.node(445, B2.p[1]); e2.R(445, B2.p[1], 445, 215, {val:'39kΩ'}); e2.gnd(445, 215);
+e2.text(322, B2.p[1] + 5, 'u_{I3}', 't', 'end'); e2.line(B2.o[0], 120, 625, 120); e2.term(625, 120); e2.text(620, 108, 'u_O', 't', 'end');
+e2.text(230, 210, 'A_1：反相加法', 'tval', 'middle'); e2.text(540, 210, 'A_2：减法', 'tval', 'middle');
+
+/* integrator */
+invAmp('intC', {cap:true});
+var iw = document.getElementById('intW');
+var iIn = new Plot(iw, {x:70, y:10, w:540, h:70}, [0, 16], [-1.5, 1.5]); iIn.axes({yl:'u_I', xt:[], yt:[-1, 1], grid:false});
+var iOut = new Plot(iw, {x:70, y:110, w:540, h:130}, [0, 16], [-14, 14]); iOut.axes({xl:'t / ms', yl:'u_O', xt:[4, 8, 12, 16], yt:[-12, -6, 6, 12]});
+function sq(t){ return (Math.floor(t / 2) % 2 === 0) ? 1 : -1; }
+iIn.poly([[0, 1], [2, 1], [2, -1], [4, -1], [4, 1], [6, 1], [6, -1], [8, -1], [8, 1], [10, 1], [10, -1], [12, -1], [12, 1], [14, 1], [14, -1], [16, -1]], 'cv3');
+bindSliders(['tau'], {tau:function(v){ return v.toFixed(2) + ' ms'; }}, function(v){
+  var d = iOut.clear(), u = 1 / v.tau, pts = [], y = u, dt = 0.01;
+  for (var t = 0; t <= 16; t += dt){ y = Math.max(-12, Math.min(12, y - sq(t) / v.tau * dt)); pts.push([t, y]); }
+  iOut.poly(pts, 'cv', d); iOut.hline(12, 'cvdash', d); iOut.hline(-12, 'cvdash', d);
+});
+
+/* comparators */
+var c1 = new Sch('cmp1'), ca = c1.opamp(120, 90);
+c1.term(40, ca.m[1]); c1.line(40, ca.m[1], ca.m[0], ca.m[1]); c1.text(32, ca.m[1] + 5, 'u_I', 't', 'end');
+c1.term(40, ca.p[1]); c1.line(40, ca.p[1], ca.p[0], ca.p[1]); c1.text(32, ca.p[1] + 5, 'U_R', 't', 'end');
+c1.line(ca.o[0], 90, 260, 90); c1.term(260, 90); c1.text(266, 95, 'u_O', 't'); c1.text(150, 160, '开环，无反馈', 'tred', 'middle');
+function hysC(id, withRef){
+  var s = new Sch(id), h = s.opamp(130, 80);
+  s.term(30, h.m[1]); s.R(30, h.m[1], 100, h.m[1], {lab:'R_1'}); s.line(100, h.m[1], h.m[0], h.m[1]); s.text(24, h.m[1] + 5, 'u_I', 't', 'end');
+  s.node(100, h.p[1]); s.line(100, h.p[1], h.p[0], h.p[1]); s.wire(100, h.p[1], 100, 150);
+  s.R(100, 150, withRef ? 30 : 30, 150, {lab:'R_2', side:'b'}); if (withRef){ s.term(30, 150); s.text(24, 155, 'U_R', 't', 'end'); } else s.gnd(30, 150);
+  s.R(100, 150, 230, 150, {lab:'R_F', side:'b'}); s.node(100, 150); s.wire(230, 150, 250, 150, 250, 80); s.node(250, 80);
+  s.line(h.o[0], 80, 290, 80); s.term(290, 80); s.text(296, 85, 'u_O', 't'); s.text(165, 190, '正反馈：u_O 经 R_F 回到 +', 'tred', 'middle');
+}
+hysC('hys', false); hysC('ex2c', true);
+
+/* noisy input demo */
+var hw = document.getElementById('hysW'), hysOn = true;
+var hi = new Plot(hw, {x:60, y:10, w:560, h:150}, [0, 20], [-4, 4]); hi.axes({yl:'u_I / V', xt:[], yt:[-2, 2]});
+var ho = new Plot(hw, {x:60, y:200, w:560, h:110}, [0, 20], [-8, 8]); ho.axes({xl:'t', yl:'u_O', xt:[], yt:[-6, 6]});
+var rnd = []; var seed = 7; for (var i = 0; i <= 2000; i++){ seed = (seed * 16807) % 2147483647; rnd.push(seed / 2147483647 - 0.5); }
+function hysRun(){
+  var nz = +document.getElementById('noise').value; document.querySelector('output[for="noise"]').textContent = nz.toFixed(2) + ' V';
+  var d1 = hi.clear(), d2 = ho.clear(), pin = [], pout = [], uo = 6, flips = 0;
+  for (var k = 0; k <= 2000; k++){ var t = k / 100, u = 3 * Math.sin(2 * Math.PI * t / 10) + nz * 2 * (rnd[k] + 0.6 * (rnd[(k * 7) % 2000])); pin.push([t, Math.max(-4, Math.min(4, u))]);
+    var th = hysOn ? (uo > 0 ? 2 : -2) : 0, nu = u > th ? -6 : (u < th ? 6 : uo); if (!hysOn) nu = u > 0 ? -6 : 6;
+    if (nu !== uo){ flips++; pout.push([t, uo]); } uo = nu; pout.push([t, uo]); }
+  hi.poly(pin, 'cvthin', d1);
+  if (hysOn){ hi.hline(2, 'cv3', d1); hi.hline(-2, 'cv2', d1); hi.text(20, 2.3, 'U\'_+ = +2V', 'tred', 'end', d1); hi.text(20, -1.6, 'U\'\'_+ = −2V', 'tblue', 'end', d1); }
+  else { hi.hline(0, 'cv3', d1); hi.text(20, 0.3, '门限 0V', 'tred', 'end', d1); }
+  ho.poly(pout, 'cv', d2);
+  document.getElementById('hysOut').innerHTML = '<span>输出翻转次数：' + flips + '（理想应为 4 次）</span><span class="state" style="color:' + (flips > 4 ? 'var(--red)' : 'var(--ok)') + '">' + (flips > 4 ? '噪声导致误翻转' : '干净的方波') + '</span>';
+}
+document.getElementById('noise').addEventListener('input', hysRun);
+document.getElementById('hOn').onclick = function(){ hysOn = true; this.classList.add('on'); document.getElementById('hOff').classList.remove('on'); hysRun(); };
+document.getElementById('hOff').onclick = function(){ hysOn = false; this.classList.add('on'); document.getElementById('hOn').classList.remove('on'); hysRun(); };
+hysRun();
+
+/* example 1 hysteresis loop + waveform */
+function loop(id, lo, hiT, U, xr){
+  var p = new Plot(id, {x:30, y:15, w:270, h:180}, xr, [-U * 1.25, U * 1.25]);
+  p.axes({xl:'u_i', yl:'u_O', xt:[lo, hiT], yt:[-U, U]});
+  p.poly([[xr[0], U], [hiT, U], [hiT, -U], [xr[1], -U]], 'cv'); p.poly([[xr[1], -U], [lo, -U], [lo, U]], 'cv3');
+  p.text(hiT, U * 1.12, '→ 上升', 'tval', 'middle'); p.text(lo, -U * 1.15, '← 下降', 'tred', 'middle');
+}
+loop('ex1h', -2, 2, 6, [-4, 4]);
+function wave(id, f, lo, hiT, U, yr, start){
+  var sv = document.getElementById(id), a = new Plot(sv, {x:60, y:10, w:560, h:110}, [0, 2], yr), b2 = new Plot(sv, {x:60, y:150, w:560, h:80}, [0, 2], [-U * 1.3, U * 1.3]);
+  a.axes({yl:'u_i', xt:[], yt:[lo, hiT]}); a.fn(f, 'cv3'); a.hline(lo, 'cvdash'); a.hline(hiT, 'cvdash');
+  b2.axes({xl:'t（周期）', yl:'u_O', xt:[], yt:[-U, U]});
+  var uo = start, pts = []; for (var k = 0; k <= 800; k++){ var t = k / 400, u = f(t); if (uo > 0 && u > hiT) uo = -U; else if (uo < 0 && u < lo) uo = U; pts.push([t, uo]); }
+  var q = []; pts.forEach(function(pnt, i){ if (i && pnt[1] !== pts[i - 1][1]) q.push([pnt[0], pts[i - 1][1]]); q.push(pnt); }); b2.poly(q, 'cv');
+}
+wave('ex1w', function(t){ return 3 * Math.sin(2 * Math.PI * t); }, -2, 2, 6, [-4, 4], 6);
+wave('ex2w', function(t){ return 5.5 + 5.5 * Math.sin(2 * Math.PI * t - 0.4) + 0.6 * Math.sin(14 * t); }, 2, 10, 12, [-1, 13], 12);
+
+/* noninverting hysteresis */
+(function(){
+  var s = new Sch('nhys'), h = s.opamp(130, 80, {plusTop:false});
+  s.line(h.m[0], h.m[1], 80, h.m[1]); s.gnd(80, h.m[1]);
+  s.node(100, h.p[1]); s.line(100, h.p[1], h.p[0], h.p[1]); s.wire(100, h.p[1], 100, 150);
+  s.term(30, 150); s.R(30, 150, 100, 150, {lab:'R_1', side:'b'}); s.text(24, 155, 'u_i', 't', 'end'); s.node(100, 150);
+  s.R(100, 150, 230, 150, {lab:'R_2', side:'b'}); s.wire(230, 150, 250, 150, 250, 80); s.node(250, 80);
+  s.line(h.o[0], 80, 290, 80); s.term(290, 80); s.text(296, 85, 'u_O', 't');
+  var p = new Plot('nloop', {x:30, y:15, w:270, h:180}, [-4, 4], [-7.5, 7.5]);
+  p.axes({xl:'u_i', yl:'u_O', xt:[-2, 2], xf:function(v){ return v > 0 ? 'U_{+H}' : 'U_{+L}'; }, yt:[-6, 6], yf:function(v){ return v > 0 ? '+U_{om}' : '−U_{om}'; }});
+  p.poly([[-4, -6], [2, -6], [2, 6], [4, 6]], 'cv'); p.poly([[4, 6], [-2, 6], [-2, -6]], 'cv3');
+  p.text(2, -6.9, '上升到 U_{+H} 跳高', 'tval', 'middle'); p.text(-2, 6.8, '下降到 U_{+L} 跳低', 'tred', 'middle');
+})();
+initPage(6);
+})();
+</script>
+</body>
+</html>

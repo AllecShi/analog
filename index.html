@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>模电讲义 · 目录</title>
+<link rel="stylesheet" href="assets/katex/katex.min.css">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="layout" style="grid-template-columns:minmax(0,1fr)">
+<article style="max-width:960px">
+<div class="eyebrow">模拟电子技术基础 · 图解讲义</div>
+<h1>模电讲义</h1>
+<p class="lead">对照课件逐章讲解，每个知识点配电路图、曲线和可以拖动的交互演示，例题按步骤展开。适合只学过电路原理、刚接触三极管的同学，从第 1 章顺序往下学。</p>
+
+<div class="chgrid" id="chs"></div>
+
+<h2 id="how">怎么用这份讲义</h2>
+<div class="grid2">
+<div class="panel"><h4>看课件原页</h4><p>正文里灰色的 <span class="src" style="cursor:default">课件 S48</span> 标签可以点击，会弹出对应的课件原页，用 ← → 键翻页。每章末尾还能浏览本章全部课件。</p></div>
+<div class="panel"><h4>例题先想再看</h4><p>例题的解答默认收起。先自己在纸上算，再点“下一步”逐步对照；卡住了再看下一步提示。</p></div>
+<div class="panel"><h4>拖动滑块</h4><p>带滑块的图是交互演示：改变电阻、电压、频率，看 Q 点、波形、波特图怎么跟着变。这比背公式更能建立直觉。</p></div>
+<div class="panel"><h4>章末自测</h4><p>每章末尾有选择题，点选后立即判断对错并给出解析。答错的题回到对应小节再看一遍图。</p></div>
+</div>
+
+<h2 id="path">知识主线</h2>
+<div class="panel fig"><svg id="road" class="wide" viewBox="0 0 680 210" role="img" aria-label="知识主线"></svg>
+<div class="cap">主线始终是“<b>不失真地放大微弱信号</b>”：第 1 章认识半导体与二极管；第 2、3 章两种放大器件和基本放大电路（先静态、后动态）；第 4 章看增益随频率怎么变；第 5 章解决直接耦合的零点漂移；第 6 章把它们集成为运放，用虚短虚断分析。</div></div>
+
+<h2 id="tips">学习建议</h2>
+<ul>
+<li><b>第 1 章的模型分析法是全书的基本功</b>：把非线性器件换成线性元件，再用电路原理求解。后面 BJT、FET 的小信号模型都是同一个思路。</li>
+<li><b>第 2 章的“先静态、后动态”</b>必须彻底掌握：直流通路求 Q 点 → 由 Q 点得 \(r_{be}\) → 交流通路换成小信号模型 → 求 \(A_u, R_i, R_o\)。第 3、5 章完全照搬。</li>
+<li><b>第 6 章</b>相对独立，虚短虚断 + KCL 就能解决大部分题目，是考试中很容易拿分的部分。</li>
+<li>作业要求 <a class="src" data-s="1:3"></a>：抄原题、画电路、标注 +/−、箭头和物理参数，写出求解过程。</li>
+</ul>
+<p class="muted">课件更新后（例如第 2 章后半部分），把新课件放进“课件”文件夹，让 Claude 补充对应章节即可。</p>
+</article>
+</div>
+<script src="assets/katex/katex.min.js"></script>
+<script src="assets/katex/auto-render.min.js"></script>
+<script src="assets/common.js"></script>
+<script>
+(function(){
+document.getElementById('chs').innerHTML = CHAPTERS.map(function(c){
+  return '<a class="chcard" href="' + c.file + '"><div class="no">第 ' + c.n + ' 章 · 课件 ' + c.slides + ' 页</div><h3>' + c.title + '</h3><p>' + c.desc + '</p></a>'; }).join('');
+var s = new Sch('road');
+var nodes = [[60, 60, '第1章', '二极管'], [200, 60, '第2章', 'BJT 放大'], [340, 60, '第3章', 'FET 放大'], [200, 160, '第4章', '频率响应'], [480, 60, '第5章', '差分放大'], [620, 60, '第6章', '集成运放']];
+s.arrow(110, 60, 148, 60, '', 'acc'); s.arrow(250, 60, 288, 60, '', 'acc'); s.arrow(390, 60, 428, 60, '', 'acc'); s.arrow(530, 60, 568, 60, '', 'acc');
+s.arrow(200, 88, 200, 130, '', 'ink'); s.arrow(254, 158, 468, 90, '', 'ink');
+nodes.forEach(function(n){ mk('rect', {x:n[0] - 52, y:n[1] - 26, width:104, height:52, rx:8, class:'body'}, s.g); s.text(n[0], n[1] - 4, n[2], 'ts', 'middle'); s.text(n[0], n[1] + 16, n[3], 'tb', 'middle'); });
+s.text(330, 200, '直接耦合（f_L = 0）引出零点漂移问题', 'ts', 'middle');
+initPage(0);
+})();
+</script>
+</body>
+</html>
