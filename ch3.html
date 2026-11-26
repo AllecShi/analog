@@ -248,13 +248,13 @@ bindSliders(['jg', 'jd'], {jg:function(v){ return v.toFixed(2) + ' V'; }, jd:fun
   if (window.__jdot){ __jdot(v.jg, v.jd, I); }
 });
 var jt = new Plot('jTr', {x:50, y:20, w:250, h:170}, [-4.5, 0.5], [0, 4.5]);
-jt.axes({xl:'u_{GS}/V', yl:'i_D/mA', xt:[-4, -2], yt:[2, 4]}); jt.fn(function(g){ return g < UPN ? 0 : IDSS * Math.pow(1 - g / UPN, 2); }, 'cv', -4.5, 0);
-jt.text(-4, -0.5, 'U_{PN}', 'tval', 'middle'); jt.text(0.1, 4.2, 'I_{DSS}', 'tval');
+jt.axes({xl:'u_{GS}/V', yl:'i_D/mA', xt:[-2], yt:[2, 4]}); jt.fn(function(g){ return g < UPN ? 0 : IDSS * Math.pow(1 - g / UPN, 2); }, 'cv', -4.5, 0);
+jt.text(-4, -0.5, 'U_{PN}', 'tval', 'middle'); jt.text(-0.15, 4.0, 'I_{DSS}', 'tval', 'end');
 var jo = new Plot('jOutC', {x:50, y:20, w:250, h:170}, [0, 8], [0, 4.5]);
 jo.axes({xl:'u_{DS}/V', yl:'i_D/mA', xt:[2, 4, 6, 8], yt:[2, 4]});
 [0, -1, -2, -3].forEach(function(g){ jo.fn(function(d){ return jI(g, d); }, 'cvthin'); jo.text(8, jI(g, 8) + 0.15, 'u_{GS}=' + g + 'V', 'ts', 'end'); });
-jo.fn(function(d){ return IDSS * Math.pow(d / UPN, 2); }, 'cvdash', 0, 4); jo.text(3.6, 3.6, '预夹断轨迹', 'ts', 'end');
-window.__jdot = function(g, d, I){ var L1 = jt.clear(), L2 = jo.clear(); if (d >= g - UPN && g > UPN) jt.dot(g, I, L1); else jt.text(-2, 4.2, '未进入饱和区，点不在转移特性上', 'ts', 'middle', L1); if (d <= 8) jo.dot(d, I, L2); jo.fn(function(x){ return jI(g, x); }, 'cv', 0, 8, 200, L2); };
+jo.fn(function(d){ return IDSS * Math.pow(d / UPN, 2); }, 'cvdash', 0, 4); jo.text(4.1, 3.0, '预夹断轨迹', 'ts');
+window.__jdot = function(g, d, I){ var L1 = jt.clear(), L2 = jo.clear(); if (d >= g - UPN && g > UPN) jt.dot(g, I, L1); else jt.text(-2.4, 3.3, '未进入饱和区，点不在转移特性上', 'ts', 'middle', L1); if (d <= 8) jo.dot(d, I, L2); jo.fn(function(x){ return jI(g, x); }, 'cv', 0, 8, 200, L2); };
 document.getElementById('jg').dispatchEvent(new Event('input'));
 
 /* ---------- MOSFET interactive ---------- */
@@ -263,7 +263,7 @@ function mI(g, d){ if (g < UTN) return 0; var ov = g - UTN; return d < ov ? KN *
 var mc = new Plot('mosC', {x:60, y:20, w:540, h:240}, [0, 8], [0, 8.5]);
 mc.axes({xl:'u_{DS}/V', yl:'i_D/mA', xt:[2, 4, 6, 8], yt:[2, 4, 6, 8]});
 [2, 3, 4, 5].forEach(function(g){ mc.fn(function(d){ return mI(g, d); }, 'cvthin'); mc.text(8, mI(g, 8) + 0.2, 'u_{GS}=' + g + 'V', 'ts', 'end'); });
-mc.fn(function(d){ return KN * d * d; }, 'cvdash', 0, 4.2); mc.text(2.2, 6.6, '可变电阻区', 'tamber', 'middle'); mc.text(6, 1.2, '饱和区（恒流区）', 'tblue', 'middle');
+mc.fn(function(d){ return KN * d * d; }, 'cvdash', 0, 4.2); mc.text(1.2, 7.2, '可变电阻区', 'tamber', 'middle'); mc.text(6, 1.2, '饱和区（恒流区）', 'tblue', 'middle');
 mc.text(4.2, 8.3, 'u_{DS} = u_{GS} − U_{TN}', 'ts', 'start');
 function mosDraw(g, d){
   ms.innerHTML = ''; var s = new Sch(ms);
@@ -325,11 +325,11 @@ d2.text(140, 140, 'U_G', 'tval');
 var d4 = new Sch('dc4'), j4 = d4.fet(270, 150, {jfet:true, lab:'T'});
 d4.wire(100, 30, 380, 30); d4.term(380, 30); d4.text(388, 35, 'V_{DD} 16V', 't');
 d4.R(100, 30, 100, 150, {lab:'R_{g1}', val:'1950kΩ', side:'l'}); d4.R(100, 150, 100, 260, {lab:'R_{g2}', val:'50kΩ', side:'l'}); d4.node(100, 150);
-d4.wire(100, 150, 180, 150); d4.R(180, 150, 180, 230, {lab:'R_{g3}', val:'10MΩ'}); d4.line(180, 150, 180, 150);
+d4.wire(100, 150, 180, 150); d4.R(180, 150, 180, 230, {lab:'R_{g3}', val:'10MΩ', side:'l'}); d4.line(180, 150, 180, 150);
 d4.wire(180, 230, 215, 230, 215, j4.g[1], j4.g[0], j4.g[1]); d4.node(180, 150);
 d4.R(j4.d[0], 30, j4.d[0], j4.d[1], {lab:'R_d', val:'30kΩ'}); d4.node(j4.d[0], 30);
 d4.R(j4.s[0], j4.s[1], j4.s[0], 260, {lab:'R', val:'2kΩ'}); d4.wire(100, 260, j4.s[0], 260); d4.gnd(j4.s[0], 260);
-d4.text(50, 285, '（R_{g3} 下端接栅极；C_{b1}、C_{b2} 在直流通路中开路，已略去）', 'ts');
+d4.text(50, 302, '（R_{g3} 下端接栅极；C_{b1}、C_{b2} 在直流通路中开路，已略去）', 'ts');
 
 /* ---------- small signal model ---------- */
 var fs = new Sch('fetSS'), fm = fs.fet(110, 90, {pins:true});

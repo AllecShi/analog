@@ -68,7 +68,8 @@ Sch.prototype = {
   },
   box: function(x, y, w, h){ return mk('rect', {x:x, y:y, width:w, height:h, class:'box-dash', rx:4}, this.g); },
   /* generic two-terminal element: body drawn in local coords along +x, centered */
-  _two: function(x1, y1, x2, y2, L, body, o){
+  _two: function(x1, y1, x2, y2, L, body, o, hw){
+    hw = hw || 7;
     var dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy), ux = dx / len, uy = dy / len, mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
     this.line(x1, y1, mx - ux * L / 2, my - uy * L / 2);
     this.line(mx + ux * L / 2, my + uy * L / 2, x2, y2);
@@ -78,31 +79,37 @@ Sch.prototype = {
     var vert = Math.abs(uy) > 0.5, side = o.side || (vert ? 'r' : 't'), off = o.off || 0;
     var lab = o.lab, val = o.val;
     if (vert){
-      var xx = side === 'r' ? mx + 14 + off : mx - 14 - off, an = side === 'r' ? 'start' : 'end';
+      var xx = side === 'r' ? mx + hw + 7 + off : mx - hw - 7 - off, an = side === 'r' ? 'start' : 'end';
       if (lab && val){ rtext(this.g, xx, my - 3, lab, 't', an); rtext(this.g, xx, my + 15, val, 'tval', an); }
       else if (lab) rtext(this.g, xx, my + 5, lab, 't', an);
       else if (val) rtext(this.g, xx, my + 5, val, 'tval', an);
     } else {
-      var yy = side === 't' ? my - 14 - off : my + 24 + off;
+      var yy = side === 't' ? my - hw - 7 - off : my + hw + 17 + off;
       var txt = [lab, val].filter(Boolean);
       if (lab) rtext(this.g, mx - (val ? 4 : 0), yy, lab, 't', val ? 'end' : 'middle');
       if (val) rtext(this.g, mx + (lab ? 4 : 0), yy, val, 'tval', lab ? 'start' : 'middle');
     }
-    return {mx:mx, my:my, ux:ux, uy:uy};
+    return {mx:mx, my:my, ux:ux, uy:uy, vert:vert, side:side};
   },
   R: function(x1, y1, x2, y2, o){ return this._two(x1, y1, x2, y2, 34, function(g){ mk('rect', {x:-17, y:-7, width:34, height:14, class:'body'}, g); }, o); },
-  C: function(x1, y1, x2, y2, o){ return this._two(x1, y1, x2, y2, 9, function(g){ mk('line', {x1:-4.5, y1:-12, x2:-4.5, y2:12, class:'w2'}, g); mk('line', {x1:4.5, y1:-12, x2:4.5, y2:12, class:'w2'}, g); }, o); },
+  C: function(x1, y1, x2, y2, o){ return this._two(x1, y1, x2, y2, 9, function(g){ mk('line', {x1:-4.5, y1:-12, x2:-4.5, y2:12, class:'w2'}, g); mk('line', {x1:4.5, y1:-12, x2:4.5, y2:12, class:'w2'}, g); }, o, 12); },
   /* battery: first point is the + terminal (long plate) */
   bat: function(x1, y1, x2, y2, o){
-    var r = this._two(x1, y1, x2, y2, 10, function(g){ mk('line', {x1:-5, y1:-14, x2:-5, y2:14, class:'w'}, g); mk('line', {x1:5, y1:-7, x2:5, y2:7, class:'w2'}, g); }, o);
-    if (!(o && o.nopm)){ var px = -r.uy, py = r.ux, s = (o && o.pmSide === 'l') ? -1 : 1;
-      this.pm(r.mx - r.ux * 15 + px * 14 * s, r.my - r.uy * 15 + py * 14 * s, '+');
-      this.pm(r.mx + r.ux * 15 + px * 14 * s, r.my + r.uy * 15 + py * 14 * s, '-'); }
+    o = o || {};
+    var r = this._two(x1, y1, x2, y2, 10, function(g){ mk('line', {x1:-5, y1:-14, x2:-5, y2:14, class:'w'}, g); mk('line', {x1:5, y1:-7, x2:5, y2:7, class:'w2'}, g); }, o, 14);
+    if (!o.nopm){
+      /* +/- go on the side opposite the label, so they never collide with it */
+      var dx, dy;
+      if (o.lab || o.val){ if (r.vert){ dx = r.side === 'r' ? -1 : 1; dy = 0; } else { dx = 0; dy = r.side === 't' ? 1 : -1; } }
+      else { dx = -r.uy; dy = r.ux; }
+      if (o.pmSide === 'l'){ dx = -dx; dy = -dy; }
+      this.pm(r.mx - r.ux * 15 + dx * 15, r.my - r.uy * 15 + dy * 15, '+');
+      this.pm(r.mx + r.ux * 15 + dx * 15, r.my + r.uy * 15 + dy * 15, '-'); }
     return r;
   },
   /* AC / signal source: first point is + */
   vs: function(x1, y1, x2, y2, o){
-    var r = this._two(x1, y1, x2, y2, 30, function(g){ mk('circle', {cx:0, cy:0, r:15, class:'body'}, g); mk('path', {d:'M-8,0 C-5,-9 -1,-9 0,0 S5,9 8,0', class:'w', transform:'rotate(-90)'}, g); }, o);
+    var r = this._two(x1, y1, x2, y2, 30, function(g){ mk('circle', {cx:0, cy:0, r:15, class:'body'}, g); mk('path', {d:'M-8,0 C-5,-9 -1,-9 0,0 S5,9 8,0', class:'w', transform:'rotate(-90)'}, g); }, o, 16);
     var px = -r.uy, py = r.ux;
     this.pm(r.mx - r.ux * 22 + px * 12, r.my - r.uy * 22 + py * 12, '+');
     this.pm(r.mx + r.ux * 22 + px * 12, r.my + r.uy * 22 + py * 12, '-');
@@ -112,27 +119,27 @@ Sch.prototype = {
   vdc: function(x1, y1, x2, y2, o){
     return this._two(x1, y1, x2, y2, 30, function(g){ mk('circle', {cx:0, cy:0, r:15, class:'body'}, g);
       var a = mk('text', {x:-8, y:5, class:'pm', 'text-anchor':'middle', transform:'rotate(90 -8 0)'}, g); a.textContent = '+';
-      var b = mk('text', {x:8, y:5, class:'pm', 'text-anchor':'middle', transform:'rotate(90 8 0)'}, g); b.textContent = '−'; }, o);
+      var b = mk('text', {x:8, y:5, class:'pm', 'text-anchor':'middle', transform:'rotate(90 8 0)'}, g); b.textContent = '−'; }, o, 16);
   },
   /* dependent current source: diamond, arrow from first point toward second */
   ccs: function(x1, y1, x2, y2, o){
-    return this._two(x1, y1, x2, y2, 30, function(g){ mk('path', {d:'M-15,0 L0,-13 L15,0 L0,13 Z', class:'body'}, g); mk('line', {x1:-8, y1:0, x2:8, y2:0, class:'w', 'marker-end':''}, g); mk('path', {d:'M8,0 L2,-4 L2,4 Z', class:'solid'}, g); }, o);
+    return this._two(x1, y1, x2, y2, 30, function(g){ mk('path', {d:'M-15,0 L0,-13 L15,0 L0,13 Z', class:'body'}, g); mk('line', {x1:-8, y1:0, x2:8, y2:0, class:'w', 'marker-end':''}, g); mk('path', {d:'M8,0 L2,-4 L2,4 Z', class:'solid'}, g); }, o, 14);
   },
   /* dependent voltage source: diamond with + toward first point */
   ccvs: function(x1, y1, x2, y2, o){
     return this._two(x1, y1, x2, y2, 30, function(g){ mk('path', {d:'M-15,0 L0,-13 L15,0 L0,13 Z', class:'body'}, g);
       var a = mk('text', {x:-6, y:5, class:'pm', 'text-anchor':'middle', transform:'rotate(90 -6 0)'}, g); a.textContent = '+';
-      var b = mk('text', {x:7, y:5, class:'pm', 'text-anchor':'middle', transform:'rotate(90 7 0)'}, g); b.textContent = '−'; }, o);
+      var b = mk('text', {x:7, y:5, class:'pm', 'text-anchor':'middle', transform:'rotate(90 7 0)'}, g); b.textContent = '−'; }, o, 14);
   },
   isrc: function(x1, y1, x2, y2, o){
-    return this._two(x1, y1, x2, y2, 30, function(g){ mk('circle', {cx:0, cy:0, r:15, class:'body'}, g); mk('line', {x1:-8, y1:0, x2:5, y2:0, class:'w'}, g); mk('path', {d:'M9,0 L2,-4.5 L2,4.5 Z', class:'solid'}, g); }, o);
+    return this._two(x1, y1, x2, y2, 30, function(g){ mk('circle', {cx:0, cy:0, r:15, class:'body'}, g); mk('line', {x1:-8, y1:0, x2:5, y2:0, class:'w'}, g); mk('path', {d:'M9,0 L2,-4.5 L2,4.5 Z', class:'solid'}, g); }, o, 16);
   },
   /* diode: first point = anode */
   D: function(x1, y1, x2, y2, o){
-    return this._two(x1, y1, x2, y2, 22, function(g){ mk('path', {d:'M-10,-10 L-10,10 L8,0 Z', class:(o && o.open) ? 'body' : 'solid'}, g); mk('line', {x1:9, y1:-11, x2:9, y2:11, class:'w2'}, g); }, o);
+    return this._two(x1, y1, x2, y2, 22, function(g){ mk('path', {d:'M-10,-10 L-10,10 L8,0 Z', class:(o && o.open) ? 'body' : 'solid'}, g); mk('line', {x1:9, y1:-11, x2:9, y2:11, class:'w2'}, g); }, o, 11);
   },
   Z: function(x1, y1, x2, y2, o){
-    return this._two(x1, y1, x2, y2, 22, function(g){ mk('path', {d:'M-10,-10 L-10,10 L8,0 Z', class:'solid'}, g); mk('polyline', {points:'4,-14 9,-11 9,11 14,14', class:'w2'}, g); }, o);
+    return this._two(x1, y1, x2, y2, 22, function(g){ mk('path', {d:'M-10,-10 L-10,10 L8,0 Z', class:'solid'}, g); mk('polyline', {points:'4,-14 9,-11 9,11 14,14', class:'w2'}, g); }, o, 14);
   },
   sw: function(x1, y1, x2, y2, closed, o){
     return this._two(x1, y1, x2, y2, 30, function(g){ mk('circle', {cx:-15, cy:0, r:2.5, class:'node'}, g); mk('circle', {cx:15, cy:0, r:2.5, class:'node'}, g);
@@ -206,12 +213,14 @@ Plot.prototype = {
     var ax = (this.yr[0] <= 0 && this.yr[1] >= 0 && !o.xAtBottom) ? this.Y(0) : b.y + b.h;
     var ay = (this.xr[0] <= 0 && this.xr[1] >= 0 && !o.yAtLeft) ? this.X(0) : b.x;
     (o.xt || []).forEach(function(v){ if (o.grid !== false) mk('line', {x1:self.X(v), y1:b.y, x2:self.X(v), y2:b.y + b.h, class:'grid'}, g);
-      rtext(g, self.X(v), ax + 16, o.xf ? o.xf(v) : String(v), 'ts', 'middle'); });
+      /* o.xtShift: label just right of its tick, for plots whose vertical segments sit exactly on the ticks */
+      var sh = o.xtShift; rtext(g, self.X(v) + (sh ? 4 : 0), ax + 16, o.xf ? o.xf(v) : String(v), 'ts', sh ? 'start' : 'middle'); });
     (o.yt || []).forEach(function(v){ if (o.grid !== false) mk('line', {x1:b.x, y1:self.Y(v), x2:b.x + b.w, y2:self.Y(v), class:'grid'}, g);
-      rtext(g, ay - 6, self.Y(v) + 4, o.yf ? o.yf(v) : String(v), 'ts', 'end'); });
+      /* y axis through the middle: labels go to the left edge of the plot, clear of the curves */
+      rtext(g, (ay > b.x + 1 ? b.x : ay) - 6, self.Y(v) + 4, o.yf ? o.yf(v) : String(v), 'ts', 'end'); });
     mk('line', {x1:b.x - 4, y1:ax, x2:b.x + b.w + 10, y2:ax, class:'axis', 'marker-end':this.mk.ink}, g);
     mk('line', {x1:ay, y1:b.y + b.h + 4, x2:ay, y2:b.y - 10, class:'axis', 'marker-end':this.mk.ink}, g);
-    if (o.xl) rtext(g, b.x + b.w + 12, ax - 8, o.xl, 't', 'end');
+    if (o.xl) rtext(g, b.x + b.w + 16, ax - 4, o.xl, 't');
     if (o.yl) rtext(g, ay + 8, b.y - 2, o.yl, 't');
     return this;
   },
@@ -247,32 +256,61 @@ function bindSliders(ids, fmt, cb){
 /* ===== Page init: nav, toc, widgets, KaTeX ===== */
 function initPage(chNum){
   var here = CHAPTERS.filter(function(c){ return c.n === chNum; })[0];
-  // top bar
-  var bar = document.createElement('div'); bar.className = 'topbar';
-  var sel = '<select id="chsel" aria-label="跳转章节"><option value="index.html">目录</option>' +
-    CHAPTERS.map(function(c){ return '<option value="' + c.file + '"' + (c.n === chNum ? ' selected' : '') + '>第' + c.n + '章 ' + c.title + '</option>'; }).join('') + '</select>';
   var idx = CHAPTERS.indexOf(here), prev = idx > 0 ? CHAPTERS[idx - 1] : null, next = here && idx < CHAPTERS.length - 1 ? CHAPTERS[idx + 1] : null;
-  bar.innerHTML = '<a class="home" href="index.html">模电讲义</a>' + sel +
-    '<div class="pn">' + (prev ? '<a href="' + prev.file + '">← 第' + prev.n + '章</a>' : '') + (next ? '<a href="' + next.file + '">第' + next.n + '章 →</a>' : '') +
-    '<a href="#" id="themeBtn" class="theme">明/暗</a></div>';
-  document.body.insertBefore(bar, document.body.firstChild);
-  document.getElementById('chsel').addEventListener('change', function(e){ location.href = e.target.value; });
+  // sidebar (desktop: fixed on the left, no top bar; phones: slides in from a slim top bar)
   try { var th = localStorage.getItem('analog-theme'); if (th) document.documentElement.setAttribute('data-theme', th); } catch(e){}
-  document.getElementById('themeBtn').addEventListener('click', function(e){ e.preventDefault();
-    var cur = document.documentElement.getAttribute('data-theme');
-    var dark = cur ? cur === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
-    var nt = dark ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', nt);
-    try { localStorage.setItem('analog-theme', nt); } catch(e){} });
-
-  // toc
-  var toc = document.querySelector('.toc');
-  if (toc){
-    var hs = document.querySelectorAll('article h2[id]');
-    toc.innerHTML = '<b>本章目录</b>' + Array.prototype.map.call(hs, function(h){ return '<a href="#' + h.id + '">' + h.textContent + '</a>'; }).join('');
-    var links = toc.querySelectorAll('a');
+  var layout = document.querySelector('.layout');
+  var side = document.querySelector('nav.toc');
+  if (!side){ side = document.createElement('nav'); layout.insertBefore(side, layout.firstChild); }
+  side.className = 'sidebar'; side.setAttribute('aria-label', '目录');
+  var hs = document.querySelectorAll('article h2[id]');
+  var html = '<div class="sb-book">模拟电子技术基础 · 图解自学讲义</div><a class="sb-title" href="index.html">模电讲义</a>' +
+    '<a class="sb-home' + (chNum === 0 ? ' on' : '') + '" href="index.html">首页 · 学习路线</a><div class="sb-group-t">章节</div><ol>';
+  CHAPTERS.forEach(function(c){
+    var cur = c.n === chNum;
+    html += '<li' + (cur ? ' class="cur"' : '') + '><a class="sb-ch" href="' + c.file + '"><span>第 ' + c.n + ' 章　' + c.title + '</span><span class="r">' + c.slides + ' 页</span></a>';
+    if (cur){ html += '<div class="sb-secs">' + Array.prototype.map.call(hs, function(h){
+        var n = h.querySelector('.n'), t = h.innerHTML.replace(/<span class="n">[^<]*<\/span>/, '').replace(/<a [^>]*class="src"[^>]*>[^<]*<\/a>/g, '').trim();
+        return '<a href="#' + h.id + '">' + (n ? '<span class="sn">' + n.textContent + '</span>' : '') + '<span>' + t + '</span></a>'; }).join('') + '</div>'; }
+    html += '</li>';
+  });
+  html += '</ol>';
+  html += '<div class="sb-tools">外观：<button type="button" id="themeBtn"></button></div>';
+  side.innerHTML = html;
+  var themeBtn = document.getElementById('themeBtn');
+  function thGet(){ try { return localStorage.getItem('analog-theme'); } catch(e){ return null; } }
+  function thLabel(){ var t = thGet(); themeBtn.textContent = t === 'dark' ? '深色' : t === 'light' ? '浅色' : '跟随系统'; }
+  themeBtn.addEventListener('click', function(){
+    var t = thGet(), nt = t === null ? 'light' : t === 'light' ? 'dark' : null;
+    if (nt) document.documentElement.setAttribute('data-theme', nt); else document.documentElement.removeAttribute('data-theme');
+    try { nt ? localStorage.setItem('analog-theme', nt) : localStorage.removeItem('analog-theme'); } catch(e){}
+    thLabel(); });
+  thLabel();
+  var links = side.querySelectorAll('.sb-secs a');
+  if (links.length){
     var io = new IntersectionObserver(function(ents){ ents.forEach(function(en){ if (en.isIntersecting){
-      links.forEach(function(a){ a.classList.toggle('on', a.getAttribute('href') === '#' + en.target.id); }); } }); }, {rootMargin:'-10% 0px -80% 0px'});
+      links.forEach(function(a){ var on = a.getAttribute('href') === '#' + en.target.id; a.classList.toggle('on', on);
+        if (on && side.scrollHeight > side.clientHeight){ var r = a.getBoundingClientRect(), sr = side.getBoundingClientRect(); if (r.top < sr.top || r.bottom > sr.bottom) a.scrollIntoView({block:'nearest'}); } }); } }); }, {rootMargin:'-10% 0px -80% 0px'});
     hs.forEach(function(h){ io.observe(h); });
+  }
+  // phone top bar
+  var bar = document.createElement('div'); bar.className = 'topbar';
+  bar.innerHTML = '<button type="button" class="menu" aria-expanded="false">目录</button><span>' + (here ? '第 ' + here.n + ' 章　' + here.title : '模电讲义') + '</span>';
+  document.body.insertBefore(bar, document.body.firstChild);
+  var mask = document.createElement('div'); mask.className = 'sb-mask'; document.body.appendChild(mask);
+  var menu = bar.querySelector('.menu');
+  function setOpen(v){ document.body.classList.toggle('sb-open', v); menu.setAttribute('aria-expanded', v ? 'true' : 'false'); }
+  menu.addEventListener('click', function(){ setOpen(!document.body.classList.contains('sb-open')); });
+  mask.addEventListener('click', function(){ setOpen(false); });
+  side.addEventListener('click', function(e){ if (e.target.closest('a')) setOpen(false); });
+
+  // prev / next at the bottom of the article
+  var art = document.querySelector('article');
+  if (art && here){
+    var pn = document.createElement('nav'); pn.className = 'page-nav'; pn.setAttribute('aria-label', '上一章 / 下一章');
+    pn.innerHTML = (prev ? '<a class="pv" href="' + prev.file + '"><small>上一章</small>第 ' + prev.n + ' 章　' + prev.title + '</a>' : '<a class="pv" href="index.html"><small>返回</small>首页 · 学习路线</a>') +
+      (next ? '<a class="nx" href="' + next.file + '"><small>下一章</small>第 ' + next.n + ' 章　' + next.title + '</a>' : '<span></span>');
+    art.appendChild(pn);
   }
 
   // slide refs: <a class="src" data-s="48">S48</a> (chapter = this page) or data-s="2:48"
@@ -314,7 +352,8 @@ function initPage(chNum){
     c.innerHTML = '<button type="button" class="nx">先自己想，再看第 1 步</button><button type="button" class="al">显示全部</button><button type="button" class="rz">收起</button>';
     r.appendChild(c);
     function upd(){ steps.forEach(function(s, i){ s.hidden = i >= k; });
-      var nx = c.querySelector('.nx'); nx.disabled = k >= steps.length; nx.textContent = k >= steps.length ? '已全部显示' : (k === 0 ? '先自己想，再看第 1 步' : '下一步（第 ' + (k + 1) + ' / ' + steps.length + ' 步）'); }
+      var nx = c.querySelector('.nx'); nx.disabled = k >= steps.length; nx.textContent = k >= steps.length ? '已全部显示' : (k === 0 ? '先自己想，再看第 1 步' : '下一步（第 ' + (k + 1) + ' / ' + steps.length + ' 步）');
+      setTimeout(function(){ fitSvgs(r); }, 0); }
     c.querySelector('.nx').onclick = function(){ k = Math.min(steps.length, k + 1); upd(); };
     c.querySelector('.al').onclick = function(){ k = steps.length; upd(); };
     c.querySelector('.rz').onclick = function(){ k = 0; upd(); };
@@ -341,5 +380,56 @@ function initPage(chNum){
     renderMathInElement(document.body, {delimiters:[{left:'\\[', right:'\\]', display:true}, {left:'\\(', right:'\\)', display:false}], throwOnError:false, strict:false,
       ignoredTags:['script', 'noscript', 'style', 'textarea', 'pre', 'code', 'option', 'svg']});
   }
+  // subscripts in text written by scripts (readouts, buttons): U_BE -> U<sub>BE</sub>
+  fixSubs(document.body);
+  new MutationObserver(function(ms){ ms.forEach(function(m){ var el = m.target.nodeType === 3 ? m.target.parentNode : m.target; if (el) fixSubs(el); }); })
+    .observe(document.body, {childList:true, subtree:true, characterData:true});
+  // phones: figures always fit the screen width; tap one to see it large (scrollable)
+  document.querySelectorAll('.fig').forEach(function(f){
+    var svgs = f.querySelectorAll(':scope > svg'); if (!svgs.length) return;
+    var h = document.createElement('div'); h.className = 'zoomhint'; h.textContent = '点图放大查看'; svgs[svgs.length - 1].after(h);
+    svgs.forEach(function(sv){ sv.addEventListener('click', function(e){
+      if (!matchMedia('(max-width:700px)').matches) return;
+      var z = document.createElement('div'); z.className = 'figzoom';
+      z.innerHTML = '<div class="fzbar"><span>左右滑动查看全图</span><button type="button">关闭</button></div>';
+      var c = sv.cloneNode(true); c.removeAttribute('id'); c.style.cursor = 'zoom-out'; z.appendChild(c);
+      document.body.appendChild(z); document.body.style.overflow = 'hidden';
+      function close(){ z.remove(); document.body.style.overflow = ''; }
+      z.querySelector('button').onclick = close; c.onclick = close; }); });
+  });
+  // grow each figure's viewBox so no label is cut off at the edge
+  fitSvgs(document);
+  document.querySelectorAll('.tabs > .tabbar > button, details').forEach(function(b){ b.addEventListener(b.tagName === 'DETAILS' ? 'toggle' : 'click', function(){ setTimeout(function(){ fitSvgs(document); }, 0); }); });
   if (location.hash){ var t0 = document.getElementById(location.hash.slice(1)); if (t0) setTimeout(function(){ t0.scrollIntoView(); }, 50); }
+}
+
+
+/* ===== text subscripts written at runtime ===== */
+var SUB_RE = /([A-Za-z0-9)α-ωΑ-Ω'])(?:_\{([^}]*)\}|_([A-Za-z0-9']+)|\^\{([^}]*)\})/;
+var SUB_SKIP = 'svg,script,style,.katex,textarea,option,sub,sup';
+function fixSubs(root){
+  if (!root || root.nodeType !== 1 || root.closest(SUB_SKIP)) return;
+  var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null), n, todo = [];
+  while ((n = w.nextNode())){ var p = n.parentNode; if (p && p.closest && p.closest(SUB_SKIP)) continue; if (SUB_RE.test(n.nodeValue)) todo.push(n); }
+  todo.forEach(function(n){
+    var f = document.createDocumentFragment(), s = n.nodeValue, m;
+    while ((m = SUB_RE.exec(s))){
+      f.appendChild(document.createTextNode(s.slice(0, m.index + 1)));
+      var sub = m[2] !== undefined ? m[2] : m[3], e = document.createElement(sub !== undefined ? 'sub' : 'sup');
+      e.textContent = sub !== undefined ? sub : m[4]; f.appendChild(e);
+      s = s.slice(m.index + m[0].length);
+    }
+    f.appendChild(document.createTextNode(s));
+    n.parentNode.replaceChild(f, n);
+  });
+}
+/* ===== make the viewBox big enough for everything drawn ===== */
+function fitSvgs(root){
+  root.querySelectorAll('article svg[viewBox]').forEach(function(svg){
+    if (svg.closest('.katex') || !svg.getBoundingClientRect().width) return;
+    var vb = svg.viewBox.baseVal, b; try { b = svg.getBBox(); } catch(e){ return; }
+    if (!b.width) return;
+    var x0 = Math.min(vb.x, b.x - 4), y0 = Math.min(vb.y, b.y - 4), x1 = Math.max(vb.x + vb.width, b.x + b.width + 4), y1 = Math.max(vb.y + vb.height, b.y + b.height + 4);
+    if (x0 < vb.x || y0 < vb.y || x1 > vb.x + vb.width || y1 > vb.y + vb.height) svg.setAttribute('viewBox', [x0, y0, x1 - x0, y1 - y0].map(function(v){ return +v.toFixed(1); }).join(' '));
+  });
 }

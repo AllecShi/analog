@@ -34,8 +34,10 @@
 <!-- ============ 2.1.2 ============ -->
 <h2 id="principle"><span class="n">2.1.2</span>放大原理与电流分配</h2>
 <p>三极管能放大的<b>外部条件：发射结正偏，集电结反偏</b> <a class="src" data-s="8"></a> <a class="src" data-s="14"></a>。下面以 NPN 为例看电子怎么走：</p>
-<div class="panel fig"><svg id="trans" class="wide" viewBox="0 0 640 310" role="img" aria-label="载流子传输"></svg>
+<div class="panel fig"><svg id="trans" class="wide" viewBox="0 0 640 315" role="img" aria-label="载流子传输"></svg>
+<div class="legend"><span><i class="ele"></i>蓝色虚线箭头：电子运动方向</span><span><i class="cur"></i>红色实线箭头：电流方向</span></div>
 <div class="cap">① 发射结正偏，发射区大量电子注入基区；② 基区很薄、空穴很少，只有极少数电子在基区复合，形成很小的 \(I_B\)；③ 绝大多数电子扩散到集电结边缘，被反偏集电结的强电场“拉”进集电区，形成 \(I_C\)。</div></div>
+<div class="warn"><b>箭头约定（全讲义统一）：</b>标着 \(I\) 或 \(i\) 的红色实线箭头一律表示<b>电流方向</b>，即正电荷流动的方向；蓝色虚线箭头表示<b>电子运动方向</b>。电子带负电，所以两者正好相反：上图中电子从发射极流进管子、从集电极流出，而电流 \(I_E\) 从发射极流出、\(I_C\) 从集电极流入。NPN 符号上发射极的箭头朝外，指的也是电流方向。</div>
 <p>由 KCL 和传输过程得到电流分配关系 <a class="src" data-s="10"></a> <a class="src" data-s="11"></a>：</p>
 <div class="formula boxed">\[ I_E = I_B + I_C,\qquad I_C=\bar\beta I_B + I_{CEO}\approx \beta I_B,\qquad I_C=\bar\alpha I_E \]</div>
 <div class="formula">\[ \beta=\frac{\Delta i_C}{\Delta i_B}\ (\text{一般 }20\sim200),\qquad \alpha=\frac{\Delta i_C}{\Delta i_E}\approx 0.98\sim0.99,\qquad \beta=\frac{\alpha}{1-\alpha},\quad \alpha=\frac{\beta}{1+\beta} \]</div>
@@ -47,7 +49,7 @@
 <div class="key"><b>本质：</b>基极电流的微小变化引起集电极电流的较大变化，所以 BJT 是一个<b>电流控制电流源（CCCS）</b> <a class="src" data-s="16"></a>。注意它不“创造”能量，能量来自直流电源 \(V_{CC}\)。</div>
 <h3>三种组态 <a class="src" data-s="12"></a></h3>
 <p>三个电极中，一个接输入、一个接输出、剩下一个做输入输出的公共端：</p>
-<div class="panel fig"><svg id="cfg" class="wide" viewBox="0 0 660 200" role="img" aria-label="三种组态"></svg></div>
+<div class="panel fig"><svg id="cfg" class="wide" viewBox="0 0 660 200" role="img" aria-label="三种组态"></svg><div class="cap">共集电极接法中，集电极接直流电源 \(V_{CC}\)，电源对交流信号相当于短路，所以 c 是交流“公共端”。</div></div>
 <h3>三种工作状态 <a class="src" data-s="15"></a>–<a class="src" data-s="18"></a></h3>
 <div class="tbl"><table>
 <thead><tr><th>状态</th><th>发射结</th><th>集电结</th><th>NPN 电位关系</th><th>特点</th></tr></thead>
@@ -239,11 +241,24 @@ Q(40μA, 3.2mA, 5.6V)，<b>放大区</b>。在上面的交互图里把 \(R_b\) �
 <div class="panel fig"><svg id="hmodel" class="wide" viewBox="0 0 620 200" role="img" aria-label="小信号模型"></svg></div>
 <div class="formula boxed">\[ r_{be}=r_{bb'}+(1+\beta)\frac{26\,\mathrm{mV}}{I_{EQ}}\qquad(r_{bb'}\text{ 常取 }200\sim300\,\Omega) \]</div>
 <p class="muted">注意 \(r_{be}\) 由 Q 点决定，所以必须<b>先算静态</b>，才能做动态分析。</p>
+<details class="deriv"><summary>推导过程：\(r_{be}\) 的公式从哪来</summary>
+<div class="step"><b>①</b><div>\(r_{be}\) 是输入特性在 Q 点的“动态电阻”：\(r_{be}=\dfrac{\Delta u_{BE}}{\Delta i_B}\)。它由两段组成：基区体电阻 \(r_{bb'}\)（几百欧，近似常数）和发射结的动态电阻折算到基极的部分。</div></div>
+<div class="step"><b>②</b><div>发射结是一个 PN 结：\(i_E\approx I_Se^{u_{BE}/V_T}\)。求导：\(\dfrac{\mathrm di_E}{\mathrm du_{BE}}=\dfrac{i_E}{V_T}\)，所以发射结动态电阻 \(r_e=\dfrac{V_T}{I_{EQ}}\)，常温 \(V_T\approx26\,\mathrm{mV}\)。这就是第 1 章二极管 \(r_d=V_T/I_D\) 的同一个公式。</div></div>
+<div class="step"><b>③</b><div>\(r_e\) 上流的是 \(i_e=(1+\beta)i_b\)。从基极看，同样的电压 \(i_er_e\) 只对应 \(i_b\) 的电流，等效电阻放大 \((1+\beta)\) 倍：\((1+\beta)r_e\)。</div></div>
+<div class="step"><b>④</b><div>串联：\(r_{be}=r_{bb'}+(1+\beta)\dfrac{26\,\mathrm{mV}}{I_{EQ}}\)。\(I_{EQ}\) 越大，\(r_{be}\) 越小。</div></div>
+</details>
 <h3>用小信号模型分析共射放大电路</h3>
 <p>把交流通路中的三极管替换成小信号模型：</p>
 <div class="panel fig"><svg id="ceSS" class="wide" viewBox="0 0 640 230" role="img" aria-label="共射小信号等效电路"></svg></div>
 <div class="formula">\[ u_i=i_b r_{be},\qquad u_o=-\beta i_b\,(R_c/\!/R_L) \]
 \[ A_u=\frac{u_o}{u_i}=-\frac{\beta R_L'}{r_{be}},\qquad R_i=R_b/\!/r_{be}\approx r_{be},\qquad R_o=R_c,\qquad A_{us}=A_u\frac{R_i}{R_s+R_i} \]</div>
+<details class="deriv"><summary>推导过程：\(A_u\)、\(R_i\)、\(R_o\)、\(A_{us}\) 逐个按定义求</summary>
+<div class="step"><b>\(A_u\)</b><div>输入回路：\(u_i\) 直接加在 \(r_{be}\) 两端（\(R_b\) 与它并联，不影响这个电压），\(i_b=u_i/r_{be}\)。输出回路：受控电流 \(\beta i_b\) 从集电极向下流，流过 \(R_c/\!/R_L=R_L'\)，按 \(u_o\) 上正下负的参考方向，\(u_o=-\beta i_bR_L'\)。相除：\(A_u=-\dfrac{\beta R_L'}{r_{be}}\)。负号表示输出与输入反相。</div></div>
+<div class="step"><b>\(R_i\)</b><div>从输入端看进去，\(R_b\) 和 \(r_{be}\) 都接在 b 与地（e）之间，是并联：\(R_i=R_b/\!/r_{be}\)。\(R_b\) 一般几百 kΩ，\(r_{be}\) 约 1 kΩ，所以 \(R_i\approx r_{be}\)。</div></div>
+<div class="step"><b>\(R_o\)</b><div>按定义：令 \(u_s=0\)、去掉 \(R_L\)，在输出端加测试电压 \(u_t\)。\(u_s=0\Rightarrow i_b=0\Rightarrow\beta i_b=0\)，受控电流源开路，看进去只剩 \(R_c\)：\(R_o=R_c\)。</div></div>
+<div class="step"><b>\(A_{us}\)</b><div>信号源内阻 \(R_s\) 和 \(R_i\) 分压，真正加到放大器上的只有 \(u_i=\dfrac{R_i}{R_s+R_i}u_s\)，所以 \(A_{us}=\dfrac{u_o}{u_s}=A_u\dfrac{R_i}{R_s+R_i}\)，总比 \(|A_u|\) 小。</div></div>
+</details>
+<div class="myth"><b>常见误区：</b>求 \(R_o\) 时不能把 \(\beta i_b\) 当成固定电流源保留下来——它受 \(i_b\) 控制，信号源置零后 \(i_b=0\)，它自己也变成 0（开路）。另外 \(R_o\) 不包括 \(R_L\)，\(A_u\) 却要用 \(R_L'\)，两者别混。</div>
 <div class="ex">
 <div class="exh"><span class="tag">补充例题</span>完整的静态 + 动态分析</div>
 <p>沿用 S62 的电路（\(\beta=80, R_b=300\,\mathrm{k\Omega}, R_c=2\,\mathrm{k\Omega}, V_{CC}=12\,\mathrm{V}\)），再接 \(R_L=2\,\mathrm{k\Omega}\)，信号源内阻 \(R_s=0.5\,\mathrm{k\Omega}\)，\(r_{bb'}=200\,\Omega\)。求 \(A_u, R_i, R_o, A_{us}\)。<span class="muted">（讲义补充，便于把静态和动态串起来）</span></p>
@@ -305,25 +320,28 @@ rtext(st, 210, 40, '发射结', 'tred', 'middle'); rtext(st, 260, 25, '集电结
 mk('line', {x1:255, y1:30, x2:250, y2:48, class:'arr-blue'}, st);
 rtext(st, 135, 178, '掺杂最浓', 'ts', 'middle'); rtext(st, 300, 178, '基区最薄、掺杂最低', 'ts'); rtext(st, 470, 178, '面积最大', 'ts', 'middle');
 var sy = new Sch('syms');
-var a = sy.bjt(80, 75, {lab:'NPN', pins:true}); sy.line(a.b[0], a.b[1], a.b[0] - 20, a.b[1]); sy.text(a.b[0] - 24, a.b[1] + 5, '基极 b', 'ts', 'end');
+var a = sy.bjt(80, 75, {lab:'NPN'}); sy.line(a.b[0], a.b[1], a.b[0] - 20, a.b[1]); sy.text(a.b[0] - 24, a.b[1] + 5, '基极 b', 'ts', 'end');
 sy.text(a.c[0] + 4, a.c[1] - 4, '集电极 c', 'ts'); sy.text(a.e[0] + 4, a.e[1] + 14, '发射极 e', 'ts');
-var p = sy.bjt(350, 75, {lab:'PNP', pnp:true, pins:true}); sy.line(p.b[0], p.b[1], p.b[0] - 20, p.b[1]);
+var p = sy.bjt(350, 75, {lab:'PNP', pnp:true}); sy.line(p.b[0], p.b[1], p.b[0] - 20, p.b[1]);
 sy.text(p.c[0] + 4, p.c[1] - 4, '集电极 c', 'ts'); sy.text(p.e[0] + 4, p.e[1] + 14, '发射极 e', 'ts');
 
 /* ---------- transport ---------- */
+/* convention used everywhere: solid red arrow + I/i label = conventional current; dashed blue arrow = electron motion */
 var tr = document.getElementById('trans'), tm = addMarkers(tr);
 mk('rect', {x:60, y:40, width:180, height:130, class:'n-reg'}, tr); mk('rect', {x:240, y:40, width:50, height:130, class:'p-reg'}, tr); mk('rect', {x:290, y:40, width:250, height:130, class:'n-reg', style:'opacity:.6'}, tr);
 rtext(tr, 150, 32, '发射区 N^{+}', 't', 'middle'); rtext(tr, 265, 32, '基区 P', 't', 'middle'); rtext(tr, 415, 32, '集电区 N', 't', 'middle');
-[60, 85, 110, 135, 155].forEach(function(y, i){ if (i === 2){ mk('path', {d:'M90,' + y + ' L250,' + y + ' Q262,' + y + ' 262,' + (y + 25), class:'arr-blue', 'marker-end':tm.blue}, tr); }
-  else mk('line', {x1:90, y1:y, x2:510, y2:y, class:'arr-blue', 'marker-end':tm.blue}, tr); });
+[60, 85, 110, 135, 155].forEach(function(y, i){ if (i === 2){ mk('path', {d:'M90,' + y + ' L250,' + y + ' Q262,' + y + ' 262,' + (y + 25), class:'arr-e', 'marker-end':tm.blue}, tr); }
+  else mk('line', {x1:90, y1:y, x2:510, y2:y, class:'arr-e', 'marker-end':tm.blue}, tr); });
 for (var i = 0; i < 6; i++){ mk('circle', {cx:110 + i * 18, cy:72 + (i % 3) * 25, r:4, class:'elec'}, tr); mk('circle', {cx:330 + i * 30, cy:97 + (i % 2) * 25, r:4, class:'elec'}, tr); }
-mk('circle', {cx:268, cy:120, r:5, class:'hole'}, tr); rtext(tr, 300, 192, '少数电子在基区复合 → I_B', 'tred');
+mk('circle', {cx:268, cy:120, r:5, class:'hole'}, tr);
+rtext(tr, 300, 192, '② 少数电子在基区与空穴复合 → 形成 I_B', 'tred'); rtext(tr, 300, 214, '③ 大部分电子被集电结电场拉入集电区 → 形成 I_C', 'tblue');
+rtext(tr, 72, 192, '① 发射区注入电子', 'tblue');
 var ts = new Sch(tr);
 ts.wire(60, 105, 30, 105, 30, 270, 130, 270); ts.bat(170, 270, 130, 270, {lab:'V_{BB}'}); ts.wire(170, 270, 265, 270, 265, 170);
 ts.wire(265, 270, 360, 270); ts.bat(400, 270, 360, 270, {lab:'V_{CC}'}); ts.wire(400, 270, 600, 270, 600, 105, 540, 105); ts.node(265, 270);
-ts.arrow(30, 230, 30, 160, 'I_E', 'red', 36, 200); ts.arrow(600, 160, 600, 230, 'I_C', 'red', 606, 200); ts.arrow(265, 240, 265, 200, 'I_B', 'red', 271, 228);
-ts.text(150, 300, '发射结正偏', 'tval', 'middle'); ts.text(380, 300, '集电结反偏', 'tval', 'middle');
-ts.text(300, 140, '大部分电子被集电结电场拉入集电区', 'tblue');
+/* conventional current: I_C flows INTO the collector, I_B INTO the base, I_E OUT OF the emitter (opposite to the electrons) */
+ts.arrow(30, 150, 30, 225, 'I_E', 'red', 38, 200); ts.arrow(600, 225, 600, 150, 'I_C', 'red', 608, 200); ts.arrow(265, 250, 265, 226, 'I_B', 'red', 273, 246);
+ts.text(150, 304, '发射结正偏', 'tval', 'middle'); ts.text(380, 304, '集电结反偏', 'tval', 'middle');
 
 /* ---------- IB bars ---------- */
 var bb = document.getElementById('ibBars');
@@ -344,9 +362,9 @@ function cfgOne(x0, title, kind){
   if (kind === 'CE'){ cf.wire(b[0], b[1], x0 + 20, b[1]); cf.wire(c[0], c[1], c[0], 45, x0 + 190, 45); cf.line(e[0], e[1], e[0], gy);
     cf.term(x0 + 20, b[1]); cf.term(x0 + 190, 45); cf.text(x0 + 20, 125, '输入 b', 'ts'); cf.text(x0 + 190, 70, '输出 c', 'ts', 'end'); cf.text(e[0] + 6, 160, '公共 e', 'tval'); }
   if (kind === 'CB'){ cf.wire(e[0], e[1], e[0], 150, x0 + 20, 150); cf.wire(c[0], c[1], c[0], 45, x0 + 190, 45); cf.wire(b[0], b[1], b[0], gy);
-    cf.term(x0 + 20, 150); cf.term(x0 + 190, 45); cf.text(x0 + 20, 140, '输入 e', 'ts'); cf.text(x0 + 190, 70, '输出 c', 'ts', 'end'); cf.text(b[0] - 4, 160, '公共 b', 'tval', 'end'); }
+    cf.term(x0 + 20, 150); cf.term(x0 + 190, 45); cf.text(x0 + 20, 140, '输入 e', 'ts'); cf.text(x0 + 190, 70, '输出 c', 'ts', 'end'); cf.text(b[0] + 6, 165, '公共 b', 'tval'); }
   if (kind === 'CC'){ cf.wire(b[0], b[1], x0 + 20, b[1]); cf.wire(e[0], e[1], e[0], 150, x0 + 190, 150); cf.wire(c[0], c[1], c[0], 45, x0 + 70, 45, x0 + 70, gy);
-    cf.term(x0 + 20, b[1]); cf.term(x0 + 190, 150); cf.text(x0 + 20, 125, '输入 b', 'ts'); cf.text(x0 + 190, 140, '输出 e', 'ts', 'end'); cf.text(x0 + 74, 60, '公共 c（交流接地）', 'tval'); }
+    cf.term(x0 + 20, b[1]); cf.term(x0 + 190, 150); cf.text(x0 + 20, 125, '输入 b', 'ts'); cf.text(x0 + 190, 140, '输出 e', 'ts', 'end'); cf.text(x0 + 64, 78, '公共 c', 'tval', 'end'); }
 }
 cfgOne(0, '共射 CE：i_C = βi_B', 'CE'); cfgOne(220, '共基 CB：i_C = αi_E', 'CB'); cfgOne(440, '共集 CC：i_E = (1+β)i_B', 'CC');
 
@@ -377,12 +395,12 @@ op.text(0.9, 4.6, '饱和区', 'tred'); op.text(6, 4.6, '放大区', 'tblue'); o
 var ob = new Plot('outBig', {x:60, y:20, w:540, h:270}, [0, 12], [0, 6]);
 ob.axes({xl:'u_{CE}/V', yl:'i_C/mA', xt:[2, 4, 6, 8, 10, 12], yt:[1, 2, 3, 4, 5, 6]});
 ob.rect(0, 0, 0.8, 6, 'zone-red'); ob.rect(0, 0, 12, 0.1, 'zone');
-ob.text(0.4, 5.7, '饱和区', 'tred', 'middle'); ob.text(7, 5.7, '放大区（恒流）', 'tblue', 'middle'); ob.text(7, 0.25, '截止区 i_B ≤ 0', 'ts', 'middle');
+ob.text(0.9, 5.4, '饱和区', 'tred'); ob.text(7, 5.7, '放大区（恒流）', 'tblue', 'middle'); ob.text(7, 0.25, '截止区 i_B ≤ 0', 'ts', 'middle');
 var obd = ob.d;
 bindSliders(['ibSel'], {ibSel:function(v){ return v * 10 + ' μA'; }}, function(v){
   obd.innerHTML = '';
   [0, 1, 2, 3, 4, 5].forEach(function(k){ var path = ob.fn(function(u){ return icf(u, k * 10, 100); }, k === v.ibSel ? 'cv' : 'cvthin', 0, 12, 300, obd);
-    ob.text(12, icf(12, k * 10, 100) + 0.12, 'i_B=' + k * 10 + 'μA', k === v.ibSel ? 'tval' : 'ts', 'end', obd); });
+    if (k > 0) ob.text(12, icf(12, k * 10, 100) + 0.12, 'i_B=' + k * 10 + 'μA', k === v.ibSel ? 'tval' : 'ts', 'end', obd); });
   if (v.ibSel > 0) ob.text(3, icf(3, v.ibSel * 10, 100) + 0.35, 'i_C ≈ β i_B = 100 × ' + v.ibSel * 10 + 'μA = ' + (v.ibSel) + ' mA', 'tval', 'start', obd);
 });
 
@@ -393,7 +411,7 @@ var PCM = 1200, ICM = 100, UBR = 35;
 var pts = [[0, 0], [0, ICM]]; for (var u = PCM / ICM; u <= UBR; u += 0.5) pts.push([u, PCM / u]); pts.push([UBR, PCM / UBR], [UBR, 0]);
 mk('polygon', {points:pts.map(function(q){ return so.X(q[0]) + ',' + so.Y(q[1]); }).join(' '), class:'zone'}, so.g);
 so.fn(function(u){ return PCM / u; }, 'cv3', 9, 40); so.hline(ICM, 'cv4'); so.vline(UBR, 'cv4');
-so.text(25, 60, 'P_{CM} 双曲线：i_C u_{CE} = P_{CM}', 'tred'); so.text(2, ICM + 5, 'I_{CM}', 'tamber'); so.text(UBR + 0.5, 110, 'U_{(BR)CEO}', 'tamber');
+so.text(20.5, 88, 'P_{CM} 双曲线：i_C u_{CE} = P_{CM}', 'tred'); so.text(2, ICM + 5, 'I_{CM}', 'tamber'); so.text(UBR + 0.5, 110, 'U_{(BR)CEO}', 'tamber');
 so.text(8, 30, '安全工作区', 'tval', 'middle');
 
 /* ---------- CE circuit ---------- */
@@ -427,7 +445,7 @@ function djDraw(){
   djIn.fn(function(u){ return ib(u); }, 'cv3', U0 - A, U0 + A, 50, d1);
   djIn.dot(U0, ib(U0), d1); djIn.text(U0, -12, biased ? 'Q：0.7V' : 'Q：0V', 'tred', 'middle', d1);
   djT.fn(function(t){ return ib(U0 + A * Math.sin(t)); }, 'cv3', 0, 4 * Math.PI, 300, d2);
-  djT.text(2 * Math.PI, 72, biased ? 'i_B 随信号变化，信号传过去了' : 'i_B ≡ 0，信号丢失', biased ? 'tval' : 'tred', 'middle', d2);
+  djT.text(2 * Math.PI, -12, biased ? 'i_B 随信号变化，信号传过去了' : 'i_B ≡ 0，信号丢失', biased ? 'tval' : 'tred', 'middle', d2);
 }
 document.getElementById('uiA').addEventListener('input', djDraw);
 document.getElementById('biasOn').onclick = function(){ biased = true; this.classList.add('on'); document.getElementById('biasOff').classList.remove('on'); djDraw(); };
@@ -475,7 +493,7 @@ bindSliders(['Rb', 'Rc'], {Rb:function(v){ return v + ' kΩ'; }, Rc:function(v){
   var IB = (VCC - 0.7) / v.Rb * 1000, U = solveQ(IB, v.Rc), IC = (VCC - U) / v.Rc, d = lp.clear();
   lp.fn(function(u){ return icf(u, IB, BETA); }, 'cv2', 0, 13, 300, d);
   lp.poly([[0, VCC / v.Rc], [VCC, 0]], 'cv', d);
-  lp.text(VCC - 0.3, 0.8, '(V_{CC}, 0)', 'tval', 'end', d); if (VCC / v.Rc < 8.8) lp.text(0.2, VCC / v.Rc + 0.25, '(0, V_{CC}/R_c)', 'tval', 'start', d);
+  lp.text(VCC - 0.3, 0.8, '(V_{CC}, 0)', 'tval', 'end', d); if (VCC / v.Rc < 8.8) lp.text(0.6, VCC / v.Rc + 0.5, '(0, V_{CC}/R_c)', 'tval', 'start', d);
   lp.dot(U, IC, d); lp.text(U + 0.25, IC + 0.45, 'Q', 'tred', 'start', d);
   var sat = U < 0.8, st = sat ? ['饱和区', 'var(--red)'] : ['放大区', 'var(--blue)'];
   document.getElementById('qOut').innerHTML = '<span>I_BQ = ' + IB.toFixed(1) + ' μA</span><span>I_CQ = ' + IC.toFixed(2) + ' mA</span><span>U_CEQ = ' + U.toFixed(2) + ' V</span><span class="state" style="color:' + st[1] + '">' + st[0] + '</span>' + (sat ? '<span>βI_B = ' + (BETA * IB / 1000).toFixed(1) + ' mA 已超过 V_CC/R_c = ' + (VCC / v.Rc).toFixed(1) + ' mA</span>' : '');
@@ -489,7 +507,7 @@ rows.forEach(function(r, i){ var zero = r[2] === 0;
   var pl = new Plot(wv, {x:90, y:10 + i * 64, w:520, h:48}, [0, 4 * Math.PI], zero ? [-1.2, 1.2] : [0, 1.05]);
   pl.axes({xt:[], yt:[], grid:false, xAtBottom:!zero}); if (!zero) pl.hline(r[2], 'cvdash');
   pl.fn(r[1], r[3]); rtext(wv, 80, 40 + i * 64, r[0], 't', 'end');
-  if (!zero) pl.text(4 * Math.PI, r[2] + 0.12, '直流分量', 'ts', 'end'); });
+  if (!zero) rtext(wv, pl.X(4 * Math.PI) + 22, pl.Y(r[2]) + 4, '直流分量', 'ts'); });
 mk('line', {x1:90 + 520 / 8, y1:10, x2:90 + 520 / 8, y2:390, class:'cvdash'}, wv); rtext(wv, 90 + 520 / 8 + 4, 395, 'u_i 最大时 u_o 最小 → 反相', 'tred');
 
 /* ---------- distortion ---------- */

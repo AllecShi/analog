@@ -32,6 +32,13 @@
 <div class="readout" id="aodOut"></div>
 <div class="cap">实际运放 \(A_{od}\) 约 \(10^5\) 以上，线性区只有零点几毫伏。不加负反馈，一点点输入差就会让输出饱和。所以：<b>运放要工作在线性区，必须引入负反馈</b>。</div>
 </div>
+<details class="deriv"><summary>推导过程：为什么加了负反馈，增益就只由外部电阻决定<span class="hint">（理解虚短的来历）</span></summary>
+<p>把运放看成一个增益为 \(A_{od}\) 的放大器，输出的一部分 \(F\,u_O\) 送回反相端（\(F\) 叫反馈系数，由电阻分压决定，\(0\lt F\le1\)）。输入 \(u_I\) 接同相端：</p>
+<div class="step"><b>①</b><div>运放本身：\(u_O=A_{od}(u_+-u_-)=A_{od}(u_I-F\,u_O)\)</div></div>
+<div class="step"><b>②</b><div>移项：\(u_O(1+A_{od}F)=A_{od}u_I\)，所以 \[A_{uf}=\frac{u_O}{u_I}=\frac{A_{od}}{1+A_{od}F}\]</div></div>
+<div class="step"><b>③</b><div>\(A_{od}\to\infty\) 时 \(A_{od}F\gg1\)：\[A_{uf}\approx\frac1F\]和 \(A_{od}\) 无关。\(A_{od}\) 从 \(10^5\) 变到 \(2\times10^5\)，闭环增益几乎不变——这就是用负反馈换来的稳定。</div></div>
+<div class="step"><b>④</b><div>再看两输入端的差：\(u_+-u_-=u_O/A_{od}\)。以 \(u_O=5\,\mathrm V\)、\(A_{od}=10^5\) 为例，差值只有 \(50\,\mu\mathrm V\)，和毫伏、伏级的信号比可以当作 0。这就是“虚短”：它是负反馈 + 高增益共同造成的结果，不是运放自带的性质。</div></div>
+</details>
 <p class="muted">主要参数 <a class="src" data-s="9"></a> <a class="src" data-s="10"></a>：最大输出电压 \(U_{OM}\)、开环差模增益 \(A_{od}\)、最大共模输入电压 \(U_{ICM}\)、输入失调电压 \(U_{IO}\)、输入失调电流 \(I_{IO}\)、输入偏置电流 \(I_{IB}\)（后三个越小越好）。</p>
 
 <h2 id="ideal"><span class="n">6.2</span>理想运放：虚短与虚断</h2>
@@ -47,6 +54,12 @@
 <p>输出只有两个值：</p>\[u_+>u_-\Rightarrow u_O=+U_{om},\qquad u_+\lt u_-\Rightarrow u_O=-U_{om}\]
 <p><b>虚断仍然成立</b>（\(i_+=i_-=0\)），但<b>不存在虚短</b>。</p></div>
 </div>
+<div class="myth"><b>常见误区</b>
+<ul>
+<li><b>“虚短”≠ 两端真的短接。</b>两端电位相等，但中间没有导线；如果你在两输入端之间接一根线，电路就完全变了。</li>
+<li><b>“虚地”只在同相端接地（或经电阻接地、电阻上无电流）时才有。</b>同相比例电路里 \(u_-=u_I\)，反相端不是虚地。</li>
+<li><b>先判断有没有负反馈，再用虚短。</b>比较器（开环或正反馈）里套用虚短，是这一章最常见的错误。</li>
+</ul></div>
 
 <h2 id="prop"><span class="n">6.3.1</span>比例运算电路</h2>
 <h3>反相比例 <a class="src" data-s="19"></a> <a class="src" data-s="20"></a></h3>
@@ -57,6 +70,10 @@
 <div class="rs">令 \(i_1=i_F\)：\[A_{uf}=\frac{u_O}{u_I}=-\frac{R_F}{R_1}\]</div>
 <div class="rs"><b>平衡电阻</b> \(R_2=R_1/\!/R_F\)，让静态时两个输入端对地电阻相同，减小偏置电流带来的误差。<b>输入电阻</b> \(r_i=R_1\)（较低）；反相端虚地，共模输入电压低。</div>
 </div>
+<details class="deriv"><summary>推导过程：输入电阻和平衡电阻</summary>
+<div class="step"><b>输入电阻</b><div>从 \(u_I\) 看进去：\(r_i=\dfrac{u_I}{i_1}=\dfrac{u_I}{u_I/R_1}=R_1\)。因为反相端虚地，\(R_1\) 右端相当于接地，所以输入电阻就是 \(R_1\)。想要高输入电阻就得把 \(R_1\) 做大，但 \(R_F\) 也得跟着变大，大电阻噪声大、精度差——这是反相比例的天然缺点。</div></div>
+<div class="step"><b>平衡电阻</b><div>实际运放两个输入端都有很小的偏置电流 \(I_{IB}\)。令 \(u_I=0\)、\(u_O=0\)，从反相端看出去的对地电阻是 \(R_1/\!/R_F\)，偏置电流在它上面产生压降 \(I_{IB}(R_1/\!/R_F)\)；同相端偏置电流在 \(R_2\) 上产生 \(I_{IB}R_2\)。两者相等时互相抵消，不会被放大到输出端，所以取 \(R_2=R_1/\!/R_F\)。理想运放分析里 \(R_2\) 不影响增益。</div></div>
+</details>
 <div class="panel">
 <b>动手：</b>改变电阻和输入幅值，注意输出不能超过 \(\pm U_{om}=\pm12\,\mathrm V\)。
 <div class="ctl"><label for="r1">\(R_1\)</label><input type="range" id="r1" min="1" max="50" step="1" value="10"><output for="r1"></output></div>
@@ -73,6 +90,13 @@
 <div class="rs">\(u_-\) 由 \(u_O\) 经 \(R_F, R_1\) 分压得到：\(u_-=\frac{R_1}{R_1+R_F}u_O=u_I\)</div>
 <div class="rs">\[A_{uf}=\frac{u_O}{u_I}=1+\frac{R_F}{R_1}\ \ (\ge1,\ \text{同相})\]输入电阻很高；但两输入端都有 \(u_I\)，共模输入电压较高。</div>
 </div>
+<details class="deriv"><summary>推导过程：用 KCL 直接推同相比例（和反相比例用同一套方法）</summary>
+<div class="step"><b>①</b><div>虚断：\(R_2\) 上没有电流，\(u_+=u_I\)；虚短：\(u_-=u_+=u_I\)。</div></div>
+<div class="step"><b>②</b><div>对反相端列 KCL（虚断，流入运放的电流为 0）：流过 \(R_F\) 的电流全部流过 \(R_1\)：\[\frac{u_O-u_-}{R_F}=\frac{u_--0}{R_1}\]</div></div>
+<div class="step"><b>③</b><div>代入 \(u_-=u_I\)：\(\dfrac{u_O-u_I}{R_F}=\dfrac{u_I}{R_1}\Rightarrow u_O=u_I+\dfrac{R_F}{R_1}u_I=\left(1+\dfrac{R_F}{R_1}\right)u_I\)。</div></div>
+<div class="step"><b>④</b><div>输入电阻：\(u_I\) 只接到同相端，虚断使 \(i_+=0\)，所以 \(r_i\to\infty\)。</div></div>
+</details>
+<div class="myth"><b>常见误区：</b>同相比例的增益是 \(1+R_F/R_1\)，不是 \(R_F/R_1\)。最小也是 1（\(R_F=0\) 或 \(R_1=\infty\)），所以它<b>不能</b>做衰减。</div>
 <div class="grid2">
 <div class="panel"><h4>电压跟随器 <a class="src" data-s="24"></a></h4><svg id="fol" viewBox="0 0 300 170" role="img" aria-label="电压跟随器"></svg>
 <p class="muted">\(R_1=\infty\)、\(R_F=0\) 时 \(u_O=u_I\)，\(A_{uf}=1\)。输入电阻高、输出电阻低，跟随性能比射极输出器更好。</p></div>
@@ -85,9 +109,20 @@
 <div class="panel fig"><svg id="sumInv" class="wide" viewBox="0 0 560 240" role="img" aria-label="反相求和"></svg></div>
 <p>反相端虚地，各路电流独立：\(i_{I1}+i_{I2}=i_F\)，</p>
 <div class="formula">\[ u_O=-\left(\frac{R_F}{R_{11}}u_{I1}+\frac{R_F}{R_{12}}u_{I2}\right)\quad\xrightarrow{R_{11}=R_{12}=R_1}\quad u_O=-\frac{R_F}{R_1}(u_{I1}+u_{I2}) \]</div>
+<details class="deriv"><summary>推导过程：反相求和</summary>
+<div class="step"><b>①</b><div>同相端经电阻接地、无电流：\(u_+=0\)；虚短：\(u_-=0\)（虚地）。</div></div>
+<div class="step"><b>②</b><div>每一路输入电流只由自己决定：\(i_{I1}=\dfrac{u_{I1}-0}{R_{11}}\)，\(i_{I2}=\dfrac{u_{I2}-0}{R_{12}}\)。这正是“各路互不影响”的原因——它们的右端都钉在 0 V 上。</div></div>
+<div class="step"><b>③</b><div>反相端 KCL（虚断）：\(i_{I1}+i_{I2}=i_F=\dfrac{0-u_O}{R_F}\)。</div></div>
+<div class="step"><b>④</b><div>\(u_O=-R_F\left(\dfrac{u_{I1}}{R_{11}}+\dfrac{u_{I2}}{R_{12}}\right)\)。</div></div>
+</details>
 <p class="muted">平衡电阻 \(R_2=R_{11}/\!/R_{12}/\!/R_F\)。</p>
 <h3>同相求和 <a class="src" data-s="27"></a>–<a class="src" data-s="29"></a></h3>
 <p>用叠加原理或先求 \(u_+\)（两路输入对同相端分压），再乘同相比例 \(1+R_F/R_1\)。</p>
+<details class="deriv"><summary>推导过程：同相求和（两路输入 \(u_{I1}\) 经 \(R_{21}\)、\(u_{I2}\) 经 \(R_{22}\) 接到同相端）</summary>
+<div class="step"><b>①</b><div>虚断：同相端没有电流流入运放，对同相端列 KCL：\[\frac{u_{I1}-u_+}{R_{21}}+\frac{u_{I2}-u_+}{R_{22}}=0\ \Rightarrow\ u_+=\frac{R_{22}}{R_{21}+R_{22}}u_{I1}+\frac{R_{21}}{R_{21}+R_{22}}u_{I2}\]</div></div>
+<div class="step"><b>②</b><div>从 \(u_+\) 到 \(u_O\) 就是同相比例：\(u_O=\left(1+\dfrac{R_F}{R_1}\right)u_+\)。</div></div>
+<div class="step"><b>③</b><div>注意 ① 里每一路的系数分母都含 \(R_{21}+R_{22}\)：改动任何一个电阻，两路的系数都会变。这就是表里“对其他路有影响”的来源。</div></div>
+</details>
 <div class="tbl"><table>
 <thead><tr><th></th><th>反相求和</th><th>同相求和</th></tr></thead>
 <tbody>
@@ -99,6 +134,13 @@
 <div class="panel fig"><svg id="sub" class="wide" viewBox="0 0 560 250" role="img" aria-label="减法电路"></svg></div>
 <p>看作反相比例与同相比例的叠加：</p>
 <div class="formula">\[ u_O=\left(1+\frac{R_F}{R_1}\right)\frac{R_3}{R_2+R_3}u_{I2}-\frac{R_F}{R_1}u_{I1}\quad\xrightarrow{R_1=R_2,\ R_3=R_F}\quad u_O=\frac{R_F}{R_1}(u_{I2}-u_{I1}) \]</div>
+<details class="deriv"><summary>推导过程：减法电路（叠加原理）</summary>
+<div class="step"><b>①</b><div><b>只留 \(u_{I1}\)</b>（\(u_{I2}\) 接地）：同相端经 \(R_2/\!/R_3\) 接地且无电流，\(u_+=0\)，电路就是反相比例：\(u_O'=-\dfrac{R_F}{R_1}u_{I1}\)。</div></div>
+<div class="step"><b>②</b><div><b>只留 \(u_{I2}\)</b>（\(u_{I1}\) 接地）：同相端电压由 \(R_2\)、\(R_3\) 分压得 \(u_+=\dfrac{R_3}{R_2+R_3}u_{I2}\)；从同相端看是同相比例（\(R_1\) 的左端接地）：\(u_O''=\left(1+\dfrac{R_F}{R_1}\right)\dfrac{R_3}{R_2+R_3}u_{I2}\)。</div></div>
+<div class="step"><b>③</b><div>叠加：\(u_O=u_O'+u_O''\)，即上面的公式。</div></div>
+<div class="step"><b>④</b><div>取 \(R_1=R_2\)、\(R_3=R_F\)：\(\left(1+\dfrac{R_F}{R_1}\right)\dfrac{R_F}{R_1+R_F}=\dfrac{R_1+R_F}{R_1}\cdot\dfrac{R_F}{R_1+R_F}=\dfrac{R_F}{R_1}\)，两路系数大小相同，得 \(u_O=\dfrac{R_F}{R_1}(u_{I2}-u_{I1})\)。</div></div>
+<p class="muted">为什么一定要配平？如果两路系数不相等，\(u_{I1}=u_{I2}\)（共模信号）时输出不为零，电路就不再只放大“差”——这和第 5 章差放要求两边对称是同一个道理。</p>
+</details>
 <p class="muted">输出与两输入之差成正比，常用作测量放大电路。缺点：比例系数调节不方便，输入电阻较低。</p>
 
 <div class="ex">
@@ -125,6 +167,14 @@
 <div class="panel fig"><svg id="intC" class="wide" viewBox="0 0 560 220" role="img" aria-label="积分电路"></svg></div>
 <p>把反相比例的 \(R_F\) 换成电容 \(C_F\)。虚地：\(i_1=u_I/R_1\)；虚断：这个电流全部给电容充电，\(u_O=-u_C\)：</p>
 <div class="formula boxed">\[ u_O=-\frac{1}{R_1C_F}\int u_I\,\mathrm dt+u_O(t_0)\qquad\xrightarrow{u_I=U_I\ \text{恒定}}\qquad u_O=-\frac{U_I}{R_1C_F}t \]</div>
+<details class="deriv"><summary>推导过程：积分电路</summary>
+<div class="step"><b>①</b><div>虚地：\(u_-=0\)，所以 \(i_1=\dfrac{u_I}{R_1}\)。</div></div>
+<div class="step"><b>②</b><div>虚断：\(i_1\) 全部流进电容，\(i_C=i_1\)。电容两端电压 \(u_C=u_--u_O=-u_O\)（左正右负为参考方向）。</div></div>
+<div class="step"><b>③</b><div>电容的伏安关系 \(i_C=C_F\dfrac{\mathrm du_C}{\mathrm dt}\)，所以 \(\dfrac{u_I}{R_1}=C_F\dfrac{\mathrm d(-u_O)}{\mathrm dt}\)，即 \[\frac{\mathrm du_O}{\mathrm dt}=-\frac{u_I}{R_1C_F}\]</div></div>
+<div class="step"><b>④</b><div>两边从 \(t_0\) 积到 \(t\)：\(u_O(t)=-\dfrac{1}{R_1C_F}\displaystyle\int_{t_0}^{t}u_I\,\mathrm dt+u_O(t_0)\)。</div></div>
+<div class="step"><b>⑤</b><div>\(u_I=U_I\) 恒定、\(u_O(t_0)=0\)：积分就是 \(U_I t\)，输出是斜率 \(-U_I/(R_1C_F)\) 的直线。换句话说：恒流 \(U_I/R_1\) 给电容充电，电容电压均匀上升。</div></div>
+</details>
+<div class="myth"><b>常见误区：</b>恒定输入下积分器的输出不会“稳定在某个值”，而是一直斜坡下降，直到运放饱和在 \(-U_{om}\)。饱和以后运放退出线性区，虚短不再成立，上面的公式也就失效了。</div>
 <p>输入恒定时输出随时间<b>线性</b>变化，直到 \(-U_{om}\)（积分饱和）。方波输入得到三角波输出：</p>
 <div class="panel">
 <div class="ctl"><label for="tau">\(R_1C_F\)</label><input type="range" id="tau" min="0.2" max="3" step="0.05" value="1"><output for="tau"></output></div>
@@ -135,6 +185,11 @@
 <h3>微分运算 <a class="src" data-s="37"></a> <a class="src" data-s="38"></a></h3>
 <p>把输入电阻换成电容 \(C_1\)：\(i_1=C_1\frac{\mathrm du_I}{\mathrm dt}=i_F\)，</p>
 <div class="formula boxed">\[ u_O=-R_FC_1\frac{\mathrm du_I}{\mathrm dt} \]</div>
+<details class="deriv"><summary>推导过程：微分电路，以及它为什么怕干扰</summary>
+<div class="step"><b>①</b><div>虚地：电容 \(C_1\) 两端电压就是 \(u_I\)，所以 \(i_1=C_1\dfrac{\mathrm du_I}{\mathrm dt}\)。</div></div>
+<div class="step"><b>②</b><div>虚断：\(i_F=i_1\)；\(R_F\) 上 \(u_--u_O=i_FR_F\)，即 \(u_O=-R_Fi_1=-R_FC_1\dfrac{\mathrm du_I}{\mathrm dt}\)。</div></div>
+<div class="step"><b>③</b><div>输入正弦 \(u_I=U\sin\omega t\)：\(u_O=-\omega R_FC_1U\cos\omega t\)，输出幅值和 \(\omega\) 成正比。频率越高的成分被放大得越多，而噪声恰好以高频为主，所以微分器输出很“毛”。实际电路常在 \(C_1\) 上串一个小电阻来限制高频增益。</div></div>
+</details>
 <p class="muted">输出与输入的<b>变化率</b>成正比。干扰都是快速变化的高频信号，所以微分器抗干扰能力差。比例–微分（PD 调节器）：\(u_O=-\left(\frac{R_F}{R_1}u_I+R_FC_1\frac{\mathrm du_I}{\mathrm dt}\right)\)，能加快系统响应。</p>
 <h3>基本运算电路归纳 <a class="src" data-s="39"></a> <a class="src" data-s="40"></a></h3>
 <div class="tbl"><table>
@@ -165,6 +220,12 @@
 \[U'_+=\frac{R_2}{R_2+R_F}U_{om},\qquad U''_+=-\frac{R_2}{R_2+R_F}U_{om}\]
 \[\text{回差 }\Delta U=U'_+-U''_+=\frac{2R_2}{R_2+R_F}U_{om}\]</div>
 </div>
+<details class="deriv"><summary>推导过程：滞回比较器的两个门限和翻转过程</summary>
+<div class="step"><b>①</b><div>虚断：同相端不取电流，\(R_2\) 和 \(R_F\) 串联把 \(u_O\) 分压：\(u_+=\dfrac{R_2}{R_2+R_F}u_O\)。注意这里<b>不能</b>用虚短，\(u_+\) 和 \(u_-\) 一般不相等。</div></div>
+<div class="step"><b>②</b><div>输出只有两种状态，所以 \(u_+\) 也只有两种值：\(u_O=+U_{om}\) 时 \(U'_+=+\dfrac{R_2}{R_2+R_F}U_{om}\)；\(u_O=-U_{om}\) 时 \(U''_+=-\dfrac{R_2}{R_2+R_F}U_{om}\)。</div></div>
+<div class="step"><b>③</b><div>翻转条件是 \(u_-=u_I\) 穿过当前的 \(u_+\)。设开始时 \(u_I\) 很负，\(u_O=+U_{om}\)，门限是 \(U'_+\)；\(u_I\) 上升到 \(U'_+\) 时输出翻到 \(-U_{om}\)，门限立刻变成 \(U''_+\)，比 \(u_I\) 低得多——即使 \(u_I\) 稍微回落一点，也翻不回去。</div></div>
+<div class="step"><b>④</b><div>只有 \(u_I\) 一路降到 \(U''_+\) 以下，输出才翻回 \(+U_{om}\)。两个门限之差 \(\Delta U\) 就是它能容忍的噪声幅度。</div></div>
+</details>
 <div class="panel">
 <b>对比：</b>同一个带噪声的输入，单门限和滞回比较器的输出（\(U_{om}=\pm6\,\mathrm V\)）。
 <div class="btns"><button type="button" id="hOn" class="on">滞回比较器（门限 ±2V）</button><button type="button" id="hOff">单门限（门限 0V）</button></div>
@@ -192,6 +253,9 @@
 <div class="fig"><svg id="ex2c" viewBox="0 0 340 200" role="img" aria-label="例2电路"></svg></div>
 <div class="reveal">
 <div class="rs">同相端电位由 \(U_R\) 和 \(u_O\) 叠加（KVL / 叠加原理）：\[u_+=\frac{R_F}{R_2+R_F}U_R+\frac{R_2}{R_2+R_F}u_O\]</div>
+<details class="deriv"><summary>推导过程：为什么 \(U_R\) 的系数是 \(\frac{R_F}{R_2+R_F}\)</summary>
+<p>同相端不取电流，\(U_R\)—\(R_2\)—同相端—\(R_F\)—\(u_O\) 是一条串联支路。对同相端列 KCL：\(\dfrac{U_R-u_+}{R_2}+\dfrac{u_O-u_+}{R_F}=0\)，两边乘 \(R_2R_F\)：\(R_FU_R+R_2u_O=(R_2+R_F)u_+\)。所以离 \(U_R\) <b>远</b>的那个电阻 \(R_F\) 出现在 \(U_R\) 的系数里——和电阻分压的规律一致。</p>
+</details>
 <div class="rs">\[U_{T+}=\frac{20}{30}\times9+\frac{10}{30}\times12=6+4=10\,\mathrm V,\qquad U_{T-}=6-4=2\,\mathrm V\]</div>
 <div class="rs">\(u_i\) 上升超过 10V 时 \(u_O\) 跳到 −12V；\(u_i\) 下降低于 2V 时跳回 +12V。
 <div class="fig"><svg id="ex2w" class="wide" viewBox="0 0 640 250" role="img" aria-label="例2波形"></svg></div></div>
@@ -202,6 +266,12 @@
 <div class="formula">\[ u_+=\frac{R_2}{R_1+R_2}u_i+\frac{R_1}{R_1+R_2}u_O \]</div>
 <p>令 \(u_+=u_-=0\) 解出翻转时的 \(u_i\)：</p>
 <div class="formula">\[ U_{+H}=\frac{R_1}{R_2}U_{om},\qquad U_{+L}=-\frac{R_1}{R_2}U_{om} \]</div>
+<details class="deriv"><summary>推导过程：同相滞回比较器的门限</summary>
+<div class="step"><b>①</b><div>同相端 KCL：\(\dfrac{u_i-u_+}{R_1}+\dfrac{u_O-u_+}{R_2}=0\Rightarrow u_+=\dfrac{R_2u_i+R_1u_O}{R_1+R_2}\)。</div></div>
+<div class="step"><b>②</b><div>反相端接地，翻转发生在 \(u_+\) 穿过 0 的时刻：令 \(u_+=0\)，得 \(R_2u_i=-R_1u_O\)，即 \(u_i=-\dfrac{R_1}{R_2}u_O\)。</div></div>
+<div class="step"><b>③</b><div>当前 \(u_O=-U_{om}\) 时，\(u_i\) 要升到 \(+\dfrac{R_1}{R_2}U_{om}=U_{+H}\) 才翻高；当前 \(u_O=+U_{om}\) 时，\(u_i\) 要降到 \(-\dfrac{R_1}{R_2}U_{om}=U_{+L}\) 才翻低。</div></div>
+<div class="step"><b>④</b><div>反相端接 \(U_R\) 时，把 ② 里的 \(u_+=0\) 换成 \(u_+=U_R\)：\(R_2u_i+R_1u_O=(R_1+R_2)U_R\)，解出 \(u_i=\dfrac{R_1+R_2}{R_2}U_R-\dfrac{R_1}{R_2}u_O\)，代入 \(u_O=\mp U_{om}\) 即得下面的公式。</div></div>
+</details>
 <p>反相端接参考电压 \(U_R\) 时（令 \(u_+=U_R\)）：</p>
 <div class="formula">\[ U_{+H}=\frac{R_1}{R_2}U_{om}+\frac{R_1+R_2}{R_2}U_R,\qquad U_{+L}=-\frac{R_1}{R_2}U_{om}+\frac{R_1+R_2}{R_2}U_R \]</div>
 <div class="grid2">
@@ -282,15 +352,15 @@ function invAmp(id, o){
   s.wire(a.o[0], a.o[1], 480, 130); s.term(480, 130); s.text(490, 135, 'u_O', 't');
   s.R(a.p[0] - 20, a.p[1], a.p[0] - 20, 215, {lab:'R_2', side:'l'}); s.line(a.p[0] - 20, a.p[1], a.p[0], a.p[1]); s.gnd(a.p[0] - 20, 215);
   s.text(70, a.m[1] + 5, 'u_I', 't', 'end');
-  if (!o.noArrows){ s.arrow(120, a.m[1] - 14, 160, a.m[1] - 14, o.cap ? 'i_1' : 'i_1', 'red', 128, a.m[1] - 20); s.arrow(370, 34, 330, 34, 'i_F', 'red', 340, 26); s.text(nx + 6, a.m[1] + 22, 'u_− = 0（虚地）', 'tval'); }
+  if (!o.noArrows){ s.arrow(88, a.m[1] - 12, 116, a.m[1] - 12, 'i_1', 'red', 92, a.m[1] - 18); s.arrow(nx - 10, a.m[1] - 18, nx - 10, a.m[1] - 50, '', 'red'); s.text(nx - 16, a.m[1] - 28, 'i_F', 'tred', 'end'); s.text(nx - 4, a.m[1] + 34, 'u_− = 0（虚地）', 'tval', 'end'); }
   return {s:s, a:a};
 }
 invAmp('inv');
 var ns = new Sch('non'), na = ns.opamp(300, 130, {});
-ns.term(150, na.p[1]); ns.R(150, na.p[1], na.p[0], na.p[1], {lab:'R_2'}); ns.text(140, na.p[1] + 5, 'u_I', 't', 'end');
-ns.node(245, na.m[1]); ns.line(245, na.m[1], na.m[0], na.m[1]); ns.R(245, na.m[1], 245, 210, {lab:'R_1', side:'l'}); ns.gnd(245, 210);
+ns.term(120, na.p[1]); ns.R(120, na.p[1], 230, na.p[1], {lab:'R_2', side:'b'}); ns.line(230, na.p[1], na.p[0], na.p[1]); ns.text(110, na.p[1] + 5, 'u_I', 't', 'end');
+ns.node(245, na.m[1]); ns.line(245, na.m[1], na.m[0], na.m[1]); ns.R(245, na.m[1], 165, na.m[1], {lab:'R_1'}); ns.gnd(165, na.m[1]);
 ns.wire(245, na.m[1], 245, 50, 330, 50); ns.R(330, 50, 400, 50, {lab:'R_F'}); ns.wire(400, 50, 420, 50, 420, 130); ns.node(420, 130); ns.wire(na.o[0], na.o[1], 480, 130); ns.term(480, 130); ns.text(490, 135, 'u_O', 't');
-ns.text(255, na.m[1] - 6, 'u_− = u_I', 'tval');
+ns.text(237, 68, 'u_− = u_I', 'tval', 'end');
 var fo = new Sch('fol'), fa = fo.opamp(110, 90, {plusTop:false});
 fo.term(40, fa.p[1]); fo.line(40, fa.p[1], fa.p[0], fa.p[1]); fo.text(32, fa.p[1] + 5, 'u_I', 't', 'end');
 fo.wire(fa.m[0], fa.m[1], fa.m[0] - 10, fa.m[1], fa.m[0] - 10, 30, 210, 30, 210, 90); fo.node(210, 90); fo.line(fa.o[0], fa.o[1], 250, 90); fo.term(250, 90); fo.text(258, 95, 'u_O', 't');
@@ -334,7 +404,7 @@ e1.term(60, A1.p[1]); e1.R(60, A1.p[1], 150, A1.p[1], {lab:'R_3', side:'b'}); e1
 e1.node(160, A1.m[1]); e1.line(160, A1.m[1], A1.m[0], A1.m[1]); e1.R(160, A1.m[1], 90, A1.m[1], {lab:'R_1'}); e1.gnd(90, A1.m[1]);
 e1.wire(160, A1.m[1], 160, 45, 210, 45); e1.R(210, 45, 270, 45, {lab:'R_{F1}'}); e1.wire(270, 45, 300, 45, 300, 120); e1.node(300, 120);
 e1.wire(A1.o[0], 120, 330, 120, 330, A2.m[1]); e1.R(330, A2.m[1], 420, A2.m[1], {lab:'R_2'}); e1.line(420, A2.m[1], A2.m[0], A2.m[1]); e1.node(430, A2.m[1]);
-e1.text(318, 112, 'u_{O1}', 'tred', 'end');
+e1.text(306, 140, 'u_{O1}', 'tred');
 e1.wire(430, A2.m[1], 430, 30, 480, 30); e1.R(480, 30, 550, 30, {lab:'R_{F2}'}); e1.wire(550, 30, 570, 30, 570, 110); e1.node(570, 110);
 e1.term(360, A2.p[1] + 50); e1.R(360, A2.p[1] + 50, 440, A2.p[1] + 50, {lab:'R_4', side:'b'}); e1.wire(440, A2.p[1] + 50, 444, A2.p[1] + 50, 444, A2.p[1], A2.p[0], A2.p[1]);
 e1.text(350, A2.p[1] + 55, 'u_{I2}', 'tblue', 'end');
@@ -376,7 +446,7 @@ function hysC(id, withRef){
   s.node(100, h.p[1]); s.line(100, h.p[1], h.p[0], h.p[1]); s.wire(100, h.p[1], 100, 150);
   s.R(100, 150, withRef ? 30 : 30, 150, {lab:'R_2', side:'b'}); if (withRef){ s.term(30, 150); s.text(24, 155, 'U_R', 't', 'end'); } else s.gnd(30, 150);
   s.R(100, 150, 230, 150, {lab:'R_F', side:'b'}); s.node(100, 150); s.wire(230, 150, 250, 150, 250, 80); s.node(250, 80);
-  s.line(h.o[0], 80, 290, 80); s.term(290, 80); s.text(296, 85, 'u_O', 't'); s.text(165, 190, '正反馈：u_O 经 R_F 回到 +', 'tred', 'middle');
+  s.line(h.o[0], 80, 290, 80); s.term(290, 80); s.text(296, 85, 'u_O', 't'); s.text(165, 206, '正反馈：u_O 经 R_F 回到 +', 'tred', 'middle');
 }
 hysC('hys', false); hysC('ex2c', true);
 
@@ -392,8 +462,8 @@ function hysRun(){
     var th = hysOn ? (uo > 0 ? 2 : -2) : 0, nu = u > th ? -6 : (u < th ? 6 : uo); if (!hysOn) nu = u > 0 ? -6 : 6;
     if (nu !== uo){ flips++; pout.push([t, uo]); } uo = nu; pout.push([t, uo]); }
   hi.poly(pin, 'cvthin', d1);
-  if (hysOn){ hi.hline(2, 'cv3', d1); hi.hline(-2, 'cv2', d1); hi.text(20, 2.3, 'U\'_+ = +2V', 'tred', 'end', d1); hi.text(20, -1.6, 'U\'\'_+ = −2V', 'tblue', 'end', d1); }
-  else { hi.hline(0, 'cv3', d1); hi.text(20, 0.3, '门限 0V', 'tred', 'end', d1); }
+  if (hysOn){ hi.hline(2, 'cv3', d1); hi.hline(-2, 'cv2', d1); rtext(d1, hi.X(20) + 6, hi.Y(2) + 5, 'U\'_+ = +2V', 'tred'); rtext(d1, hi.X(20) + 6, hi.Y(-2) + 5, 'U\'\'_+ = −2V', 'tblue'); }
+  else { hi.hline(0, 'cv3', d1); rtext(d1, hi.X(20) + 6, hi.Y(0) + 5, '门限 0V', 'tred'); }
   ho.poly(pout, 'cv', d2);
   document.getElementById('hysOut').innerHTML = '<span>输出翻转次数：' + flips + '（理想应为 4 次）</span><span class="state" style="color:' + (flips > 4 ? 'var(--red)' : 'var(--ok)') + '">' + (flips > 4 ? '噪声导致误翻转' : '干净的方波') + '</span>';
 }
@@ -405,9 +475,9 @@ hysRun();
 /* example 1 hysteresis loop + waveform */
 function loop(id, lo, hiT, U, xr){
   var p = new Plot(id, {x:30, y:15, w:270, h:180}, xr, [-U * 1.25, U * 1.25]);
-  p.axes({xl:'u_i', yl:'u_O', xt:[lo, hiT], yt:[-U, U]});
+  p.axes({xl:'u_i', yl:'u_O', xt:[lo, hiT], yt:[-U, U], xtShift:true});
   p.poly([[xr[0], U], [hiT, U], [hiT, -U], [xr[1], -U]], 'cv'); p.poly([[xr[1], -U], [lo, -U], [lo, U]], 'cv3');
-  p.text(hiT, U * 1.12, '→ 上升', 'tval', 'middle'); p.text(lo, -U * 1.15, '← 下降', 'tred', 'middle');
+  p.text(hiT, U * 1.12, '→ 上升', 'tval', 'middle'); p.text(lo, -U * 1.24, '← 下降', 'tred', 'middle');
 }
 loop('ex1h', -2, 2, 6, [-4, 4]);
 function wave(id, f, lo, hiT, U, yr, start){
@@ -429,9 +499,9 @@ wave('ex2w', function(t){ return 5.5 + 5.5 * Math.sin(2 * Math.PI * t - 0.4) + 0
   s.R(100, 150, 230, 150, {lab:'R_2', side:'b'}); s.wire(230, 150, 250, 150, 250, 80); s.node(250, 80);
   s.line(h.o[0], 80, 290, 80); s.term(290, 80); s.text(296, 85, 'u_O', 't');
   var p = new Plot('nloop', {x:30, y:15, w:270, h:180}, [-4, 4], [-7.5, 7.5]);
-  p.axes({xl:'u_i', yl:'u_O', xt:[-2, 2], xf:function(v){ return v > 0 ? 'U_{+H}' : 'U_{+L}'; }, yt:[-6, 6], yf:function(v){ return v > 0 ? '+U_{om}' : '−U_{om}'; }});
+  p.axes({xl:'u_i', yl:'u_O', xtShift:true, xt:[-2, 2], xf:function(v){ return v > 0 ? 'U_{+H}' : 'U_{+L}'; }, yt:[-6, 6], yf:function(v){ return v > 0 ? '+U_{om}' : '−U_{om}'; }});
   p.poly([[-4, -6], [2, -6], [2, 6], [4, 6]], 'cv'); p.poly([[4, 6], [-2, 6], [-2, -6]], 'cv3');
-  p.text(2, -6.9, '上升到 U_{+H} 跳高', 'tval', 'middle'); p.text(-2, 6.8, '下降到 U_{+L} 跳低', 'tred', 'middle');
+  p.text(2, -7.4, '上升到 U_{+H} 跳高', 'tval', 'middle'); p.text(-2, 7.2, '下降到 U_{+L} 跳低', 'tred', 'middle');
 })();
 initPage(6);
 })();

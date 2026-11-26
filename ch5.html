@@ -37,6 +37,12 @@
 <div class="formula boxed">\[ u_{id}=u_{i1}-u_{i2}\ (\text{差模}),\qquad u_{ic}=\frac{u_{i1}+u_{i2}}{2}\ (\text{共模}) \]
 \[ \Longleftrightarrow\quad u_{i1}=u_{ic}+\frac{u_{id}}{2},\qquad u_{i2}=u_{ic}-\frac{u_{id}}{2} \]</div>
 <ul><li><b>差模</b>：两输入大小相等、极性相反，是我们要放大的<b>有用信号</b>；</li><li><b>共模</b>：两输入大小相等、极性相同，温漂、电源干扰都属于这一类，是要抑制的<b>干扰</b>。</li></ul>
+<details class="deriv"><summary>推导过程：为什么任何一对输入都能这样拆，以及 \(u_o=A_{ud}u_{id}+A_{uc}u_{ic}\) 从哪来</summary>
+<div class="step"><b>①</b><div>把两个定义式当成方程组：\(u_{i1}-u_{i2}=u_{id}\)，\(u_{i1}+u_{i2}=2u_{ic}\)。两式相加除以 2 得 \(u_{i1}=u_{ic}+\frac{u_{id}}{2}\)，相减除以 2 得 \(u_{i2}=u_{ic}-\frac{u_{id}}{2}\)。两个未知数、两个方程，解唯一——所以任何一对输入都能拆，而且拆法只有一种。</div></div>
+<div class="step"><b>②</b><div>小信号分析时电路是线性的，可以用叠加原理：让“两端各加 \(\pm u_{id}/2\)”单独作用，输出 \(A_{ud}u_{id}\)；让“两端都加 \(u_{ic}\)”单独作用，输出 \(A_{uc}u_{ic}\)；总输出是两者之和。</div></div>
+<div class="step"><b>③</b><div>例：\(u_{i1}=16\,\mathrm{mV}\)、\(u_{i2}=10\,\mathrm{mV}\)，得 \(u_{id}=6\,\mathrm{mV}\)、\(u_{ic}=13\,\mathrm{mV}\)。验证：\(13+3=16\)，\(13-3=10\)。</div></div>
+</details>
+<div class="myth"><b>常见误区：</b>“单端输入（\(u_{i2}=0\)）就只有差模信号”——不对。\(u_{i1}=u_i, u_{i2}=0\) 拆开是 \(u_{id}=u_i\)、\(u_{ic}=u_i/2\)，同时带着一半大小的共模信号。</div>
 <div class="panel">
 <b>拆一拆：</b>拖动两个输入，看它们被分解成什么。
 <div class="ctl"><label for="u1">\(u_{i1}\)</label><input type="range" id="u1" min="-20" max="20" step="1" value="16"><output for="u1"></output></div>
@@ -50,6 +56,9 @@
 <h3>共模抑制比 \(K_{CMR}\) <a class="src" data-s="20"></a></h3>
 <div class="formula boxed">\[ K_{CMR}=\left|\frac{A_{ud}}{A_{uc}}\right|,\qquad K_{CMR}(\mathrm{dB})=20\lg\left|\frac{A_{ud}}{A_{uc}}\right| \]</div>
 <p>例：\(A_{ud}=-200\)，\(A_{uc}=0.1\)，\(K_{CMR}=20\lg(200/0.1)=66\,\mathrm{dB}\)。\(K_{CMR}\) 越大，电路“放大有用信号、压制干扰”的本领越强。</p>
+<details class="deriv"><summary>计算过程：66 dB 是怎么算出来的</summary>
+<p>\(\left|\frac{A_{ud}}{A_{uc}}\right|=\frac{200}{0.1}=2000\)；\(20\lg2000=20(\lg2+\lg1000)=20\times(0.301+3)\approx66\,\mathrm{dB}\)。增益带负号只表示反相，求 \(K_{CMR}\) 时取绝对值。</p>
+</details>
 
 <h2 id="static"><span class="n">5.4.5</span>静态分析与 \(R_E\) 的作用</h2>
 <h3>Q 点 <a class="src" data-s="27"></a> <a class="src" data-s="28"></a></h3>
@@ -58,6 +67,13 @@
 <div class="formula">\[ V_{EE}=I_BR_B+U_{BE}+2I_ER_E=I_BR_B+U_{BE}+2(1+\beta)I_BR_E\ \Rightarrow\ I_B=\frac{V_{EE}-U_{BE}}{R_B+2(1+\beta)R_E} \]
 \[ I_C=\beta I_B,\qquad V_E=-I_BR_B-U_{BE},\qquad U_{CE}=V_{CC}-I_CR_C-2I_ER_E+V_{EE} \]</div>
 <p class="muted">\(R_B\) 很小时，\(V_E\approx-0.7\,\mathrm V\)，\(I_E\approx\frac{V_{EE}-0.7}{2R_E}\)，这是最常用的快速估算。双电源的好处 <a class="src" data-s="24"></a>：信号摆动范围大；基极电流由负电源提供，输入端可以直接接地。</p>
+<details class="deriv"><summary>推导过程：静态电流（沿输入回路列 KVL）</summary>
+<div class="step"><b>①</b><div>选回路：地 → \(R_B\) → b → e → \(R_E\) → \(-V_{EE}\)。从地出发到 \(-V_{EE}\) 一共降了 \(V_{EE}\)：\[I_BR_B+U_{BE}+I_{RE}R_E=V_{EE}\]</div></div>
+<div class="step"><b>②</b><div>\(R_E\) 是两管共用的：\(I_{RE}=I_{E1}+I_{E2}=2I_E=2(1+\beta)I_B\)。漏掉这个“2”是静态计算最常见的错。</div></div>
+<div class="step"><b>③</b><div>代入解出 \(I_B=\dfrac{V_{EE}-U_{BE}}{R_B+2(1+\beta)R_E}\)。</div></div>
+<div class="step"><b>④</b><div>近似：\(R_B\) 一般只有几 kΩ，\(I_BR_B\) 只有几十 mV，可以忽略，于是 \(V_E\approx-U_{BE}=-0.7\,\mathrm V\)，\(I_E\approx\dfrac{V_{EE}-0.7}{2R_E}\)。</div></div>
+<div class="step"><b>⑤</b><div>输出回路：\(V_C=V_{CC}-I_CR_C\)，\(U_{CE}=V_C-V_E\)。</div></div>
+</details>
 <h3>\(R_E\) 对差模和共模的作用截然不同 <a class="src" data-s="25"></a> <a class="src" data-s="26"></a></h3>
 <div class="tabs">
 <div class="tabbar"><button>差模输入：\(R_E\) 相当于短路</button><button>共模输入：\(R_E\) 相当于 \(2R_E\)</button></div>
@@ -68,19 +84,45 @@
 </div>
 
 <h2 id="dynamic"><span class="n">5.4.5</span>动态分析：四种接法</h2>
+<details class="deriv"><summary>推导过程：\(R_E\) 对差模“短路”、对共模“变成 \(2R_E\)”</summary>
+<div class="step"><b>差模</b><div>两管基极加 \(\pm u_{id}/2\)，对称使 \(i_{e1}=-i_{e2}\)。\(R_E\) 上的交流电压 \(u_E=(i_{e1}+i_{e2})R_E=0\)，发射极交流电位恒为 0，等于接地。所以画差模半电路时把发射极直接接地。</div></div>
+<div class="step"><b>共模</b><div>两管基极都加 \(u_{ic}\)，\(i_{e1}=i_{e2}=i_e\)。\(u_E=2i_eR_E=i_e\cdot(2R_E)\)。只看一只管子，它的发射极电流 \(i_e\) 产生的电压就像流过一个 \(2R_E\) 的电阻，所以共模半电路的发射极接 \(2R_E\)。</div></div>
+</details>
+<div class="myth"><b>常见误区：</b>“\(R_E\) 对差模短路”说的是<b>交流差模分量</b>。静态（直流）时 \(R_E\) 照样决定 Q 点，不能把它从直流通路里去掉。</div>
 <h3>差模增益 <a class="src" data-s="29"></a>–<a class="src" data-s="34"></a></h3>
 <p>取 T1 的差模半电路（发射极接地），就是第 2 章的共射电路：</p>
 <div class="panel fig"><svg id="halfSS" class="wide" viewBox="0 0 640 210" role="img" aria-label="差模半电路小信号"></svg></div>
 <div class="formula">\[ A_{d1}=\frac{u_{od1}}{u_{i1}}=-\frac{\beta R_C}{R_B+r_{be}},\qquad A_{ud}=\frac{u_{od1}-u_{od2}}{u_{i1}-u_{i2}}=\frac{2u_{od1}}{2u_{i1}}=A_{d1} \]</div>
+<details class="deriv"><summary>推导过程：差模增益</summary>
+<div class="step"><b>①</b><div>差模时 \(u_{i1}=u_{id}/2\)，\(u_{i2}=-u_{id}/2\)，发射极交流接地。半电路的输入回路：\(i_{b1}=\dfrac{u_{i1}}{R_B+r_{be}}\)。</div></div>
+<div class="step"><b>②</b><div>输出回路：受控源 \(\beta i_{b1}\) 流过 \(R_C\)，按图中参考方向 \(u_{od1}=-\beta i_{b1}R_C=-\dfrac{\beta R_C}{R_B+r_{be}}u_{i1}\)。</div></div>
+<div class="step"><b>③</b><div>T2 输入正好相反，输出也相反：\(u_{od2}=-u_{od1}\)。</div></div>
+<div class="step"><b>④</b><div>双端输出：\(u_{od}=u_{od1}-u_{od2}=2u_{od1}\)；\(u_{id}=2u_{i1}\)。相除，2 约掉：\(A_{ud}=\dfrac{u_{od1}}{u_{i1}}=-\dfrac{\beta R_C}{R_B+r_{be}}\)。</div></div>
+<div class="step"><b>⑤</b><div>单端输出只取 \(u_{od1}\)：\(A_{ud(\text{单})}=\dfrac{u_{od1}}{2u_{i1}}=-\dfrac{\beta R_C}{2(R_B+r_{be})}\)，是双端的一半。</div></div>
+</details>
 <div class="key"><b>双端输出的差模增益等于单管共射增益</b>。差分电路用两倍的元件，换来了抑制零漂的能力 <a class="src" data-s="32"></a>。</div>
 <p><b>带负载 \(R_L\)（双端输出）</b>：两集电极交流电位一正一负、大小相等，\(R_L\) 中点是交流地，每个半电路只带 \(R_L/2\) <a class="src" data-s="33"></a>：</p>
 <div class="formula">\[ A_{ud}=-\frac{\beta R_L'}{R_B+r_{be}},\qquad R_L'=R_C/\!/\frac{R_L}{2} \]</div>
+<details class="deriv"><summary>推导过程：为什么是 \(R_L/2\)</summary>
+<p>\(R_L\) 接在两个集电极之间。差模时两集电极交流电位 \(+u_{od1}\) 和 \(-u_{od1}\) 大小相等、符号相反，\(R_L\) 的中点电位是 \(\frac{u_{od1}+(-u_{od1})}{2}=0\)。把 \(R_L\) 从中点劈成两个 \(R_L/2\)，中点接地并不改变任何电流。于是每个半电路的集电极对地接的是 \(R_C/\!/(R_L/2)\)。</p>
+</details>
 <p><b>输入、输出电阻</b> <a class="src" data-s="35"></a>–<a class="src" data-s="37"></a>：差模信号从一个基极进、另一个基极出，经过两个半电路串联：</p>
 <div class="formula">\[ R_{id}=2(R_B+r_{be}),\qquad R_{od}=2R_C\ (\text{双端输出}),\qquad R_o=R_C\ (\text{单端输出}) \]</div>
+<details class="deriv"><summary>推导过程：输入、输出电阻</summary>
+<div class="step"><b>\(R_{id}\)</b><div>差模电流 \(i_b\) 从 b1 流进，经 \(R_B\)、\(r_{be}\) 到发射极（交流地），再经 T2 的 \(r_{be}\)、\(R_B\) 从 b2 流出。路径上串联了两份 \(R_B+r_{be}\)：\(R_{id}=\dfrac{u_{id}}{i_b}=\dfrac{2i_b(R_B+r_{be})}{i_b}=2(R_B+r_{be})\)。</div></div>
+<div class="step"><b>\(R_o\)</b><div>令输入为零、受控源 \(\beta i_b=0\)（开路），从输出端看进去只剩 \(R_C\)。双端输出时两集电极之间是两个 \(R_C\) 串联：\(2R_C\)；单端输出是一个 \(R_C\)。</div></div>
+</details>
 <h3>共模增益 <a class="src" data-s="40"></a>–<a class="src" data-s="43"></a></h3>
 <p><b>双端输出</b>：两管共模输出完全相同，相减为零：\(A_{uc}\approx0\)，\(K_{CMR}\to\infty\)。</p>
 <p><b>单端输出</b>：只取一管输出，抵消不了，靠 \(2R_E\) 的负反馈压低：</p>
 <div class="formula">\[ A_{uc}=\frac{u_{oc1}}{u_{ic}}=-\frac{\beta(R_C/\!/R_L)}{R_B+r_{be}+2(1+\beta)R_E}\approx-\frac{R_L'}{2R_E} \]</div>
+<details class="deriv"><summary>推导过程：单端输出的共模增益和 \(K_{CMR}\)</summary>
+<div class="step"><b>①</b><div>共模半电路：基极加 \(u_{ic}\)，发射极接 \(2R_E\)。输入回路 KVL：\(u_{ic}=i_b(R_B+r_{be})+(1+\beta)i_b\cdot2R_E\)，所以 \(i_b=\dfrac{u_{ic}}{R_B+r_{be}+2(1+\beta)R_E}\)。（发射极电阻折算到基极回路要乘 \(1+\beta\)，和第 2 章分压偏置电路一样。）</div></div>
+<div class="step"><b>②</b><div>\(u_{oc1}=-\beta i_bR_L'\)，\(R_L'=R_C/\!/R_L\)，得到上式。</div></div>
+<div class="step"><b>③</b><div>\(2(1+\beta)R_E\) 通常远大于 \(R_B+r_{be}\)，分母只留它，再用 \(\frac{\beta}{1+\beta}\approx1\)：\(A_{uc}\approx-\dfrac{R_L'}{2R_E}\)。\(R_E\) 越大，共模增益越小。</div></div>
+<div class="step"><b>④</b><div>单端输出 \(K_{CMR}=\left|\dfrac{A_{ud}}{A_{uc}}\right|=\dfrac{\beta R_L'/[2(R_B+r_{be})]}{\beta R_L'/[R_B+r_{be}+2(1+\beta)R_E]}=\dfrac{R_B+r_{be}+2(1+\beta)R_E}{2(R_B+r_{be})}\approx\dfrac{\beta R_E}{R_B+r_{be}}\)。</div></div>
+<div class="step"><b>⑤</b><div>双端输出：两管共模输出相同，\(u_{oc}=u_{oc1}-u_{oc2}=0\)，理想情况下 \(A_{uc}=0\)。实际两管不可能完全一样，所以 \(A_{uc}\) 很小但不为零。</div></div>
+</details>
 <p class="muted">单端输出不能完全抑制温漂。\(R_E\) 越大越好，但 \(R_E\) 太大会使静态电流太小（容易截止失真），所以用<b>恒流源</b>代替 \(R_E\)（5.4.6）。</p>
 <h3>四种接法比较 <a class="src" data-s="63"></a></h3>
 <div class="tbl"><table>
@@ -111,11 +153,17 @@
 <div class="panel"><h4>镜像恒流源 <a class="src" data-s="53"></a> <a class="src" data-s="54"></a></h4><svg id="mirror" viewBox="0 0 320 250" role="img" aria-label="镜像恒流源"></svg>
 <p class="muted">T1 基极与集电极短接，相当于一个二极管。两管 \(U_{BE}\) 相同 → 电流相同：</p>
 \[I_O=I_{C2}\approx I_R=\frac{V_{CC}-U_{BE}}{R}\]
-<p class="muted">\(I_O\) 是 \(I_R\) 的“镜像”，与负载 \(R_L\) 无关。</p></div>
+<p class="muted">\(I_O\) 是 \(I_R\) 的“镜像”，与负载 \(R_L\) 无关。</p>
+<details class="deriv"><summary>推导过程：镜像电流（考虑基极电流）</summary>
+<p>两管 \(U_{BE}\) 相同、特性相同 → \(I_{B1}=I_{B2}=I_B\)，\(I_{C1}=I_{C2}=\beta I_B\)。T1 集电极节点 KCL：\(I_R=I_{C1}+2I_B=\beta I_B+2I_B\)，所以 \[I_O=I_{C2}=\beta I_B=\frac{\beta}{\beta+2}I_R\]\(\beta\gg2\) 时 \(I_O\approx I_R\)。\(\beta=100\) 时误差约 2%。</p>
+</details></div>
 <div class="panel"><h4>微电流源 <a class="src" data-s="55"></a></h4><svg id="widlar" viewBox="0 0 320 250" role="img" aria-label="微电流源"></svg>
 <p class="muted">T2 发射极串 \(R_{E2}\)：\(U_{BE1}-U_{BE2}=I_OR_{E2}\)，</p>
 \[I_O\approx\frac{V_T}{R_{E2}}\ln\frac{I_R}{I_O}\]
-<p class="muted">用不大的电阻就能得到微安级的小电流，温度稳定性好。</p></div>
+<p class="muted">用不大的电阻就能得到微安级的小电流，温度稳定性好。</p>
+<details class="deriv"><summary>推导过程：微电流源公式</summary>
+<p>BJT 的发射结服从 \(I_C\approx I_Se^{U_{BE}/V_T}\)，即 \(U_{BE}=V_T\ln\dfrac{I_C}{I_S}\)。两管同型号，\(I_S\) 相同：\[U_{BE1}-U_{BE2}=V_T\ln\frac{I_R}{I_S}-V_T\ln\frac{I_O}{I_S}=V_T\ln\frac{I_R}{I_O}\]而基极回路 KVL 给出 \(U_{BE1}=U_{BE2}+I_OR_{E2}\)（忽略基极电流），两式联立即得 \(I_O R_{E2}=V_T\ln\dfrac{I_R}{I_O}\)。这是一个超越方程，一般已知 \(I_R\) 和想要的 \(I_O\)，反过来求 \(R_{E2}\)。例：\(I_R=1\,\mathrm{mA}\)、\(I_O=10\,\mu\mathrm A\)，\(R_{E2}=\dfrac{26\,\mathrm{mV}\times\ln100}{10\,\mu\mathrm A}\approx12\,\mathrm{k\Omega}\)；若用镜像电流源（\(V_{CC}=15\,\mathrm V\)）得到同样的 10 μA，就要 \(R\approx\frac{15-0.7}{10\,\mu\mathrm A}\approx1.4\,\mathrm{M\Omega}\)，集成电路里做不出这么大的电阻。</p>
+</details></div>
 </div>
 <p><b>比例恒流源</b> <a class="src" data-s="56"></a>：两管都接射极电阻，\(I_O\approx\dfrac{R_{E1}}{R_{E2}}I_R\)。<b>多路恒流源</b> <a class="src" data-s="57"></a>：一个基准带多个输出，路数多了 \(\sum I_B\) 增大会带来误差，可加缓冲级改善。</p>
 <div class="panel fig"><svg id="ccDiff" class="wide" viewBox="0 0 640 325" role="img" aria-label="恒流源差放"></svg>
@@ -222,7 +270,7 @@
 var ds = new Sch('driftS');
 [['输入级', 40], ['中间级', 220], ['输出级', 400]].forEach(function(b, i){ mk('rect', {x:b[1], y:40, width:120, height:60, rx:8, class:'body'}, ds.g); ds.text(b[1] + 60, 76, b[0], 'tb', 'middle');
   if (i < 2) ds.arrow(b[1] + 120, 70, b[1] + 178, 70, '', 'ink'); });
-ds.arrow(520, 70, 560, 70, '', 'ink'); ds.text(568, 75, 'u_o', 't'); ds.text(4, 58, 'u_i = 0', 't');
+ds.arrow(520, 70, 560, 70, '', 'ink'); ds.text(568, 75, 'u_o', 't'); ds.text(34, 75, 'u_i = 0', 't', 'end');
 ds.text(100, 120, '温漂 ΔU', 'tred', 'middle'); ds.text(280, 120, '× A_2', 'tred', 'middle'); ds.text(460, 120, '× A_3 → 很大', 'tred', 'middle');
 var dp = new Plot('driftS', {x:120, y:140, w:420, h:55}, [0, 10], [-0.2, 1.2]);
 dp.axes({xl:'t', yl:'u_o', xt:[], yt:[], grid:false, xAtBottom:true}); dp.fn(function(t){ return 0.09 * t + 0.05 * Math.sin(3 * t) * (t / 10); }, 'cv3');
@@ -274,10 +322,10 @@ qh.text(20, 290, '对称 → 两管电流都流过 R_E；只看一管时，等�
 /* ---------- diff / common mode ---------- */
 function modeDraw(id, diff){
   var r = pair(id, {out:false}), s = r.s;
-  s.arrow(130, 210, 130, diff ? 190 : 190, diff ? '+u_{id}/2' : '+u_{ic}', 'red', 70, 205);
-  s.arrow(510, diff ? 190 : 210, 510, diff ? 210 : 190, diff ? '−u_{id}/2' : '+u_{ic}', 'red', 530, 205);
-  s.arrow(250, 242, 290, 242, '', 'blue'); s.text(236, 262, diff ? 'i_{e1} 增大' : 'i_{e1} 增大', 'tblue');
-  s.arrow(390, 242, 350, 242, '', 'blue'); s.text(372, 262, diff ? 'i_{e2} 减小' : 'i_{e2} 增大', 'tblue');
+  s.arrow(130, 210, 130, diff ? 190 : 190, diff ? '+u_{id}/2' : '+u_{ic}', 'amber', 70, 205);
+  s.arrow(510, diff ? 190 : 210, 510, diff ? 210 : 190, diff ? '−u_{id}/2' : '+u_{ic}', 'amber', 530, 205);
+  s.arrow(250, 242, 290, 242, '', 'red'); s.text(236, 262, 'i_{e1} 增大', 'tred');
+  s.arrow(390, 242, 350, 242, '', 'red'); s.text(372, 262, diff ? 'i_{e2} 减小' : 'i_{e2} 增大', 'tred');
   s.text(20, 305, diff ? 'i_{RE} = Δi_{e1}+Δi_{e2} = 0 → 发射极 = 交流地' : 'i_{RE} = 2Δi_e → 每管等效 2R_E', diff ? 'tval' : 'tred');
 }
 modeDraw('dmode', true); modeDraw('cmode', false);
@@ -287,8 +335,8 @@ var hs = new Sch('halfSS');
 hs.term(40, 50); hs.text(30, 55, 'B_1 侧输入', 'ts', 'end'); hs.R(40, 50, 140, 50, {lab:'R_B'}); hs.wire(140, 50, 220, 50); hs.text(220, 38, 'B_1', 'tb', 'middle');
 hs.R(220, 50, 220, 170, {lab:'r_{be}'}); hs.ccs(360, 50, 360, 170, {lab:'βi_{b1}', side:'l'}); hs.wire(360, 50, 520, 50); hs.R(460, 50, 460, 170, {lab:'R_C'}); hs.node(460, 50);
 hs.wire(40, 170, 520, 170); hs.term(40, 170); hs.term(520, 50); hs.term(520, 170); hs.node(220, 170); hs.node(360, 170); hs.node(460, 170);
-hs.text(360, 38, 'C_1', 'tb', 'middle'); hs.text(290, 195, 'E（差模时为交流地）', 'tval', 'middle'); hs.gnd(290, 170);
-hs.text(30, 115, 'u_{i1}', 't', 'end'); hs.text(530, 115, 'u_{od1}', 't'); hs.arrow(80, 30, 120, 30, 'i_{b1}', 'blue', 90, 22);
+hs.text(360, 38, 'C_1', 'tb', 'middle'); hs.text(306, 194, 'E（差模时为交流地）', 'tval'); hs.gnd(290, 170);
+hs.text(30, 115, 'u_{i1}', 't', 'end'); hs.text(530, 115, 'u_{od1}', 't'); hs.arrow(168, 64, 204, 64, 'i_{b1}', 'red', 172, 84);
 
 /* ---------- current mirror ---------- */
 var mr = new Sch('mirror'), a1 = mr.bjt(110, 150, {flip:true, lab:'T_1'}), a2 = mr.bjt(210, 150, {lab:'T_2'});
@@ -311,7 +359,7 @@ var tp = new Plot('tf', {x:60, y:20, w:540, h:220}, [-150, 150], [-1.3, 1.3]);
 tp.axes({xl:'u_{id} / mV', yl:'u_{od}', xt:[-100, -52, 52, 100], yt:[-1, 1], yf:function(v){ return v > 0 ? '+I_OR_C' : '−I_OR_C'; }});
 tp.g.insertBefore(tp.rect(-26, -1.3, 26, 1.3, 'zone'), tp.g.firstChild); tp.fn(function(u){ return Math.tanh(u / 52); }, 'cv');
 tp.poly([[-40, -40 / 52], [40, 40 / 52]], 'cv3');
-tp.text(0, -1.2, '线性区 ≈ ±V_T', 'tval', 'middle'); tp.text(110, 0.82, '饱和：T_1 导通、T_2 截止', 'ts', 'middle'); tp.text(-110, -0.75, 'T_1 截止、T_2 导通', 'ts', 'middle');
+tp.text(8, -1.2, '线性区 ≈ ±V_T', 'tval'); tp.text(105, 0.62, '饱和：T_1 导通、T_2 截止', 'ts', 'middle'); tp.text(-110, -0.75, 'T_1 截止、T_2 导通', 'ts', 'middle');
 
 /* ---------- ex8 ---------- */
 var r8 = pair('ex8', {reVal:'R_e = ?'});

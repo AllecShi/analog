@@ -177,7 +177,7 @@ var AM = 40, fL = 100, fH = 1e6;
 fp.fn(function(x){ var f = Math.pow(10, x); return AM - 10 * lg(1 + Math.pow(fL / f, 2)) - 10 * lg(1 + Math.pow(f / fH, 2)); }, 'cv');
 fp.hline(37, 'cvdash'); fp.vline(2, 'cvdash'); fp.vline(6, 'cvdash');
 fp.text(2, -20, 'f_L', 'tval', 'middle'); fp.text(6, -20, 'f_H', 'tval', 'middle'); fp.text(4, 42, '中频区：增益平坦', 't', 'middle');
-fp.text(0.9, 10, '低频区', 'tblue', 'middle'); fp.text(7.2, 10, '高频区', 'tred', 'middle'); fp.text(8, 33, '−3dB', 'ts', 'end');
+fp.text(1.6, 3, '低频区', 'tblue', 'middle'); fp.text(6.4, 3, '高频区', 'tred', 'middle'); fp.text(8, 33, '−3dB', 'ts', 'end');
 mk('line', {x1:fp.X(2), y1:fp.Y(25), x2:fp.X(6), y2:fp.Y(25), class:'arr-acc', 'marker-end':fp.mk.acc, 'marker-start':fp.mk.acc}, fp.g); fp.text(4, 27, '通频带 BW', 'tval', 'middle');
 
 /* ---------- RC circuits ---------- */
@@ -204,7 +204,7 @@ var rcRun = bindSliders(['rcR', 'rcC', 'rcF'], {rcR:fmtR, rcC:fmtC, rcF:function
   pp.fn(ph, 'cv2', 0, 7, 300, d2);
   if (lp) pp.poly([[0, 0], [xc - 1, 0], [xc + 1, -90], [7, -90]], 'cvdash', d2); else pp.poly([[0, 90], [xc - 1, 90], [xc + 1, 0], [7, 0]], 'cvdash', d2);
   pm.vline(xc, 'cvthin', d1); pp.vline(xc, 'cvthin', d2);
-  pm.text(xc, -57, (lp ? 'f_H' : 'f_L') + ' = ' + fmtF(fc), 'tval', 'middle', d1);
+  pm.text(xc + (lp ? 0.08 : -0.08), -55, (lp ? 'f_H' : 'f_L') + ' = ' + fmtF(fc), 'tval', lp ? 'start' : 'end', d1);
   pm.dot(v.rcF, mag(v.rcF), d1); pp.dot(v.rcF, ph(v.rcF), d2);
   var m = mag(v.rcF);
   document.getElementById('rcOut').innerHTML = '<span>' + (lp ? 'f_H' : 'f_L') + ' = 1/(2πRC) = ' + fmtF(fc) + '</span><span>f = ' + fmtF(f) + '</span><span>|A_V| = ' + Math.pow(10, m / 20).toFixed(3) + '（' + m.toFixed(1) + ' dB）</span><span>φ = ' + ph(v.rcF).toFixed(1) + '°</span>';
@@ -219,7 +219,7 @@ pi.wire(230, 50, 290, 50, 290, 20, 330, 20); pi.C(330, 20, 410, 20, {lab:'C_{b\'
 pi.ccs(470, 50, 470, 170, {lab:'g_mU_{b\'e}', side:'l'}); pi.wire(470, 50, 600, 50); pi.R(540, 50, 540, 170, {lab:'r_{ce}'}); pi.node(540, 50);
 pi.wire(30, 170, 600, 170); pi.term(30, 170); pi.term(600, 50); pi.term(600, 170); pi.text(610, 55, 'c', 'tb'); pi.text(320, 195, 'e', 'tb', 'middle');
 pi.node(160, 170); pi.node(230, 170); pi.node(470, 170); pi.node(540, 170);
-pi.pm(195, 75, '+'); pi.pm(195, 150, '-'); pi.text(205, 115, 'U_{b\'e}', 'ts');
+pi.pm(195, 75, '+'); pi.pm(195, 150, '-'); pi.text(195, 117, 'U_{b\'e}', 'ts', 'middle');
 
 /* ---------- beta bode ---------- */
 var bp = new Plot('betaB', {x:70, y:15, w:520, h:180}, [3, 10], [-10, 50]);
@@ -228,7 +228,7 @@ var b0 = 100, fb = 3e6;
 bp.fn(function(x){ var r = Math.pow(10, x) / fb; return 20 * lg(b0) - 10 * lg(1 + r * r); }, 'cv');
 bp.poly([[3, 40], [lg(fb), 40], [lg(fb) + 2.5, -10]], 'cvdash');
 bp.vline(lg(fb), 'cvthin'); bp.vline(lg(fb * b0), 'cvthin'); bp.text(lg(fb) + 0.1, 6, 'f_β', 'tval', 'start'); bp.text(lg(fb * b0) + 0.1, 6, 'f_T = β_0 f_β', 'tval', 'start');
-bp.text(3.2, 44, '20lg β_0', 'ts'); bp.text(7.9, 25, '−20 dB/十倍频', 'ts');
+bp.text(3.2, 44, '20lg β_0', 'ts'); bp.text(7.0, 37, '−20 dB/十倍频', 'ts');
 
 /* ---------- miller ---------- */
 var ml = new Sch('miller');
@@ -237,7 +237,7 @@ mk('rect', {x:110, y:80, width:100, height:50, class:'body', rx:6}, ml.g); ml.te
 ml.arrow(300, 100, 350, 100, '', 'acc'); ml.text(325, 88, '等效', 'tval', 'middle');
 ml.term(380, 60); ml.text(370, 65, '1', 'tb', 'end'); ml.C(390, 60, 390, 160, {lab:'C_{M1}'}); ml.line(380, 60, 390, 60); ml.line(380, 160, 390, 160); ml.gnd(390, 160);
 mk('rect', {x:470, y:80, width:60, height:50, class:'body', rx:6}, ml.g); ml.text(500, 110, 'K', 't', 'middle'); ml.wire(390, 60, 450, 60, 450, 105, 470, 105); ml.wire(530, 105, 560, 105, 560, 60);
-ml.C(560, 60, 560, 160, {lab:'C_{M2}', side:'l'}); ml.gnd(560, 160); ml.line(560, 60, 600, 60); ml.term(600, 60); ml.text(610, 65, '2', 'tb');
+ml.C(560, 60, 560, 160, {lab:'C_{M2}'}); ml.gnd(560, 160); ml.line(560, 60, 600, 60); ml.term(600, 60); ml.text(610, 65, '2', 'tb');
 
 /* miller bars */
 var mb = document.getElementById('mBars');

@@ -326,11 +326,11 @@
 /* ---------- signals ---------- */
 var p1 = new Plot('sigs', {x:30, y:30, w:270, h:110}, [0, 4 * Math.PI], [-1.3, 1.3]);
 p1.axes({xl:'t', yl:'u'}); p1.fn(function(t){ return Math.sin(t) * 0.7 + 0.35 * Math.sin(2.3 * t); }, 'cv');
-p1.text(0.2, 1.25, '模拟信号：连续变化', 't');
+p1.text(1.0, 1.25, '模拟信号：连续变化', 't');
 var p2 = new Plot('sigs', {x:380, y:30, w:270, h:110}, [0, 8], [-0.3, 1.3]);
 p2.axes({xl:'t', yl:'u', xAtBottom:true});
 p2.poly([[0,0],[1,0],[1,1],[2.5,1],[2.5,0],[3.5,0],[3.5,1],[4,1],[4,0],[5.5,0],[5.5,1],[7,1],[7,0],[8,0]], 'cv2');
-p2.text(0.2, 1.25, '数字信号：只有 0 和 1', 't');
+p2.text(0.6, 1.25, '数字信号：只有 0 和 1', 't');
 
 /* ---------- amplifier model ---------- */
 var s = new Sch('ampModel');
@@ -370,7 +370,7 @@ ys.forEach(function(y){ for (var i = 0; i < 3; i++){ var m = (xs[i] + xs[i + 1])
 xs.forEach(function(x){ for (var j = 0; j < 2; j++){ var m = (ys[j] + ys[j + 1]) / 2; mk('circle', {cx:x, cy:m - 6, r:3.5, class:'elec'}, L); mk('circle', {cx:x, cy:m + 6, r:3.5, class:'elec'}, L); } });
 xs.forEach(function(x){ ys.forEach(function(y){ mk('circle', {cx:x, cy:y, r:20, class:'atom'}, L); rtext(L, x, y + 5, 'Si', 't', 'middle'); }); });
 mk('circle', {cx:565, cy:95, r:6, class:'elec'}, L);
-mk('path', {d:'M310,122 Q430,60 553,92', class:'arr-blue', 'stroke-dasharray':'5 4', 'marker-end':Lm.blue}, L);
+mk('path', {d:'M310,122 Q430,60 553,92', class:'arr-e', 'marker-end':Lm.blue}, L);
 rtext(L, 540, 78, '自由电子', 'tblue'); rtext(L, 300, 160, '空穴', 'tred', 'middle');
 rtext(L, 20, 245, '每条双线 = 一个共价键（两个原子共用一对电子）', 'ts');
 
@@ -406,7 +406,7 @@ function drawForm(){
   block(fg, 34, st.w);
   if (st.diff){ [70, 160].forEach(function(y){
     mk('line', {x1:282, y1:34 + y, x2:372, y2:34 + y, class:'arr-red', 'marker-end':fm.red}, fg);
-    mk('line', {x1:358, y1:56 + y, x2:268, y2:56 + y, class:'arr-blue', 'marker-end':fm.blue}, fg); });
+    mk('line', {x1:358, y1:56 + y, x2:268, y2:56 + y, class:'arr-e', 'marker-end':fm.blue}, fg); });
     rtext(fg, 30, 250, '空穴 → 向 N 区扩散', 'tred'); rtext(fg, 610, 250, '电子 ← 向 P 区扩散', 'tblue', 'end'); }
   if (st.field){ mk('line', {x1:320 + st.w + 30, y1:250, x2:320 - st.w - 30, y2:250, class:'arr-amber', 'marker-end':fm.amber}, fg); rtext(fg, 320, 274, '内电场 E（N → P）', 'tamber', 'middle'); }
   if (st.br){ var a = 320 - st.w, b = 320 + st.w; mk('path', {d:'M' + a + ',282 L' + a + ',290 L' + b + ',290 L' + b + ',282', class:'w'}, fg); rtext(fg, b + 8, 294, '空间电荷区 = PN 结', 't'); }
@@ -484,18 +484,18 @@ ds.arrow(430, 30, 530, 30, '', 'acc'); ds.text(480, 20, '电流只能这样走',
 
 /* ---------- three models ---------- */
 function modelPanel(id, kind){
-  var p = new Plot(id, {x:25, y:15, w:180, h:105}, [-1, 1.2], [-0.2, 1.2]);
+  var p = new Plot(id, {x:25, y:15, w:180, h:105}, [-1, 1.6], [-0.2, 1.2]);
   p.axes({xl:'u_D', yl:'i_D', xt:[], yt:[]});
   if (kind === 1) p.poly([[-1, 0], [0, 0], [0, 1.15]], 'cv');
-  if (kind === 2){ p.poly([[-1, 0], [0.7, 0], [0.7, 1.15]], 'cv'); p.text(0.7, -0.15, '0.7V', 'tval', 'middle'); }
-  if (kind === 3){ p.poly([[-1, 0], [0.5, 0], [1.1, 1.15]], 'cv'); p.text(0.5, -0.15, '0.5V', 'tval', 'middle'); p.text(0.95, 0.5, '斜率 1/r_d', 'ts', 'end'); }
+  if (kind === 2){ p.poly([[-1, 0], [0.7, 0], [0.7, 1.15]], 'cv'); p.text(0.7, -0.22, '0.7V', 'tval', 'middle'); }
+  if (kind === 3){ p.poly([[-1, 0], [0.5, 0], [1.1, 1.15]], 'cv'); p.text(0.5, -0.22, '0.5V', 'tval', 'middle'); p.text(0.95, 0.45, '斜率 1/r_d', 'ts'); }
   p.fn(function(v){ return 1e-9 * (Math.exp(v / 0.035) - 1); }, 'cvdash', -1, 1.2);
   var s = new Sch(id);
   s.text(10, 160, '导通时等效为：', 'ts');
   if (kind === 1){ s.wire(30, 195, 190, 195); s.text(110, 185, '导线（短路）', 'tval', 'middle'); }
   if (kind === 2){ s.bat(40, 195, 110, 195, {val:'0.7V'}); s.line(110, 195, 130, 195); s.D(130, 195, 180, 195, {open:true}); s.line(180, 195, 200, 195); }
   if (kind === 3){ s.bat(20, 195, 75, 195, {val:'0.5V'}); s.R(75, 195, 140, 195, {lab:'r_d'}); s.D(150, 195, 200, 195, {open:true}); s.line(140, 195, 150, 195); }
-  if (kind !== 1) s.text(110, 225, '（理想二极管只管方向）', 'ts', 'middle');
+  if (kind !== 1) s.text(110, 242, '（理想二极管只管方向）', 'ts', 'middle');
 }
 modelPanel('m1', 1); modelPanel('m2', 2); modelPanel('m3', 3);
 
@@ -514,7 +514,7 @@ function ex141(id, mode){
   s.pm(360, 70, '+'); s.pm(360, 172, '-'); s.text(372, 125, 'U_{AB}', 't');
   if (mode === 'cv'){
     s.text(60, 40, '−6V', 'tblue', 'middle'); s.text(230, 40, '−6.7V', 'tblue', 'middle'); s.text(205, 150, '−12V', 'tblue', 'end');
-    s.arrow(300, 70, 300, 110, 'I_D ≈ 1.77mA', 'red', 306, 95);
+    s.arrow(244, 68, 244, 108, '', 'red'); s.text(238, 94, 'I_D ≈ 1.77mA', 'tred', 'end');
   } else { s.text(60, 40, 'P：−6V', 'tblue', 'middle'); s.text(205, 150, '−12V', 'tblue', 'end'); }
 }
 ex141('ex1'); ex141('ex1b', 'cv');
@@ -535,7 +535,7 @@ e3.wire(100, 140, 100, 95, 160, 95); e3.D(160, 95, 220, 95, {lab:'D_1'}); e3.wir
 e3.R(300, 95, 300, 150, {lab:'R', val:'3kΩ'}); e3.line(300, 150, 300, 160); e3.bat(300, 210, 300, 160, {lab:'12V', side:'l'});
 e3.wire(40, 210, 400, 210); e3.node(100, 210); e3.node(300, 210); e3.gnd(300, 210);
 e3.term(400, 95); e3.term(400, 210); e3.text(410, 100, 'A', 'tb'); e3.text(410, 215, 'B', 'tb'); e3.text(410, 158, 'U_{AB}', 't');
-e3.text(160, 28, '阳极 0V', 'tblue', 'middle'); e3.text(140, 85, '阳极 −6V', 'tblue', 'end');
+e3.text(150, 33, '阳极 0V', 'tblue', 'end'); e3.text(140, 85, '阳极 −6V', 'tblue', 'end');
 
 /* ---------- AND gate ---------- */
 var gA = 0, gB = 0, gs = document.getElementById('gate');
