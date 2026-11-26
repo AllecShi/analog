@@ -77,6 +77,7 @@
 <div class="rs">\(u_{GS}=2U_{TN}=1.5\,\mathrm V\)，代入饱和区方程：
 \[i_D=K_n(u_{GS}-U_{TN})^2=0.249\times(1.5-0.75)^2\approx0.14\,\mathrm{mA}\]</div>
 </div>
+<details class="figfold"><summary>配图：工作点在转移特性上的位置</summary><div class="fig"><svg id="exSat3" class="wide" viewBox="0 0 640 260" role="img" aria-label="数值示例"></svg></div></details>
 </div>
 
 <h3>耗尽型 NMOS 与 P 沟道 MOS <a class="src" data-s="22"></a>–<a class="src" data-s="24"></a></h3>
@@ -125,6 +126,7 @@
 <div class="rs"><b>假设饱和区：</b>\(I_{DQ}=0.16\times(2.25-1)^2=0.25\,\mathrm{mA}\)</div>
 <div class="rs">\(U_{DSQ}=V_{DD}-I_DR_d-V_S=5-0.25\times10-(-2.25)=4.75\,\mathrm V>1.25\,\mathrm V\)，饱和区成立。</div>
 </div>
+<details class="figfold"><summary>配图：带数值的电路</summary><div class="fig"><svg id="ex3d" class="wide" viewBox="0 0 640 330" role="img" aria-label="数值示例"></svg></div></details>
 </div>
 
 <div class="ex">
@@ -166,6 +168,7 @@
 <div class="rs">\[g_m=2K_n(U_{GS}-U_{TN})=1.2\,\mathrm{mS},\qquad r_{ds}=\frac{1}{\lambda K_n(U_{GS}-U_{TN})^2}=\frac{1}{0.02\times0.6}\approx83.3\,\mathrm{k\Omega}\]</div>
 <div class="rs">\(r_{ds}\) 与 \(R_d\) 并联：\[A_u=-g_m(r_{ds}/\!/R_d)=-1.2\times(83.3/\!/4)\approx-4.58\]<span class="muted">若忽略 \(r_{ds}\)，\(A_u=-1.2\times4=-4.8\)；\(r_{ds}\gg R_d\) 时影响不大。</span></div>
 </div>
+<details class="figfold"><summary>配图：小信号等效电路中的电流分配</summary><div class="fig"><svg id="exLamD" class="wide" viewBox="0 0 640 270" role="img" aria-label="数值示例"></svg></div></details>
 </div>
 
 <div class="ex">
@@ -358,6 +361,42 @@ cd.wire(330, 50, 580, 50); cd.ccs(400, 190, 400, 50, {lab:'g_mu_{gs}', side:'l'}
 cd.node(400, 50); cd.node(470, 50); cd.node(540, 50); cd.wire(40, 160, 40, 190, 580, 190); cd.node(200, 190); cd.node(400, 190); cd.node(470, 190); cd.node(540, 190);
 cd.term(580, 50); cd.term(580, 190); cd.text(588, 125, 'u_o', 't'); cd.text(400, 212, 'd（交流接地）', 'ts', 'middle');
 
+
+/* ---------- numeric figures for examples ---------- */
+(function(){
+  var K = 0.249, U = 0.75, p = new Plot('exSat3', {x:60, y:20, w:480, h:200}, [0, 2.2], [0, 0.45]);
+  p.axes({xl:'u_{GS}/V', yl:'i_D/mA', xt:[0.75, 1.5, 2], yt:[0.14, 0.3], xAtBottom:true, yAtLeft:true});
+  p.fn(function(u){ return u <= U ? 0 : K * (u - U) * (u - U); }, 'cv', 0, 2.2, 300);
+  p.poly([[1.5, 0], [1.5, 0.2]], 'cvdash'); p.poly([[0, 0.14], [1.5, 0.14]], 'cvdash'); p.poly([[0.75, 0], [0.75, 0.2]], 'cvdash'); p.dot(1.5, 0.14);
+  p.text(1.55, 0.1, 'i_D = 0.249 × 0.75² ≈ 0.14 mA', 'tred');
+  p.text(0.73, 0.06, 'U_{TN}', 'tval', 'end');
+  mk('line', {x1:p.X(0.76), y1:p.Y(0.2), x2:p.X(1.49), y2:p.Y(0.2), class:'arr-amber', 'marker-end':p.mk.amber, 'marker-start':p.mk.amber}, p.g);
+  p.text(1.125, 0.225, 'u_{GS} − U_{TN} = 0.75 V', 'tamber', 'middle');
+  p.text(0.1, 0.40, 'K_n = μ_nC_{ox}W / 2L ≈ 0.249 mA/V²', 'tval');
+})();
+(function(){
+  var s = new Sch('ex3d'), m = s.fet(260, 150, {lab:'T'});
+  s.wire(m.d[0], 40, 380, 40); s.term(380, 40); s.text(388, 45, '+V_{DD} = 5 V', 't');
+  s.R(m.d[0], 40, m.d[0], m.d[1], {lab:'R_d', val:'10kΩ'});
+  s.line(m.g[0], m.g[1], 160, m.g[1]); s.R(160, m.g[1], 160, 250, {lab:'R_g', side:'l'}); s.gnd(160, 250); s.node(160, m.g[1]);
+  s.line(m.s[0], m.s[1], m.s[0], 200); s.isrc(m.s[0], 200, m.s[0], 268, {lab:'I', val:'0.25mA'}); s.term(m.s[0], 272); s.line(m.s[0], 268, m.s[0], 272); s.text(m.s[0] + 10, 290, '−V_{SS} = −5 V', 't');
+  s.arrow(m.d[0] - 12, 60, m.d[0] - 12, 94, '', 'red'); s.text(m.d[0] - 18, 82, 'I_D = 0.25 mA', 'tred', 'end');
+  s.text(170, m.g[1] - 8, 'V_G = 0', 'tval'); s.text(m.s[0] + 10, 196, 'V_S = −2.25 V', 'tval'); s.text(m.d[0] + 10, 128, 'V_D = 5 − 0.25 × 10 = 2.5 V', 'tval');
+  s.text(20, 320, 'U_{GS} = 0 − (−2.25) = 2.25 V；U_{DS} = 2.5 − (−2.25) = 4.75 V > U_{GS} − U_{TN} = 1.25 V', 'tval');
+})();
+(function(){
+  var s = new Sch('exLamD'), gm = 1.2, rds = 83.3, Rd = 4, ugs = 10, i = gm * ugs, rp = rds * Rd / (rds + Rd), uo = -i * rp;
+  s.term(60, 50); s.term(60, 170); s.text(50, 55, 'g', 'tb', 'end'); s.text(50, 175, 's', 'tb', 'end'); s.pm(70, 80, '+'); s.pm(70, 140, '-'); s.text(80, 115, 'u_{gs} = 10 mV', 'tval');
+  s.ccs(250, 50, 250, 170, {lab:'g_mu_{gs}', side:'l'}); s.R(370, 50, 370, 170, {lab:'r_{ds}', val:'83.3kΩ'}); s.R(480, 50, 480, 170, {lab:'R_d', val:'4kΩ'});
+  s.wire(250, 50, 560, 50); s.wire(60, 170, 560, 170); s.node(370, 50); s.node(480, 50); s.node(370, 170); s.node(480, 170); s.term(560, 50); s.term(560, 170);
+  s.text(250, 36, 'd', 'tb', 'middle'); s.text(570, 115, 'u_o = ' + nf3(uo) + ' mV', 'tval');
+  s.text(240, 196, 'g_mu_{gs} = 1.2 mS × 10 mV = 12 μA', 'tred', 'middle');
+  s.arrow(356, 108, 356, 76, '', 'red'); s.text(350, 100, nf3(-uo / rds) + ' μA', 'tred', 'end');
+  s.arrow(466, 108, 466, 76, '', 'red'); s.text(460, 100, nf3(-uo / Rd) + ' μA', 'tred', 'end');
+  s.text(40, 236, 'r_{ds} // R_d = 83.3 // 4 ≈ ' + nf3(rp) + ' kΩ：12 μA 中只有约 0.55 μA 走 r_{ds}', 'tval');
+  s.text(40, 256, 'A_u = ' + nf3(uo) + ' mV ÷ 10 mV ≈ ' + nf3(uo / ugs), 'tred');
+  function nf3(v){ return (+v.toFixed(2)).toString().replace('-', '−'); }
+})();
 initPage(3);
 })();
 </script>

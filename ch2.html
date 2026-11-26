@@ -201,6 +201,7 @@ Q(40μA, 3.2mA, 5.6V)，<b>放大区</b>。在上面的交互图里把 \(R_b\) �
 \[I_{CM}=\frac{V_{CC}-V_{CES}}{R_c}\approx\frac{12}{2}=6\,\mathrm{mA}\]
 因为 \(\beta I_{BQ}=9.6\,\mathrm{mA}>6\,\mathrm{mA}\)，BJT 工作在<b>饱和区</b>，Q(120μA, 6mA, 0V)。<br><span class="muted">教训：算出 \(U_{CE}\) 为负或很小，说明假设“放大区”不成立。</span></div>
 </div>
+<details class="figfold"><summary>配图：两个 Q 点在负载线上的位置</summary><div class="fig"><svg id="exSatD" class="wide" viewBox="0 0 640 300" role="img" aria-label="数值示例"></svg></div></details>
 </div>
 
 <!-- ============ 2.3 dynamic ============ -->
@@ -242,6 +243,7 @@ Q(40μA, 3.2mA, 5.6V)，<b>放大区</b>。在上面的交互图里把 \(R_b\) �
 <div class="formula boxed">\[ r_{be}=r_{bb'}+(1+\beta)\frac{26\,\mathrm{mV}}{I_{EQ}}\qquad(r_{bb'}\text{ 常取 }200\sim300\,\Omega) \]</div>
 <p class="muted">注意 \(r_{be}\) 由 Q 点决定，所以必须<b>先算静态</b>，才能做动态分析。</p>
 <details class="deriv"><summary>推导过程：\(r_{be}\) 公式的来源</summary>
+<div class="fig"><svg id="dvRbe" class="wide" viewBox="0 0 640 330" role="img" aria-label="数值示例"></svg><div class="cap">数值示例（取下面补充例题的 Q 点）：\(I_{BQ}=40\,\mu\mathrm A\)，\(\beta=80\)，\(I_{EQ}=3.24\,\mathrm{mA}\)。红线是 Q 点处的切线，\(r_{be}\) 就是它斜率的倒数（再加上 \(r_{bb'}\)）。</div></div>
 <div class="step"><b>①</b><div>\(r_{be}\) 是输入特性在 Q 点的“动态电阻”：\(r_{be}=\dfrac{\Delta u_{BE}}{\Delta i_B}\)。它由两段组成：基区体电阻 \(r_{bb'}\)（几百欧，近似常数）和发射结的动态电阻折算到基极的部分。</div></div>
 <div class="step"><b>②</b><div>发射结是一个 PN 结：\(i_E\approx I_Se^{u_{BE}/V_T}\)。求导：\(\dfrac{\mathrm di_E}{\mathrm du_{BE}}=\dfrac{i_E}{V_T}\)，所以发射结动态电阻 \(r_e=\dfrac{V_T}{I_{EQ}}\)，常温 \(V_T\approx26\,\mathrm{mV}\)。这就是第 1 章二极管 \(r_d=V_T/I_D\) 的同一个公式。</div></div>
 <div class="step"><b>③</b><div>\(r_e\) 上流的是 \(i_e=(1+\beta)i_b\)。从基极看，同样的电压 \(i_er_e\) 只对应 \(i_b\) 的电流，等效电阻放大 \((1+\beta)\) 倍：\((1+\beta)r_e\)。</div></div>
@@ -253,6 +255,7 @@ Q(40μA, 3.2mA, 5.6V)，<b>放大区</b>。在上面的交互图里把 \(R_b\) �
 <div class="formula">\[ u_i=i_b r_{be},\qquad u_o=-\beta i_b\,(R_c/\!/R_L) \]
 \[ A_u=\frac{u_o}{u_i}=-\frac{\beta R_L'}{r_{be}},\qquad R_i=R_b/\!/r_{be}\approx r_{be},\qquad R_o=R_c,\qquad A_{us}=A_u\frac{R_i}{R_s+R_i} \]</div>
 <details class="deriv"><summary>推导过程：\(A_u\)、\(R_i\)、\(R_o\)、\(A_{us}\) 逐个按定义求</summary>
+<div class="fig"><svg id="dvAu" class="wide" viewBox="0 0 640 300" role="img" aria-label="数值示例"></svg><div class="cap">数值示例：参数同下面的补充例题，信号源 \(u_s=10\,\mathrm{mV}\)。</div></div>
 <div class="step"><b>\(A_u\)</b><div>输入回路：\(u_i\) 直接加在 \(r_{be}\) 两端（\(R_b\) 与它并联，不影响这个电压），\(i_b=u_i/r_{be}\)。输出回路：受控电流 \(\beta i_b\) 从集电极向下流，流过 \(R_c/\!/R_L=R_L'\)，按 \(u_o\) 上正下负的参考方向，\(u_o=-\beta i_bR_L'\)。相除：\(A_u=-\dfrac{\beta R_L'}{r_{be}}\)。负号表示输出与输入反相。</div></div>
 <div class="step"><b>\(R_i\)</b><div>从输入端看进去，\(R_b\) 和 \(r_{be}\) 都接在 b 与地（e）之间，是并联：\(R_i=R_b/\!/r_{be}\)。\(R_b\) 一般几百 kΩ，\(r_{be}\) 约 1 kΩ，所以 \(R_i\approx r_{be}\)。</div></div>
 <div class="step"><b>\(R_o\)</b><div>按定义：令 \(u_s=0\)、去掉 \(R_L\)，在输出端加测试电压 \(u_t\)。\(u_s=0\Rightarrow i_b=0\Rightarrow\beta i_b=0\)，受控电流源开路，看进去只剩 \(R_c\)：\(R_o=R_c\)。</div></div>
@@ -270,6 +273,7 @@ Q(40μA, 3.2mA, 5.6V)，<b>放大区</b>。在上面的交互图里把 \(R_b\) �
 <div class="rs">\[A_{us}=A_u\frac{R_i}{R_s+R_i}=-94\times\frac{0.85}{0.5+0.85}\approx-59\]
 <span class="muted">信号源内阻“吃掉”了约 37% 的增益，因为共射电路的 \(R_i\) 不大。</span></div>
 </div>
+<details class="figfold"><summary>配图：带数值的小信号等效电路</summary><div class="fig"><svg id="exSupD" class="wide" viewBox="0 0 640 280" role="img" aria-label="数值示例"></svg></div></details>
 </div>
 <div class="key"><b>动态分析三步走：</b>① 求 Q 点 → 算 \(r_{be}\)；② 画交流通路 → 换成小信号模型；③ 按定义求 \(A_u, R_i, R_o\)。</div>
 
@@ -565,6 +569,48 @@ ss.text(150, 38, 'u_i', 't', 'middle'); ss.arrow(275, 70, 275, 100, 'i_b', 'red'
 ss.text(185, 215, '←  R_i = R_b // r_{be}', 'tval'); ss.text(470, 215, 'R_o = R_c  →', 'tval');
 ss.text(255, 30, 'b', 'tb'); ss.text(375, 30, 'c', 'tb'); ss.text(320, 205, 'e', 'tb');
 
+/* ---------- numeric figures for derivations and examples ---------- */
+/* r_be from the slope of the input characteristic at Q */
+(function(){
+  var p = new Plot('dvRbe', {x:70, y:20, w:480, h:220}, [0.55, 0.78], [0, 100]);
+  p.axes({xl:'u_{BE}/V', yl:'i_B/μA', xt:[0.6, 0.65, 0.7, 0.75], yt:[20, 40, 60, 80], xAtBottom:true, yAtLeft:true});
+  var f = function(u){ return 40 * Math.exp((u - 0.70) / 0.026); };
+  p.fn(f, 'cv2', 0.55, 0.78, 300);
+  var k = 40 / 0.026; p.poly([[0.674, 0], [0.735, 40 + k * 0.035]], 'cv3');
+  p.poly([[0.70, 40], [0.713, 40], [0.713, 60]], 'cvdash');
+  p.dot(0.70, 40); p.text(0.697, 44, 'Q（0.70 V，40 μA）', 'tval', 'end');
+  p.text(0.716, 36, 'Δu_{BE} = 13 mV', 'tamber'); p.text(0.716, 52, 'Δi_B = 20 μA', 'tamber');
+  rtext(p.g, 70, 292, '切线斜率的倒数 = 13 mV ÷ 20 μA = 650 Ω = (1 + β)·26 mV / I_{EQ}', 'tred');
+  rtext(p.g, 70, 314, '再加 r_{bb\'} = 200 Ω：r_{be} = 850 Ω', 'tred');
+})();
+/* common-emitter small-signal circuit with numbers */
+function ceSSV(id, o){
+  var ss = new Sch(id);
+  ss.vs(40, 90, 40, 170, {lab:'u_s', val:o.us, side:'l'}); ss.wire(40, 90, 40, 50, 60, 50); ss.R(60, 50, 130, 50, {lab:'R_s', val:'0.5kΩ'});
+  ss.wire(130, 50, 260, 50); ss.node(170, 50); ss.node(260, 50); ss.term(150, 50);
+  ss.R(200, 50, 200, 190, {lab:'R_b', val:'300kΩ', side:'l'}); ss.wire(170, 50, 200, 50); ss.R(260, 50, 260, 190, {lab:'r_{be}', val:'0.85kΩ'});
+  ss.ccs(380, 50, 380, 190, {lab:'βi_b', side:'l'}); ss.wire(380, 50, 540, 50); ss.R(460, 50, 460, 190, {lab:'R_c', val:'2kΩ'}); ss.R(540, 50, 540, 190, {lab:'R_L', val:'2kΩ'});
+  ss.node(460, 50); ss.node(460, 190); ss.node(540, 50); ss.node(540, 190); ss.wire(40, 170, 40, 190, 600, 190); ss.node(200, 190); ss.node(260, 190); ss.node(380, 190);
+  ss.line(540, 50, 600, 50); ss.term(600, 50); ss.term(600, 190); ss.text(610, 125, o.uo, 'tval');
+  ss.text(156, 18, o.ui, 'tval'); ss.arrow(275, 70, 275, 100, '', 'red'); ss.text(282, 90, o.ib, 'tred');
+  ss.text(255, 36, 'b', 'tb'); ss.text(375, 36, 'c', 'tb'); ss.text(320, 206, 'e', 'tb');
+  (o.notes || []).forEach(function(t, i){ ss.text(40, 236 + 20 * i, t[0], t[1] || 'tval'); });
+}
+ceSSV('dvAu', {us:'10 mV', ui:'u_i = 6.3 mV', ib:'i_b = 7.4 μA', uo:'u_o = −0.59 V',
+  notes:[['R_s 和 R_i = 300 // 0.85 ≈ 0.85 kΩ 分压：u_i = 10 × 0.85 / 1.35 ≈ 6.3 mV'], ['i_b = 6.3 mV ÷ 0.85 kΩ ≈ 7.4 μA，流过 R_c // R_L = 1 kΩ：u_o ≈ −0.59 V'], ['A_u = −0.59 V ÷ 6.3 mV ≈ −94，A_{us} = −0.59 V ÷ 10 mV ≈ −59', 'tred']]});
+ceSSV('exSupD', {ui:'R_i ≈ 0.85 kΩ', ib:'i_b', uo:'R_o = 2 kΩ',
+  notes:[['r_{be} = 200 + 81 × 26 / 3.24 ≈ 850 Ω；R_L\' = 2 // 2 = 1 kΩ'], ['A_u = −80 × 1 / 0.85 ≈ −94；A_{us} = −94 × 0.85 / 1.35 ≈ −59', 'tred']]});
+/* load line: Rb = 300k (active) vs 100k (saturated) */
+(function(){
+  var p = new Plot('exSatD', {x:60, y:20, w:520, h:250}, [0, 13], [0, 11]);
+  p.axes({xl:'u_{CE}/V', yl:'i_C/mA', xt:[2, 4, 5.6, 8, 10, 12], yt:[2, 3.2, 6, 9.6]});
+  p.rect(0, 0, 0.8, 11, 'zone-red'); p.text(0.9, 10.4, '饱和区', 'tred');
+  p.fn(function(u){ return icf(u, 40, 80); }, 'cv2'); p.text(12.9, icf(12.9, 40, 80) + 0.3, 'I_B = 40 μA', 'tblue', 'end');
+  p.fn(function(u){ return icf(u, 120, 80); }, 'cvdash'); p.text(12.9, icf(12.9, 120, 80) + 0.3, 'I_B = 120 μA（βI_B = 9.6 mA）', 'ts', 'end');
+  p.poly([[0, 6], [12, 0]], 'cv'); p.text(2.0, 5.6, '负载线 i_C = (12 − u_{CE}) / 2 kΩ', 'tval');
+  p.dot(5.6, 3.2); p.text(5.4, 2.2, 'Q_1（R_b = 300 kΩ）：放大区', 'tval', 'end');
+  p.dot(0.15, 5.95); p.text(1.0, 6.6, 'Q_2（R_b = 100 kΩ）：负载线最多 6 mA，饱和', 'tred');
+})();
 initPage(2);
 })();
 </script>

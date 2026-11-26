@@ -37,7 +37,8 @@
 <div class="formula boxed">\[ u_{id}=u_{i1}-u_{i2}\ (\text{差模}),\qquad u_{ic}=\frac{u_{i1}+u_{i2}}{2}\ (\text{共模}) \]
 \[ \Longleftrightarrow\quad u_{i1}=u_{ic}+\frac{u_{id}}{2},\qquad u_{i2}=u_{ic}-\frac{u_{id}}{2} \]</div>
 <ul><li><b>差模</b>：两输入大小相等、极性相反，是我们要放大的<b>有用信号</b>；</li><li><b>共模</b>：两输入大小相等、极性相同，温漂、电源干扰都属于这一类，是要抑制的<b>干扰</b>。</li></ul>
-<details class="deriv"><summary>推导过程：任意一对输入都能这样分解的原因，以及 \(u_o=A_{ud}u_{id}+A_{uc}u_{ic}\) 从哪来</summary>
+<details class="deriv"><summary>推导过程：任意一对输入都能这样分解的原因，以及 \(u_o=A_{ud}u_{id}+A_{uc}u_{ic}\) 的来源</summary>
+<div class="fig"><svg id="dvDec" class="wide" viewBox="0 0 640 230" role="img" aria-label="数值示例"></svg><div class="cap">数值示例：\(u_{i1}=16\,\mathrm{mV}\)、\(u_{i2}=10\,\mathrm{mV}\)。两边都含 13 mV 的共模，T1 侧多 3 mV、T2 侧少 3 mV。</div></div>
 <div class="step"><b>①</b><div>把两个定义式当成方程组：\(u_{i1}-u_{i2}=u_{id}\)，\(u_{i1}+u_{i2}=2u_{ic}\)。两式相加除以 2 得 \(u_{i1}=u_{ic}+\frac{u_{id}}{2}\)，相减除以 2 得 \(u_{i2}=u_{ic}-\frac{u_{id}}{2}\)。两个未知数、两个方程，解唯一——所以任何一对输入都能拆，而且拆法只有一种。</div></div>
 <div class="step"><b>②</b><div>小信号分析时电路是线性的，可以用叠加原理：让“两端各加 \(\pm u_{id}/2\)”单独作用，输出 \(A_{ud}u_{id}\)；让“两端都加 \(u_{ic}\)”单独作用，输出 \(A_{uc}u_{ic}\)；总输出是两者之和。</div></div>
 <div class="step"><b>③</b><div>例：\(u_{i1}=16\,\mathrm{mV}\)、\(u_{i2}=10\,\mathrm{mV}\)，得 \(u_{id}=6\,\mathrm{mV}\)、\(u_{ic}=13\,\mathrm{mV}\)。验证：\(13+3=16\)，\(13-3=10\)。</div></div>
@@ -57,6 +58,7 @@
 <div class="formula boxed">\[ K_{CMR}=\left|\frac{A_{ud}}{A_{uc}}\right|,\qquad K_{CMR}(\mathrm{dB})=20\lg\left|\frac{A_{ud}}{A_{uc}}\right| \]</div>
 <p>例：\(A_{ud}=-200\)，\(A_{uc}=0.1\)，\(K_{CMR}=20\lg(200/0.1)=66\,\mathrm{dB}\)。\(K_{CMR}\) 越大，电路“放大有用信号、压制干扰”的本领越强。</p>
 <details class="deriv"><summary>计算过程：66 dB 的由来</summary>
+<div class="fig"><svg id="dvKdb" class="wide" viewBox="0 0 640 170" role="img" aria-label="数值示例"></svg><div class="cap">对数刻度上，每 10 倍是 20 dB。0.1 在 −20 dB，200 在 +46 dB，相距 66 dB。</div></div>
 <p>\(\left|\frac{A_{ud}}{A_{uc}}\right|=\frac{200}{0.1}=2000\)；\(20\lg2000=20(\lg2+\lg1000)=20\times(0.301+3)\approx66\,\mathrm{dB}\)。增益带负号只表示反相，求 \(K_{CMR}\) 时取绝对值。</p>
 </details>
 
@@ -68,6 +70,7 @@
 \[ I_C=\beta I_B,\qquad V_E=-I_BR_B-U_{BE},\qquad U_{CE}=V_{CC}-I_CR_C-2I_ER_E+V_{EE} \]</div>
 <p class="muted">\(R_B\) 很小时，\(V_E\approx-0.7\,\mathrm V\)，\(I_E\approx\frac{V_{EE}-0.7}{2R_E}\)，这是最常用的快速估算。双电源的好处 <a class="src" data-s="24"></a>：信号摆动范围大；基极电流由负电源提供，输入端可以直接接地。</p>
 <details class="deriv"><summary>推导过程：静态电流（沿输入回路列 KVL）</summary>
+<div class="fig"><svg id="dvQ" class="wide" viewBox="0 0 640 350" role="img" aria-label="数值示例"></svg><div class="cap">数值示例：\(V_{CC}=V_{EE}=12\,\mathrm V\)，\(R_B=1\,\mathrm{k\Omega}\)，\(R_E=5.6\,\mathrm{k\Omega}\)，\(\beta=50\)。绿色是 KVL 走过的回路，12 V 几乎全部降在 \(R_E\) 上，\(R_B\) 上只有约 20 mV。</div></div>
 <div class="step"><b>①</b><div>选回路：地 → \(R_B\) → b → e → \(R_E\) → \(-V_{EE}\)。从地出发到 \(-V_{EE}\) 一共降了 \(V_{EE}\)：\[I_BR_B+U_{BE}+I_{RE}R_E=V_{EE}\]</div></div>
 <div class="step"><b>②</b><div>\(R_E\) 是两管共用的：\(I_{RE}=I_{E1}+I_{E2}=2I_E=2(1+\beta)I_B\)。漏掉这个“2”是静态计算最常见的错。</div></div>
 <div class="step"><b>③</b><div>代入解出 \(I_B=\dfrac{V_{EE}-U_{BE}}{R_B+2(1+\beta)R_E}\)。</div></div>
@@ -85,6 +88,7 @@
 
 <h2 id="dynamic"><span class="n">5.4.5</span>动态分析：四种接法</h2>
 <details class="deriv"><summary>推导过程：\(R_E\) 对差模“短路”、对共模“变成 \(2R_E\)”</summary>
+<div class="fig"><svg id="dvRE" class="wide" viewBox="0 0 640 240" role="img" aria-label="数值示例"></svg><div class="cap">数值示例：每管发射极电流变化 10 μA，\(R_E=10\,\mathrm{k\Omega}\)。</div></div>
 <div class="step"><b>差模</b><div>两管基极加 \(\pm u_{id}/2\)，对称使 \(i_{e1}=-i_{e2}\)。\(R_E\) 上的交流电压 \(u_E=(i_{e1}+i_{e2})R_E=0\)，发射极交流电位恒为 0，等于接地。所以画差模半电路时把发射极直接接地。</div></div>
 <div class="step"><b>共模</b><div>两管基极都加 \(u_{ic}\)，\(i_{e1}=i_{e2}=i_e\)。\(u_E=2i_eR_E=i_e\cdot(2R_E)\)。只看一只管子，它的发射极电流 \(i_e\) 产生的电压就像流过一个 \(2R_E\) 的电阻，所以共模半电路的发射极接 \(2R_E\)。</div></div>
 </details>
@@ -94,6 +98,7 @@
 <div class="panel fig"><svg id="halfSS" class="wide" viewBox="0 0 640 210" role="img" aria-label="差模半电路小信号"></svg></div>
 <div class="formula">\[ A_{d1}=\frac{u_{od1}}{u_{i1}}=-\frac{\beta R_C}{R_B+r_{be}},\qquad A_{ud}=\frac{u_{od1}-u_{od2}}{u_{i1}-u_{i2}}=\frac{2u_{od1}}{2u_{i1}}=A_{d1} \]</div>
 <details class="deriv"><summary>推导过程：差模增益</summary>
+<div class="fig"><svg id="dvAd" class="wide" viewBox="0 0 640 260" role="img" aria-label="数值示例"></svg><div class="cap">数值示例：\(R_B=1\,\mathrm{k\Omega}\)，\(r_{be}=2\,\mathrm{k\Omega}\)，\(\beta=50\)，\(R_C=5\,\mathrm{k\Omega}\)，\(u_{id}=10\,\mathrm{mV}\)。验证：\(-\frac{50\times5}{1+2}=-83.3\)。</div></div>
 <div class="step"><b>①</b><div>差模时 \(u_{i1}=u_{id}/2\)，\(u_{i2}=-u_{id}/2\)，发射极交流接地。半电路的输入回路：\(i_{b1}=\dfrac{u_{i1}}{R_B+r_{be}}\)。</div></div>
 <div class="step"><b>②</b><div>输出回路：受控源 \(\beta i_{b1}\) 流过 \(R_C\)，按图中参考方向 \(u_{od1}=-\beta i_{b1}R_C=-\dfrac{\beta R_C}{R_B+r_{be}}u_{i1}\)。</div></div>
 <div class="step"><b>③</b><div>T2 输入正好相反，输出也相反：\(u_{od2}=-u_{od1}\)。</div></div>
@@ -104,11 +109,13 @@
 <p><b>带负载 \(R_L\)（双端输出）</b>：两集电极交流电位一正一负、大小相等，\(R_L\) 中点是交流地，每个半电路只带 \(R_L/2\) <a class="src" data-s="33"></a>：</p>
 <div class="formula">\[ A_{ud}=-\frac{\beta R_L'}{R_B+r_{be}},\qquad R_L'=R_C/\!/\frac{R_L}{2} \]</div>
 <details class="deriv"><summary>推导过程：负载取 \(R_L/2\) 的原因</summary>
+<div class="fig"><svg id="dvRL2" class="wide" viewBox="0 0 640 190" role="img" aria-label="数值示例"></svg><div class="cap">数值示例：\(R_L=10\,\mathrm{k\Omega}\)，两集电极交流电位 ±0.4 V。</div></div>
 <p>\(R_L\) 接在两个集电极之间。差模时两集电极交流电位 \(+u_{od1}\) 和 \(-u_{od1}\) 大小相等、符号相反，\(R_L\) 的中点电位是 \(\frac{u_{od1}+(-u_{od1})}{2}=0\)。把 \(R_L\) 从中点劈成两个 \(R_L/2\)，中点接地并不改变任何电流。于是每个半电路的集电极对地接的是 \(R_C/\!/(R_L/2)\)。</p>
 </details>
 <p><b>输入、输出电阻</b> <a class="src" data-s="35"></a>–<a class="src" data-s="37"></a>：差模信号从一个基极进、另一个基极出，经过两个半电路串联：</p>
 <div class="formula">\[ R_{id}=2(R_B+r_{be}),\qquad R_{od}=2R_C\ (\text{双端输出}),\qquad R_o=R_C\ (\text{单端输出}) \]</div>
 <details class="deriv"><summary>推导过程：输入、输出电阻</summary>
+<div class="fig"><svg id="dvRid" class="wide" viewBox="0 0 640 220" role="img" aria-label="数值示例"></svg><div class="cap">数值示例：\(R_B=1\,\mathrm{k\Omega}\)，\(r_{be}=2\,\mathrm{k\Omega}\)，\(u_{id}=10\,\mathrm{mV}\)。差模电流从 \(b_1\) 进、\(b_2\) 出，中途经过交流地 E。</div></div>
 <div class="step"><b>\(R_{id}\)</b><div>差模电流 \(i_b\) 从 b1 流进，经 \(R_B\)、\(r_{be}\) 到发射极（交流地），再经 T2 的 \(r_{be}\)、\(R_B\) 从 b2 流出。路径上串联了两份 \(R_B+r_{be}\)：\(R_{id}=\dfrac{u_{id}}{i_b}=\dfrac{2i_b(R_B+r_{be})}{i_b}=2(R_B+r_{be})\)。</div></div>
 <div class="step"><b>\(R_o\)</b><div>令输入为零、受控源 \(\beta i_b=0\)（开路），从输出端看进去只剩 \(R_C\)。双端输出时两集电极之间是两个 \(R_C\) 串联：\(2R_C\)；单端输出是一个 \(R_C\)。</div></div>
 </details>
@@ -117,6 +124,7 @@
 <p><b>单端输出</b>：只取一管输出，抵消不了，靠 \(2R_E\) 的负反馈压低：</p>
 <div class="formula">\[ A_{uc}=\frac{u_{oc1}}{u_{ic}}=-\frac{\beta(R_C/\!/R_L)}{R_B+r_{be}+2(1+\beta)R_E}\approx-\frac{R_L'}{2R_E} \]</div>
 <details class="deriv"><summary>推导过程：单端输出的共模增益和 \(K_{CMR}\)</summary>
+<div class="fig"><svg id="dvAc" class="wide" viewBox="0 0 640 330" role="img" aria-label="数值示例"></svg><div class="cap">数值示例：\(R_E=10\,\mathrm{k\Omega}\)（共模半电路接 \(2R_E=20\,\mathrm{k\Omega}\)），其余同差模增益的例子。</div></div>
 <div class="step"><b>①</b><div>共模半电路：基极加 \(u_{ic}\)，发射极接 \(2R_E\)。输入回路 KVL：\(u_{ic}=i_b(R_B+r_{be})+(1+\beta)i_b\cdot2R_E\)，所以 \(i_b=\dfrac{u_{ic}}{R_B+r_{be}+2(1+\beta)R_E}\)。（发射极电阻折算到基极回路要乘 \(1+\beta\)，和第 2 章分压偏置电路一样。）</div></div>
 <div class="step"><b>②</b><div>\(u_{oc1}=-\beta i_bR_L'\)，\(R_L'=R_C/\!/R_L\)，得到上式。</div></div>
 <div class="step"><b>③</b><div>\(2(1+\beta)R_E\) 通常远大于 \(R_B+r_{be}\)，分母只留它，再用 \(\frac{\beta}{1+\beta}\approx1\)：\(A_{uc}\approx-\dfrac{R_L'}{2R_E}\)。\(R_E\) 越大，共模增益越小。</div></div>
@@ -145,6 +153,7 @@
 <div class="rs"><b>差模 6mV 单独作用：</b>\(u''_{o1}=A_{d1}u_{d1}\)，\(u''_{o2}=-A_{d1}u_{d1}\)；双端输出 \(u''_o=A_du_d\)，\(A_d=-\beta\dfrac{R_C}{R_B+r_{be}}\)。</div>
 <div class="rs"><b>叠加：</b>\[u_{o1}=A_cu_c+A_{d1}u_{d1},\qquad u_{o2}=A_cu_c-A_{d1}u_{d1},\qquad u_o=u_{o1}-u_{o2}=A_du_d\]双端输出只与差模有关；单端输出 \(u_{o1}\) 中混有共模成分。</div>
 </div>
+<details class="figfold"><summary>配图：带数值的电路</summary><div class="fig"><svg id="exSup" class="wide" viewBox="0 0 640 350" role="img" aria-label="数值示例"></svg></div></details>
 </div>
 
 <h2 id="current"><span class="n">5.4.6</span>恒流源与恒流源式差放</h2>
@@ -155,6 +164,7 @@
 \[I_O=I_{C2}\approx I_R=\frac{V_{CC}-U_{BE}}{R}\]
 <p class="muted">\(I_O\) 是 \(I_R\) 的“镜像”，与负载 \(R_L\) 无关。</p>
 <details class="deriv"><summary>推导过程：镜像电流（考虑基极电流）</summary>
+<div class="fig"><svg id="dvMir" viewBox="0 0 460 290" role="img" aria-label="数值示例"></svg></div>
 <p>两管 \(U_{BE}\) 相同、特性相同 → \(I_{B1}=I_{B2}=I_B\)，\(I_{C1}=I_{C2}=\beta I_B\)。T1 集电极节点 KCL：\(I_R=I_{C1}+2I_B=\beta I_B+2I_B\)，所以 \[I_O=I_{C2}=\beta I_B=\frac{\beta}{\beta+2}I_R\]\(\beta\gg2\) 时 \(I_O\approx I_R\)。\(\beta=100\) 时误差约 2%。</p>
 </details></div>
 <div class="panel"><h4>微电流源 <a class="src" data-s="55"></a></h4><svg id="widlar" viewBox="0 0 320 250" role="img" aria-label="微电流源"></svg>
@@ -162,6 +172,7 @@
 \[I_O\approx\frac{V_T}{R_{E2}}\ln\frac{I_R}{I_O}\]
 <p class="muted">用不大的电阻就能得到微安级的小电流，温度稳定性好。</p>
 <details class="deriv"><summary>推导过程：微电流源公式</summary>
+<div class="fig"><svg id="dvWid" viewBox="0 0 460 320" role="img" aria-label="数值示例"></svg></div>
 <p>BJT 的发射结服从 \(I_C\approx I_Se^{U_{BE}/V_T}\)，即 \(U_{BE}=V_T\ln\dfrac{I_C}{I_S}\)。两管同型号，\(I_S\) 相同：\[U_{BE1}-U_{BE2}=V_T\ln\frac{I_R}{I_S}-V_T\ln\frac{I_O}{I_S}=V_T\ln\frac{I_R}{I_O}\]而基极回路 KVL 给出 \(U_{BE1}=U_{BE2}+I_OR_{E2}\)（忽略基极电流），两式联立即得 \(I_O R_{E2}=V_T\ln\dfrac{I_R}{I_O}\)。这是一个超越方程，一般已知 \(I_R\) 和想要的 \(I_O\)，反过来求 \(R_{E2}\)。例：\(I_R=1\,\mathrm{mA}\)、\(I_O=10\,\mu\mathrm A\)，\(R_{E2}=\dfrac{26\,\mathrm{mV}\times\ln100}{10\,\mu\mathrm A}\approx12\,\mathrm{k\Omega}\)；若用镜像电流源（\(V_{CC}=15\,\mathrm V\)）得到同样的 10 μA，就要 \(R\approx\frac{15-0.7}{10\,\mu\mathrm A}\approx1.4\,\mathrm{M\Omega}\)，集成电路里做不出这么大的电阻。</p>
 </details></div>
 </div>
@@ -177,58 +188,68 @@
 <div class="ex"><div class="exh"><span class="tag">例 1</span>输入信号分解 <a class="src" data-s="68"></a></div>
 <p>\(u_{i1}=12\,\mathrm{mV}\)，\(u_{i2}=-4\,\mathrm{mV}\)。求差模、共模分量；若 \(A_{ud}=-80\)、\(A_{uc}=-0.1\)（单出），求输出。</p>
 <div class="reveal"><div class="rs">\(u_{id}=12-(-4)=16\,\mathrm{mV}\)，\(u_{ic}=\frac{12-4}{2}=4\,\mathrm{mV}\)</div>
-<div class="rs">\(u_o=-80\times16+(-0.1)\times4=-1280-0.4\approx-1280\,\mathrm{mV}\)。共模贡献只有 −0.4mV，可以忽略。</div></div></div>
+<div class="rs">\(u_o=-80\times16+(-0.1)\times4=-1280-0.4\approx-1280\,\mathrm{mV}\)。共模贡献只有 −0.4mV，可以忽略。</div></div>
+<details class="figfold"><summary>配图：输入分解</summary><div class="fig"><svg id="ex1d" class="wide" viewBox="0 0 640 230" role="img" aria-label="数值示例"></svg></div></details></div>
 
 <div class="ex"><div class="exh"><span class="tag">例 2</span>\(K_{CMR}\) 的定义与单位 <a class="src" data-s="69"></a></div>
 <p>\(A_{ud}=80\,\mathrm{dB}\)，单端输出 \(A_{uc}=2\times10^{-4}\)（倍）。求 \(K_{CMR}\) 的倍数与分贝值。</p>
 <div class="reveal"><div class="rs">先把 dB 换回倍数：\(A_{ud}=10^{80/20}=10^4\)</div>
-<div class="rs">\(K_{CMR}=\frac{10^4}{2\times10^{-4}}=5\times10^7\)，\(K_{CMR}(\mathrm{dB})=20\lg(5\times10^7)\approx154\,\mathrm{dB}\)</div></div></div>
+<div class="rs">\(K_{CMR}=\frac{10^4}{2\times10^{-4}}=5\times10^7\)，\(K_{CMR}(\mathrm{dB})=20\lg(5\times10^7)\approx154\,\mathrm{dB}\)</div></div>
+<details class="figfold"><summary>配图：对数刻度上的距离</summary><div class="fig"><svg id="ex2d" class="wide" viewBox="0 0 640 170" role="img" aria-label="数值示例"></svg></div></details></div>
 
 <div class="ex"><div class="exh"><span class="tag">例 3</span>长尾电阻对差模与共模的不同作用 <a class="src" data-s="70"></a></div>
 <p>长尾式差分：\(R_e=10\,\mathrm{k\Omega}, r_{be}=2\,\mathrm{k\Omega}, \beta=50, R_c=5\,\mathrm{k\Omega}\)。求单端输出时 \(A_{ud}\) 与 \(A_{uc}\)。</p>
 <div class="reveal"><div class="rs">差模半电路 \(R_e\) 短路，单端输出取一半：\(A_{ud}=-\frac{\beta R_c}{2r_{be}}=-\frac{50\times5}{4}=-62.5\)</div>
 <div class="rs">共模：\(A_{uc}\approx-\frac{R_c}{2R_e}=-\frac{5}{20}=-0.25\)</div>
-<div class="rs">\(K_{CMR}=\frac{62.5}{0.25}=250\)（48 dB）。\(R_e\) 只压制共模、不影响差模，这就是“长尾”的作用。</div></div></div>
+<div class="rs">\(K_{CMR}=\frac{62.5}{0.25}=250\)（48 dB）。\(R_e\) 只压制共模、不影响差模，这就是“长尾”的作用。</div></div>
+<details class="figfold"><summary>配图：差模、共模半电路</summary><div class="fig"><svg id="ex3a" class="wide" viewBox="0 0 640 230" role="img" aria-label="数值示例"></svg><svg id="ex3b" class="wide" viewBox="0 0 640 300" role="img" aria-label="数值示例"></svg></div></details></div>
 
 <div class="ex"><div class="exh"><span class="tag">例 4</span>恒流源差分的 \(A_{uc}\) <a class="src" data-s="71"></a></div>
 <p>恒流源输出电阻 \(r_o=1\,\mathrm{M\Omega}\)（代替 \(R_e\)），其余同例 3（单端输出），求 \(A_{uc}\) 与 \(K_{CMR}\)。</p>
 <div class="reveal"><div class="rs">\(A_{uc}\approx-\frac{R_c}{2r_o}=-\frac{5\,\mathrm k}{2\,\mathrm M}=-2.5\times10^{-3}\)</div>
-<div class="rs">\(K_{CMR}=\frac{62.5}{0.0025}=25000\)（88 dB）。\(R_e\) 从 10kΩ 提到 1MΩ，\(K_{CMR}\) 提升两个数量级。</div></div></div>
+<div class="rs">\(K_{CMR}=\frac{62.5}{0.0025}=25000\)（88 dB）。\(R_e\) 从 10kΩ 提到 1MΩ，\(K_{CMR}\) 提升两个数量级。</div></div>
+<details class="figfold"><summary>配图：共模半电路</summary><div class="fig"><svg id="ex4d" class="wide" viewBox="0 0 640 300" role="img" aria-label="数值示例"></svg></div></details></div>
 
 <div class="ex"><div class="exh"><span class="tag">例 5</span>静态计算 <a class="src" data-s="72"></a></div>
 <p>恒流源差分：\(V_{CC}=V_{EE}=15\,\mathrm V\)，恒流源 \(I_O=2\,\mathrm{mA}\)，\(R_C=5\,\mathrm{k\Omega}\)，双端输出接 \(R_L=10\,\mathrm{k\Omega}\)。求静态 \(I_{CQ}, V_{CQ}, U_{CEQ}\)。</p>
 <div class="reveal"><div class="rs">对称分流：\(I_{EQ1}=I_{EQ2}=I_O/2=1\,\mathrm{mA}\)，\(I_{CQ}\approx1\,\mathrm{mA}\)</div>
 <div class="rs">\(V_{EQ}=-0.7\,\mathrm V\)；\(V_{CQ}=15-1\times5=10\,\mathrm V\)；\(U_{CEQ}=10-(-0.7)=10.7\,\mathrm V\)</div>
-<div class="rs">静态时两集电极电位相等，\(R_L\) 上无电流，所以 \(V_{CQ}\) 不受 \(R_L\) 影响。</div></div></div>
+<div class="rs">静态时两集电极电位相等，\(R_L\) 上无电流，所以 \(V_{CQ}\) 不受 \(R_L\) 影响。</div></div>
+<details class="figfold"><summary>配图：带数值的电路</summary><div class="fig"><svg id="ex5d" class="wide" viewBox="0 0 640 350" role="img" aria-label="数值示例"></svg></div></details></div>
 
 <div class="ex"><div class="exh"><span class="tag">例 6</span>带负载的差模增益与输入电阻 <a class="src" data-s="73"></a></div>
 <p>例 5 电路，\(\beta=80\)，\(r_{bb'}=300\,\Omega\)。求双端输出 \(A_{ud}\)、\(R_{id}\)、\(R_{od}\)。</p>
 <div class="reveal"><div class="rs">\(r_{be}=300+81\times\frac{26}{1}\approx2.41\,\mathrm{k\Omega}\)</div>
 <div class="rs">\(R_L'=R_C/\!/\frac{R_L}{2}=5/\!/5=2.5\,\mathrm{k\Omega}\)，\(A_{ud}=-\frac{80\times2.5}{2.41}\approx-83\)</div>
-<div class="rs">\(R_{id}=2r_{be}\approx4.8\,\mathrm{k\Omega}\)，\(R_{od}=2R_C=10\,\mathrm{k\Omega}\)</div></div></div>
+<div class="rs">\(R_{id}=2r_{be}\approx4.8\,\mathrm{k\Omega}\)，\(R_{od}=2R_C=10\,\mathrm{k\Omega}\)</div></div>
+<details class="figfold"><summary>配图：差模半电路</summary><div class="fig"><svg id="ex6d" class="wide" viewBox="0 0 680 260" role="img" aria-label="数值示例"></svg></div></details></div>
 
 <div class="ex"><div class="exh"><span class="tag">例 7</span>双端输入改单端输入的等效 <a class="src" data-s="74"></a></div>
 <p>双端输入 \(u_{i1}=20\,\mathrm{mV}\)、\(u_{i2}=10\,\mathrm{mV}\) 求它等效的差模、共模组合。</p>
 <div class="reveal"><div class="rs">T1 侧差模 \(\frac{u_{i1}-u_{i2}}{2}=5\,\mathrm{mV}\)，T2 侧 \(-5\,\mathrm{mV}\)，再叠加共模 \(u_{ic}=15\,\mathrm{mV}\)。</div>
-<div class="rs">任何输入方式 = 差模 ±5mV + 共模 15mV 的叠加；差模增益不变，只是多了一份共模输出。</div></div></div>
+<div class="rs">任何输入方式 = 差模 ±5mV + 共模 15mV 的叠加；差模增益不变，只是多了一份共模输出。</div></div>
+<details class="figfold"><summary>配图：输入分解</summary><div class="fig"><svg id="ex7d" class="wide" viewBox="0 0 640 230" role="img" aria-label="数值示例"></svg></div></details></div>
 
 <div class="ex"><div class="exh"><span class="tag">例 8</span>由集电极电位反推 \(R_e\) <a class="src" data-s="75"></a></div>
 <p>长尾式差分：\(V_{CC}=V_{EE}=6\,\mathrm V\)，\(R_c=5\,\mathrm{k\Omega}\)，\(U_{BE}=0.7\,\mathrm V\)，\(\beta\) 很大（\(I_B\) 可忽略）。实测 \(V_{C1}=V_{C2}=3.5\,\mathrm V\)。求 \(I_{CQ}\)、\(R_e\)、\(U_{CEQ}\)。</p>
 <div class="fig"><svg id="ex8" class="wide" viewBox="0 0 640 325" role="img" aria-label="例8电路"></svg></div>
 <div class="reveal"><div class="rs">先由集电极电位求电流：\(I_{CQ}\approx I_{EQ}=\frac{V_{CC}-V_C}{R_c}=\frac{6-3.5}{5}=0.5\,\mathrm{mA}\)</div>
 <div class="rs">基极接地，\(V_E=-0.7\,\mathrm V\)。\(R_e\) 中流 \(2I_{EQ}=1\,\mathrm{mA}\)：\(R_e=\frac{V_{EE}-0.7}{2I_{EQ}}=\frac{5.3}{1}=5.3\,\mathrm{k\Omega}\)</div>
-<div class="rs">\(U_{CEQ}=V_C-V_E=3.5+0.7=4.2\,\mathrm V\)。这是“逆向考法”：先由 \(V_C\) 定 \(I_C\)，再回到发射极回路求 \(R_e\)。</div></div></div>
+<div class="rs">\(U_{CEQ}=V_C-V_E=3.5+0.7=4.2\,\mathrm V\)。这是“逆向考法”：先由 \(V_C\) 定 \(I_C\)，再回到发射极回路求 \(R_e\)。</div></div>
+<details class="figfold"><summary>配图：求解后的电路</summary><div class="fig"><svg id="ex8s" class="wide" viewBox="0 0 640 350" role="img" aria-label="数值示例"></svg></div></details></div>
 
 <div class="ex"><div class="exh"><span class="tag">例 9</span>单端输入、单端输出综合 <a class="src" data-s="76"></a></div>
 <p>T1 基极输入、T2 基极接地，从 T1 集电极输出：\(r_{be}=2\,\mathrm{k\Omega}, \beta=60, R_C=10\,\mathrm{k\Omega}, R_L=10\,\mathrm{k\Omega}\)（c1 到地），\(R_e=10\,\mathrm{k\Omega}\)。求 \(A_{ud}, A_{uc}, K_{CMR}\)。</p>
 <div class="reveal"><div class="rs">\(R_L'=R_C/\!/R_L=5\,\mathrm{k\Omega}\)，\(A_{ud}=-\frac{\beta R_L'}{2r_{be}}=-\frac{60\times5}{4}=-75\)</div>
 <div class="rs">\(A_{uc}=-\frac{\beta R_L'}{r_{be}+(1+\beta)\cdot2R_e}=-\frac{300}{2+1220}\approx-0.245\)</div>
-<div class="rs">\(K_{CMR}=\frac{75}{0.245}\approx306\)（约 50 dB）。单出时差模、共模增益公式都要带 \(R_L'\)。</div></div></div>
+<div class="rs">\(K_{CMR}=\frac{75}{0.245}\approx306\)（约 50 dB）。单出时差模、共模增益公式都要带 \(R_L'\)。</div></div>
+<details class="figfold"><summary>配图：差模、共模半电路</summary><div class="fig"><svg id="ex9a" class="wide" viewBox="0 0 680 230" role="img" aria-label="数值示例"></svg><svg id="ex9b" class="wide" viewBox="0 0 680 300" role="img" aria-label="数值示例"></svg></div></details></div>
 
 <div class="ex"><div class="exh"><span class="tag">例 10</span>输入输出电阻汇总 <a class="src" data-s="77"></a></div>
 <div class="reveal"><div class="rs">\(R_{id}=2r_{be}\)（各种输入方式相同，差模通路对称）</div>
 <div class="rs">双出 \(R_{od}=2R_C\)；单出 \(R_o=R_C\)</div>
-<div class="rs">带调零电位器 \(R_w\)（滑动端接 \(R_E\)，每管射极串 \(R_w/2\)）：\(R_{id}=2\left[r_{be}+(1+\beta)\frac{R_w}{2}\right]\)。“×2”来自两只管子串联（输入）和两臂对称（输出）。</div></div></div>
+<div class="rs">带调零电位器 \(R_w\)（滑动端接 \(R_E\)，每管射极串 \(R_w/2\)）：\(R_{id}=2\left[r_{be}+(1+\beta)\frac{R_w}{2}\right]\)。“×2”来自两只管子串联（输入）和两臂对称（输出）。</div></div>
+<details class="figfold"><summary>配图：差模输入通路</summary><div class="fig"><svg id="ex10d" class="wide" viewBox="0 0 640 200" role="img" aria-label="数值示例"></svg></div></details></div>
 
 <h2 id="hw"><span class="n">习题</span>课后习题（课件附带）</h2>
 <div class="tbl"><table>
@@ -279,16 +300,17 @@ dp.text(10, 1.05, '输入为零，输出却缓慢漂移', 'tred', 'end');
 /* ---------- diff pair drawer ---------- */
 function pair(id, o){
   o = o || {}; var s = new Sch(id), y = 170, t1 = s.bjt(220, y, {lab:'T_1'}), t2 = s.bjt(420, y, {flip:true, lab:'T_2'});
-  s.wire(t1.c[0], 40, 500, 40); s.term(500, 40); s.text(508, 45, '+V_{CC}', 't');
-  s.R(t1.c[0], 40, t1.c[0], 100, {lab:'R_C', side:'l'}); s.R(t2.c[0], 40, t2.c[0], 100, {lab:'R_C'}); s.node(t2.c[0], 40);
+  s.wire(t1.c[0], 40, 500, 40); s.term(500, 40); s.text(508, 45, o.vcc || '+V_{CC}', 't');
+  s.R(t1.c[0], 40, t1.c[0], 100, {lab:'R_C', val:o.rcv, side:'l'}); s.R(t2.c[0], 40, t2.c[0], 100, {lab:'R_C', val:o.rcv}); s.node(t2.c[0], 40);
   s.line(t1.c[0], 100, t1.c[0], t1.c[1]); s.line(t2.c[0], 100, t2.c[0], t2.c[1]); s.node(t1.c[0], 112); s.node(t2.c[0], 112);
-  if (o.out !== false){ s.line(t1.c[0], 112, 290, 112); s.line(t2.c[0], 112, 350, 112); s.term(290, 112); s.term(350, 112); s.pm(278, 128, '+'); s.pm(362, 128, '-'); s.text(320, 117, 'u_o', 'tred', 'middle'); }
+  if (o.rl) s.R(t1.c[0], 112, t2.c[0], 112, {lab:'R_L', val:o.rl});
+  else if (o.out !== false){ s.line(t1.c[0], 112, 290, 112); s.line(t2.c[0], 112, 350, 112); s.term(290, 112); s.term(350, 112); s.pm(278, 128, '+'); s.pm(362, 128, '-'); s.text(320, 117, 'u_o', 'tred', 'middle'); }
   s.wire(t1.e[0], t1.e[1], t1.e[0], 232, t2.e[0], 232, t2.e[0], t2.e[1]); s.node(320, 232);
   if (o.cs){ var t3 = s.bjt(304, 272, {lab:'T_3', circle:true}); s.line(320, 232, t3.c[0], t3.c[1] < 232 ? 232 : t3.c[1]); s.line(t3.c[0], 232, t3.c[0], t3.c[1]);
-    s.line(t3.e[0], t3.e[1], t3.e[0], 315); s.text(t3.e[0] + 8, 315, '−V_{EE}', 't'); s.line(t3.b[0], t3.b[1], 240, t3.b[1]); s.text(236, t3.b[1] + 4, '偏置', 'ts', 'end'); s.text(380, 262, 'r_{ce3} ≈ 1MΩ', 'tval'); }
-  else { s.R(320, 232, 320, 295, {lab:'R_E', val:o.reVal}); s.term(320, 300); s.line(320, 295, 320, 300); s.text(330, 312, '−V_{EE}', 't'); }
-  s.R(t1.b[0], y, 120, y, {lab:'R_B'}); s.R(t2.b[0], y, 520, y, {lab:'R_B'}); s.term(120, y); s.term(520, y);
-  s.text(112, y + 5, 'u_{i1}', 't', 'end'); s.text(528, y + 5, 'u_{i2}', 't');
+    s.line(t3.e[0], t3.e[1], t3.e[0], 315); s.text(t3.e[0] + 8, 315, o.vee || '−V_{EE}', 't'); s.line(t3.b[0], t3.b[1], 240, t3.b[1]); s.text(236, t3.b[1] + 4, '偏置', 'ts', 'end'); s.text(380, 262, 'r_{ce3} ≈ 1MΩ', 'tval'); }
+  else { s.R(320, 232, 320, 295, {lab:o.reLab || 'R_E', val:o.reVal, side:o.reSide}); s.term(320, 300); s.line(320, 295, 320, 300); s.text(330, 312, o.vee || '−V_{EE}', 't'); }
+  s.R(t1.b[0], y, 120, y, {lab:'R_B', val:o.rbv}); s.R(t2.b[0], y, 520, y, {lab:'R_B', val:o.rbv}); s.term(120, y); s.term(520, y);
+  s.text(112, y + 5, o.u1 || 'u_{i1}', 't', 'end'); s.text(528, y + 5, o.u2 || 'u_{i2}', 't');
   return {s:s, t1:t1, t2:t2};
 }
 pair('diff');
@@ -304,7 +326,7 @@ var decRun = bindSliders(['u1', 'u2'], {u1:function(v){ return v + ' mV'; }, u2:
   bar(1.0, 0, uic, '--amber'); bar(1.0, uic, uid / 2, '--blue'); P.text(1.0, -24, '= 共模 + 差模/2', 'ts', 'middle');
   bar(2.2, 0, v.u2, '--ink'); P.text(2.2, -24, 'u_{i2}', 't', 'middle');
   bar(2.8, 0, uic, '--amber'); bar(2.8, uic, -uid / 2, '--blue'); P.text(2.8, -24, '= 共模 − 差模/2', 'ts', 'middle');
-  P.text(3.45, 22, '■ 共模 u_{ic}', 'tamber', 'end'); P.text(3.45, 17, '■ 差模分量 ±u_{id}/2', 'tblue', 'end');
+  P.text(1.45, 23, '■ 共模 u_{ic}', 'tamber'); P.text(1.45, 18, '■ 差模分量 ±u_{id}/2', 'tblue');
   var Aud = -50, Auc = -0.25, uo = Aud * uid + Auc * uic;
   document.getElementById('decOut').innerHTML = '<span>u_id = ' + uid + ' mV</span><span>u_ic = ' + uic.toFixed(1) + ' mV</span><span>若 A_ud = −50、A_uc = −0.25（单出）：u_o = ' + (Aud * uid).toFixed(0) + ' + (' + (Auc * uic).toFixed(2) + ') = ' + uo.toFixed(1) + ' mV</span>';
   dpre.forEach(function(b){ b.classList.toggle('on', b.dataset.v === v.u1 + ',' + v.u2); });
@@ -362,8 +384,185 @@ tp.poly([[-40, -40 / 52], [40, 40 / 52]], 'cv3');
 tp.text(8, -1.2, '线性区 ≈ ±V_T', 'tval'); tp.text(105, 0.62, '饱和：T_1 导通、T_2 截止', 'ts', 'middle'); tp.text(-110, -0.75, 'T_1 截止、T_2 导通', 'ts', 'middle');
 
 /* ---------- ex8 ---------- */
-var r8 = pair('ex8', {reVal:'R_e = ?'});
+var r8 = pair('ex8', {reLab:'R_e', reVal:'待求', rcv:'5kΩ', vcc:'+6 V', vee:'−6 V', u1:'0 V', u2:'0 V', out:false, reSide:'l'});
+r8.s.text(228, 126, 'V_{C1} = 3.5 V', 'tval', 'end'); r8.s.text(412, 126, 'V_{C2} = 3.5 V', 'tval');
 
+/* ---------- numeric figures for derivations and examples ---------- */
+function nf(v, d){ return (+v.toFixed(d === undefined ? 2 : d)).toString().replace('-', '−'); }
+/* bar decomposition of a pair of inputs */
+function decBars(id, u1, u2){
+  var uid = u1 - u2, uic = (u1 + u2) / 2, sv = document.getElementById(id);
+  var P = new Plot(sv, {x:80, y:15, w:520, h:190}, [-0.5, 3.5], [-25, 25]);
+  P.axes({yl:'mV', xt:[], yt:[-20, -10, 10, 20], xAtBottom:false});
+  function bar(x, from, val, cls){ mk('rect', {x:P.X(x) - 26, y:P.Y(Math.max(from, from + val)), width:52, height:Math.abs(P.Y(from) - P.Y(from + val)), style:'fill:var(' + cls + ');opacity:.85'}, P.g); }
+  function top(x, v, s){ P.text(x, v + (v >= 0 ? 1.5 : -4), s, 'tb', 'middle'); }
+  bar(0.4, 0, u1, '--ink'); top(0.4, u1, nf(u1) + ' mV'); P.text(0.4, -24, 'u_{i1}', 't', 'middle');
+  function half(x, side, from, val, cls){ mk('rect', {x:P.X(x) + (side ? 0 : -26), y:P.Y(Math.max(from, from + val)), width:26, height:Math.max(1, Math.abs(P.Y(from) - P.Y(from + val))), style:'fill:var(' + cls + ');opacity:.85'}, P.g); }
+  half(1.0, 0, 0, uic, '--amber'); half(1.0, 1, uic, uid / 2, '--blue');
+  function stack(x, d){ P.text(x, Math.max(0, uic, uic + d) + 1.5, '= ' + nf(uic) + (d >= 0 ? ' + ' : ' − ') + nf(Math.abs(d)), 'tb', 'middle'); }
+  stack(1.0, uid / 2);
+  bar(2.2, 0, u2, '--ink'); top(2.2, u2, nf(u2) + ' mV'); P.text(2.2, -24, 'u_{i2}', 't', 'middle');
+  half(2.8, 0, 0, uic, '--amber'); half(2.8, 1, uic, -uid / 2, '--blue');
+  stack(2.8, -uid / 2);
+  P.text(1.45, 23, '■ 共模 u_{ic}', 'tamber'); P.text(1.45, 18, '■ 差模分量 ±u_{id}/2', 'tblue');
+  P.text(1.0, -24, '= 共模 + 差模/2', 'ts', 'middle'); P.text(2.8, -24, '= 共模 − 差模/2', 'ts', 'middle');
+}
+/* log scale showing the ratio between two gains in dB */
+function dbLine(id, lo, hi, step, pts, msg){
+  var s = new Sch(id), x0 = 50, x1 = 590, k = (x1 - x0) / (hi - lo), X = function(v){ return x0 + (Math.log10(v) - lo) * k; };
+  mk('line', {x1:x0 - 10, y1:100, x2:x1 + 16, y2:100, class:'axis', 'marker-end':s.mk.ink}, s.g);
+  for (var e = lo; e <= hi; e += step){ var x = x0 + (e - lo) * k; s.line(x, 95, x, 105);
+    s.text(x, 124, e >= 0 && e <= 3 ? String(Math.pow(10, e)) : '10^{' + e + '}', 'ts', 'middle'); s.text(x, 144, (20 * e > 0 ? '+' : '') + nf(20 * e, 0) + ' dB', 'ts', 'middle'); }
+  s.text(x0 - 30, 128, '倍数', 'ts', 'end'); s.text(x0 - 30, 148, '分贝', 'ts', 'end');
+  pts.forEach(function(p){ mk('circle', {cx:X(p[0]), cy:100, r:6, class:'dot'}, s.g); s.text(X(p[0]), 82, p[1], 'tval', 'middle'); });
+  var a = X(pts[0][0]) + 10, b = X(pts[1][0]) - 10;
+  mk('line', {x1:a, y1:52, x2:b, y2:52, class:'arr-red', 'marker-end':s.mk.red, 'marker-start':s.mk.red}, s.g);
+  s.text((a + b) / 2, 42, msg, 'tred', 'middle');
+}
+/* half circuit, small-signal: o.rb, o.rbe, o.rc, o.rl, o.re (emitter resistor, common mode) */
+function halfSS2(id, o){
+  var s = new Sch(id), yb = o.re ? 240 : 170, xo = o.rl ? 600 : 540;
+  s.term(40, 50); s.term(40, yb); s.text(30, 55, o.uin, 't', 'end');
+  if (o.rb){ s.R(40, 50, 140, 50, {lab:'R_B', val:o.rb}); s.wire(140, 50, 220, 50); } else s.wire(40, 50, 220, 50);
+  s.text(220, 36, 'B', 'tb', 'middle'); s.node(220, 50);
+  s.R(220, 50, 220, 170, {lab:'r_{be}', val:o.rbe}); s.ccs(360, 50, 360, 170, {lab:'βi_b', side:'l'});
+  s.wire(360, 50, xo, 50); s.text(360, 36, 'C', 'tb', 'middle'); s.node(360, 50);
+  s.R(460, 50, 460, yb, {lab:o.rcLab || 'R_C', val:o.rc}); s.node(460, 50); s.node(460, yb);
+  if (o.rl){ s.R(540, 50, 540, yb, {lab:o.rlLab || 'R_L', val:o.rl}); s.node(540, 50); s.node(540, yb); }
+  s.term(xo, 50); s.term(xo, yb); s.text(xo + 10, (50 + yb) / 2 + 5, o.uout, 'tval');
+  if (o.re){ s.wire(220, 170, 360, 170); s.node(220, 170); s.node(290, 170); s.node(360, 170); s.R(290, 170, 290, yb, {lab:o.reLab || '2R_E', val:o.re}); s.text(232, 160, 'E', 'tb'); }
+  else s.text(290, 162, 'E（交流地）', 'tval', 'middle');
+  s.wire(40, yb, xo, yb); s.gnd(150, yb);
+  s.arrow(168, 64, 204, 64, '', 'red'); s.text(206, 84, o.ib, 'tred', 'end');
+  (o.notes || []).forEach(function(t, i){ s.text(40, yb + 40 + 20 * i, t[0], t[1] || 'tval'); });
+  return s;
+}
+/* differential input path b1 -> E -> b2 */
+function chain(id, els, o){
+  var s = new Sch(id), y = 80, n = els.length, w = 240 / n, x = 40;
+  s.term(40, y); s.term(600, y);
+  els.forEach(function(e){ s.R(x, y, x + w, y, {lab:e[0], val:e[1]}); x += w; });
+  s.line(x, y, 320, y); s.node(320, y); s.line(320, y, 320, y + 30); s.gnd(320, y + 30); x = 320;
+  if (n <= 2) s.line(320, y, 360, y);
+  els.slice().reverse().forEach(function(e){ s.R(x + (n > 2 ? 0 : 40), y, x + (n > 2 ? 0 : 40) + w, y, {lab:e[0], val:e[1]}); x += w; });
+  s.line(x + (n > 2 ? 0 : 40), y, 600, y);
+  s.text(40, 46, o.b1, 'tval', 'middle'); s.text(600, 46, o.b2, 'tval', 'middle'); s.text(330, 112, o.e, 'tval');
+  s.arrow(60, y + 14, 100, y + 14, '', 'red'); s.arrow(540, y + 14, 580, y + 14, '', 'red'); s.text(60, y + 34, o.ib, 'tred');
+  (o.notes || []).forEach(function(t, i){ s.text(40, 170 + 20 * i, t[0], t[1] || 'tval'); });
+  return s;
+}
+
+/* derivation: decomposition */
+decBars('dvDec', 16, 10);
+/* derivation: 66 dB */
+dbLine('dvKdb', -2, 3, 1, [[0.1, '|A_{uc}| = 0.1'], [200, '|A_{ud}| = 200']], '相差 2000 倍 = 66 dB');
+/* derivation: static current, KVL loop with numbers */
+(function(){
+  var VEE = 12, RB = 1, b = 50, RE = 5.6, IB = (VEE - 0.7) / (RB + 2 * (1 + b) * RE), IE = (1 + b) * IB;
+  var r = pair('dvQ', {out:false, rbv:'1kΩ', reVal:'5.6kΩ', reSide:'l', vee:'−12 V', vcc:'+12 V', rcv:'5kΩ', u1:'0 V', u2:'0 V'}), s = r.s;
+  s.hl([[120, 170], [198, 170], [228, 170], [236, 204], [236, 232], [320, 232], [320, 300]], 'path-hl');
+  s.text(160, 196, 'I_BR_B = ' + nf(IB * RB, 3) + ' V', 'tred', 'middle');
+  s.text(250, 196, 'U_{BE} = 0.7 V', 'tred');
+  s.arrow(336, 254, 336, 290, '', 'red'); s.text(342, 278, 'I_{RE} = 2I_E = ' + nf(2 * IE, 2) + ' mA', 'tred');
+  s.text(330, 248, 'V_E = ' + nf(-IB * RB - 0.7, 2) + ' V', 'tval');
+  s.text(20, 340, 'KVL：' + nf(IB * RB, 3) + ' + 0.7 + ' + nf(2 * IE * RE, 2) + ' = 12 V，I_B = ' + nf(IB * 1000, 1) + ' μA，I_E = ' + nf(IE, 2) + ' mA', 'tval');
+})();
+/* derivation: R_E for differential vs common mode */
+(function(){
+  var s = new Sch('dvRE');
+  [[150, '差模：Δi_{e1} = −Δi_{e2}', '+10 μA', '−10 μA', 'i_{RE} = 0 → u_E = 0（交流地）', 'tval'],
+   [470, '共模：Δi_{e1} = Δi_{e2}', '+10 μA', '+10 μA', 'i_{RE} = 20 μA → u_E = 20 μA × 10 kΩ = 0.2 V', 'tred']].forEach(function(k){
+    var x = k[0]; s.text(x, 14, k[1], 'tb', 'middle');
+    s.line(x - 50, 42, x - 50, 90); s.line(x + 50, 42, x + 50, 90); s.line(x - 50, 90, x + 50, 90); s.node(x, 90);
+    s.text(x - 50, 38, 'e_1', 'ts', 'middle'); s.text(x + 50, 38, 'e_2', 'ts', 'middle');
+    s.arrow(x - 60, 48, x - 60, 80, '', 'red'); s.text(x - 66, 64, k[2], 'tred', 'end');
+    s.arrow(x + 60, 48, x + 60, 80, '', 'red'); s.text(x + 66, 64, k[3], 'tred');
+    s.R(x, 90, x, 160, {lab:'R_E', val:'10kΩ', side:'l'}); s.term(x, 164); s.text(x + 10, 180, '−V_{EE}', 'ts');
+    s.text(x, 206, k[4], k[5], 'middle'); });
+  s.text(470, 226, '= 10 μA × 20 kΩ：每管看到 2R_E', 'ts', 'middle');
+})();
+/* derivation: differential gain, half circuit */
+(function(){
+  var rb = 1, rbe = 2, b = 50, rc = 5, ui = 5, ib = ui / (rb + rbe), uo = -b * ib * rc;
+  halfSS2('dvAd', {uin:'u_{i1} = +5 mV', rb:'1kΩ', rbe:'2kΩ', rc:'5kΩ', ib:'i_b = ' + nf(ib, 2) + ' μA', uout:'u_{od1} = ' + nf(uo / 1000, 3) + ' V',
+    notes:[['βi_b = 50 × ' + nf(ib, 2) + ' μA = ' + nf(b * ib, 1) + ' μA，u_{od1} = −' + nf(b * ib, 1) + ' μA × 5 kΩ'], ['T_2 一侧输入 −5 mV，u_{od2} = +' + nf(-uo / 1000, 3) + ' V；u_{od} = ' + nf(2 * uo / 1000, 3) + ' V，A_{ud} = ' + nf(2 * uo / 10, 1)]]});
+})();
+/* derivation: R_L/2 */
+(function(){
+  var s = new Sch('dvRL2');
+  s.term(80, 80); s.term(560, 80); s.R(80, 80, 300, 80, {lab:'R_L/2', val:'5kΩ'}); s.R(340, 80, 560, 80, {lab:'R_L/2', val:'5kΩ'}); s.line(300, 80, 340, 80); s.node(320, 80);
+  mk('line', {x1:320, y1:84, x2:320, y2:130, class:'cvdash'}, s.g); s.gnd(320, 130);
+  s.text(80, 52, 'C_1：+0.4 V', 'tval', 'middle'); s.text(560, 52, 'C_2：−0.4 V', 'tval', 'middle'); s.text(330, 112, '中点 0 V', 'tval');
+  s.arrow(120, 96, 180, 96, '', 'red'); s.text(150, 116, 'i = 0.8 V ÷ 10 kΩ = 80 μA', 'tred', 'middle');
+  s.text(20, 176, '中点电位 (0.4 + (−0.4))/2 = 0：把中点接地，所有电流都不变', 'ts');
+})();
+/* derivation: input resistance */
+chain('dvRid', [['R_B', '1kΩ'], ['r_{be}', '2kΩ']], {b1:'b_1：+5 mV', b2:'b_2：−5 mV', e:'E：0 V', ib:'i_b = 1.67 μA',
+  notes:[['路径上串联 2 × (1 + 2) kΩ = 6 kΩ'], ['R_{id} = u_{id} / i_b = 10 mV ÷ 1.67 μA = 6 kΩ']]});
+/* derivation: common-mode gain, single-ended */
+(function(){
+  var rb = 1, rbe = 2, b = 50, rc = 5, re2 = 20, uic = 10, ib = uic / (rb + rbe + (1 + b) * re2), uo = -b * ib * rc;
+  halfSS2('dvAc', {uin:'u_{ic} = 10 mV', rb:'1kΩ', rbe:'2kΩ', rc:'5kΩ', re:'20kΩ', ib:'i_b = ' + nf(ib * 1000, 1) + ' nA', uout:'u_{oc1} = ' + nf(uo, 2) + ' mV',
+    notes:[['2R_E 折算到基极回路：(1 + 50) × 20 kΩ = 1020 kΩ，远大于 R_B + r_{be} = 3 kΩ'], ['A_{uc} = ' + nf(uo, 2) + ' / 10 = ' + nf(uo / uic, 3) + ' ≈ −R_C / 2R_E = −0.25']]});
+})();
+/* derivation: current mirror */
+(function(){
+  var b = 100, IR = 1, IO = b / (b + 2) * IR, IB = IO / b;
+  var s = new Sch('dvMir'), a1 = s.bjt(150, 150, {flip:true, lab:'T_1'}), a2 = s.bjt(270, 150, {lab:'T_2'});
+  s.wire(a1.b[0], 150, a2.b[0], 150); s.node(210, 150); s.wire(210, 150, 210, 100, a1.c[0], 100); s.node(a1.c[0], 100);
+  s.R(a1.c[0], 25, a1.c[0], a1.c[1], {lab:'R', val:'14.3kΩ', side:'l'}); s.wire(a1.c[0], 25, 370, 25); s.text(374, 30, 'V_{CC} = 15 V', 't');
+  s.R(a2.c[0], 25, a2.c[0], a2.c[1], {lab:'R_L'}); s.node(a2.c[0], 25);
+  s.wire(a1.e[0], a1.e[1], a1.e[0], 215, a2.e[0], 215, a2.e[0], a2.e[1]); s.gnd(210, 215);
+  s.arrow(a1.c[0] + 14, 40, a1.c[0] + 14, 80, '', 'red'); s.text(a1.c[0] + 20, 62, 'I_R = 1 mA', 'tred');
+  s.arrow(a2.c[0] + 34, 75, a2.c[0] + 34, 110, '', 'red'); s.text(a2.c[0] + 40, 98, 'I_O = ' + nf(IO, 2) + ' mA', 'tred');
+  s.text(210, 172, '2I_B = ' + nf(2 * IB * 1000, 1) + ' μA', 'tred', 'middle');
+  s.text(20, 258, 'I_R = (15 − 0.7) V ÷ 14.3 kΩ = 1 mA', 'tval'); s.text(20, 280, 'β = 100：I_O = 100/102 × 1 mA = ' + nf(IO, 3) + ' mA', 'tval');
+})();
+/* derivation: Widlar source */
+(function(){
+  var s = new Sch('dvWid'), w1 = s.bjt(150, 140, {flip:true, lab:'T_1'}), w2 = s.bjt(270, 140, {lab:'T_2'});
+  s.wire(w1.b[0], 140, w2.b[0], 140); s.node(210, 140); s.wire(210, 140, 210, 92, w1.c[0], 92); s.node(w1.c[0], 92);
+  s.R(w1.c[0], 25, w1.c[0], w1.c[1], {lab:'R', val:'14.3kΩ', side:'l'}); s.wire(w1.c[0], 25, 370, 25); s.text(374, 30, 'V_{CC} = 15 V', 't');
+  s.R(w2.c[0], 25, w2.c[0], w2.c[1], {lab:'R_L'}); s.node(w2.c[0], 25);
+  s.R(w2.e[0], w2.e[1], w2.e[0], 240, {lab:'R_{E2}', val:'12kΩ'}); s.wire(w1.e[0], w1.e[1], w1.e[0], 240, w2.e[0], 240); s.gnd(210, 240);
+  s.arrow(w1.c[0] + 14, 40, w1.c[0] + 14, 76, '', 'red'); s.text(w1.c[0] + 20, 60, 'I_R = 1 mA', 'tred');
+  s.arrow(w2.c[0] + 34, 70, w2.c[0] + 34, 104, '', 'red'); s.text(w2.c[0] + 40, 92, 'I_O = 10 μA', 'tred');
+  s.text(126, 200, 'U_{BE1} ≈ 0.70 V', 'tval', 'end'); s.text(300, 186, 'U_{BE2} ≈ 0.58 V', 'tval');
+  s.text(20, 284, 'U_{BE1} − U_{BE2} = 26 mV × ln(1 mA / 10 μA)', 'tval'); s.text(20, 306, '= 120 mV = 10 μA × 12 kΩ', 'tval');
+})();
+
+/* examples */
+(function(){
+  var r = pair('exSup', {u1:'16 mV = 13 + 3', u2:'10 mV = 13 − 3', out:false}), s = r.s;
+  s.text(228, 126, 'u_{o1} = A_c·13 + A_{d1}·3', 'tval', 'end'); s.text(412, 126, 'u_{o2} = A_c·13 − A_{d1}·3', 'tval');
+  s.text(20, 345, '双端输出：u_o = u_{o1} − u_{o2} = 2A_{d1}·3 mV = A_d·6 mV（共模 13 mV 相减抵消）', 'tred');
+})();
+decBars('ex1d', 12, -4);
+dbLine('ex2d', -4, 5, 1, [[2e-4, '|A_{uc}| = 2×10^{−4}'], [1e4, '|A_{ud}| = 10^{4}']], '相差 5×10^{7} 倍 = 154 dB');
+halfSS2('ex3a', {uin:'u_{id}/2', rbe:'2kΩ', rc:'5kΩ', ib:'i_b', uout:'单出 A_{ud} = −62.5', notes:[['差模半电路：E 交流接地，单端输出 = −βR_C/(2r_{be}) = −50 × 5 / 4']]});
+halfSS2('ex3b', {uin:'u_{ic}', rbe:'2kΩ', rc:'5kΩ', re:'20kΩ', ib:'i_b', uout:'A_{uc} ≈ −0.25', notes:[['共模半电路：E 接 2R_e = 20 kΩ，A_{uc} ≈ −R_c / 2R_e = −5/20']]});
+halfSS2('ex4d', {uin:'u_{ic}', rbe:'2kΩ', rc:'5kΩ', re:'2MΩ', reLab:'2r_o', ib:'i_b', uout:'A_{uc} ≈ −0.0025', notes:[['恒流源的 r_o = 1 MΩ 代替 R_e：A_{uc} ≈ −5 kΩ / 2 MΩ，比例 3 的 −0.25 小 100 倍']]});
+(function(){
+  var r = pair('ex5d', {cs:true, vcc:'+15 V', vee:'−15 V', rcv:'5kΩ', rl:'10kΩ', u1:'0 V', u2:'0 V'}), s = r.s;
+  s.text(228, 128, 'V_{C1} = 10 V', 'tval', 'end'); s.text(412, 128, 'V_{C2} = 10 V', 'tval');
+  s.text(300, 250, 'V_E = −0.7 V', 'tval', 'end'); s.arrow(336, 240, 336, 268, '', 'red'); s.text(344, 244, 'I_O = 2 mA', 'tred');
+  s.arrow(250, 50, 250, 84, '', 'red'); s.text(256, 72, 'I_C = 1 mA', 'tred');
+  s.text(20, 345, 'R_L 两端都是 10 V，没有电流：静态时 R_L 不影响 Q 点', 'ts');
+})();
+halfSS2('ex6d', {uin:'u_{id}/2', rbe:'2.41kΩ', rc:'5kΩ', rl:'5kΩ', rlLab:'R_L/2', ib:'i_b', uout:'A_{ud} = −83',
+  notes:[['r_{be} = 300 + 81 × 26/1 ≈ 2.41 kΩ；R_L\' = 5 // 5 = 2.5 kΩ'], ['A_{ud} = −80 × 2.5 / 2.41 ≈ −83']]});
+decBars('ex7d', 20, 10);
+(function(){
+  var r = pair('ex8s', {reLab:'R_e', reVal:'5.3kΩ', rcv:'5kΩ', vcc:'+6 V', vee:'−6 V', u1:'0 V', u2:'0 V', out:false, reSide:'l'}), s = r.s;
+  s.text(228, 126, 'V_{C1} = 3.5 V', 'tval', 'end'); s.text(412, 126, 'V_{C2} = 3.5 V', 'tval');
+  s.arrow(250, 50, 250, 84, '', 'red'); s.text(256, 72, 'I_C = 0.5 mA', 'tred');
+  s.text(330, 248, 'V_E = −0.7 V', 'tval'); s.arrow(336, 254, 336, 290, '', 'red'); s.text(342, 278, 'I_{Re} = 1 mA', 'tred');
+  s.text(20, 345, 'I_C = (6 − 3.5) V ÷ 5 kΩ = 0.5 mA；R_e = (−0.7 + 6) V ÷ 1 mA = 5.3 kΩ；U_{CEQ} = 4.2 V', 'tval');
+})();
+halfSS2('ex9a', {uin:'u_{id}/2', rbe:'2kΩ', rc:'10kΩ', rl:'10kΩ', ib:'i_b', uout:'A_{ud} = −75', notes:[['差模（单出）：R_L\' = 10 // 10 = 5 kΩ，A_{ud} = −60 × 5 / (2 × 2) = −75']]});
+halfSS2('ex9b', {uin:'u_{ic}', rbe:'2kΩ', rc:'10kΩ', rl:'10kΩ', re:'20kΩ', ib:'i_b', uout:'A_{uc} ≈ −0.245', notes:[['共模：A_{uc} = −60 × 5 / (2 + 61 × 20) ≈ −0.245；K_{CMR} = 75 / 0.245 ≈ 306']]});
+chain('ex10d', [['r_{be}', ''], ['R_w/2', '']], {b1:'b_1', b2:'b_2', e:'E（交流地）', ib:'i_b',
+  notes:[['R_{id} = 2[r_{be} + (1 + β)R_w/2]：R_w/2 中流的是 (1 + β)i_b，折算到基极回路要乘 (1 + β)']]});
 initPage(5);
 })();
 </script>

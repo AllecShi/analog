@@ -33,6 +33,7 @@
 <div class="cap">实际运放 \(A_{od}\) 约 \(10^5\) 以上，线性区只有零点几毫伏。不加负反馈，一点点输入差就会让输出饱和。所以：<b>运放要工作在线性区，必须引入负反馈</b>。</div>
 </div>
 <details class="deriv"><summary>推导过程：加负反馈后增益只由外部电阻决定的原因<span class="hint">（理解虚短的来历）</span></summary>
+<div class="fig"><svg id="dvFb" class="wide" viewBox="0 0 640 200" role="img" aria-label="数值示例"></svg><div class="cap">数值示例：\(A_{od}=10^5\)，\(F=0.1\)，\(u_I=1\,\mathrm V\)。闭环增益 \(\frac{10^5}{1+10^4}=9.999\)，几乎就是 \(1/F=10\)；两个输入端只差约 0.1 mV，这就是“虚短”。</div></div>
 <p>把运放看成一个增益为 \(A_{od}\) 的放大器，输出的一部分 \(F\,u_O\) 送回反相端（\(F\) 叫反馈系数，由电阻分压决定，\(0\lt F\le1\)）。输入 \(u_I\) 接同相端：</p>
 <div class="step"><b>①</b><div>运放本身：\(u_O=A_{od}(u_+-u_-)=A_{od}(u_I-F\,u_O)\)</div></div>
 <div class="step"><b>②</b><div>移项：\(u_O(1+A_{od}F)=A_{od}u_I\)，所以 \[A_{uf}=\frac{u_O}{u_I}=\frac{A_{od}}{1+A_{od}F}\]</div></div>
@@ -71,6 +72,7 @@
 <div class="rs"><b>平衡电阻</b> \(R_2=R_1/\!/R_F\)，让静态时两个输入端对地电阻相同，减小偏置电流带来的误差。<b>输入电阻</b> \(r_i=R_1\)（较低）；反相端虚地，共模输入电压低。</div>
 </div>
 <details class="deriv"><summary>推导过程：输入电阻和平衡电阻</summary>
+<div class="fig"><svg id="dvInv" class="wide" viewBox="0 0 560 250" role="img" aria-label="数值示例"></svg><div class="cap">数值示例：\(R_1=10\,\mathrm{k\Omega}\)，\(R_F=100\,\mathrm{k\Omega}\)，\(u_I=0.5\,\mathrm V\)。反相端是 0 V，\(i_1=0.5/10\mathrm k=50\,\mu\mathrm A\) 全部流过 \(R_F\)，\(u_O=0-50\,\mu\mathrm A\times100\,\mathrm k=-5\,\mathrm V\)。平衡电阻 \(R_2=10/\!/100\approx9.1\,\mathrm{k\Omega}\)。</div></div>
 <div class="step"><b>输入电阻</b><div>从 \(u_I\) 看进去：\(r_i=\dfrac{u_I}{i_1}=\dfrac{u_I}{u_I/R_1}=R_1\)。因为反相端虚地，\(R_1\) 右端相当于接地，所以输入电阻就是 \(R_1\)。想要高输入电阻就得把 \(R_1\) 做大，但 \(R_F\) 也得跟着变大，大电阻噪声大、精度差——这是反相比例的天然缺点。</div></div>
 <div class="step"><b>平衡电阻</b><div>实际运放两个输入端都有很小的偏置电流 \(I_{IB}\)。令 \(u_I=0\)、\(u_O=0\)，从反相端看出去的对地电阻是 \(R_1/\!/R_F\)，偏置电流在它上面产生压降 \(I_{IB}(R_1/\!/R_F)\)；同相端偏置电流在 \(R_2\) 上产生 \(I_{IB}R_2\)。两者相等时互相抵消，不会被放大到输出端，所以取 \(R_2=R_1/\!/R_F\)。理想运放分析里 \(R_2\) 不影响增益。</div></div>
 </details>
@@ -91,6 +93,7 @@
 <div class="rs">\[A_{uf}=\frac{u_O}{u_I}=1+\frac{R_F}{R_1}\ \ (\ge1,\ \text{同相})\]输入电阻很高；但两输入端都有 \(u_I\)，共模输入电压较高。</div>
 </div>
 <details class="deriv"><summary>推导过程：用 KCL 直接推同相比例（和反相比例用同一套方法）</summary>
+<div class="fig"><svg id="dvNon" class="wide" viewBox="0 0 560 240" role="img" aria-label="数值示例"></svg><div class="cap">数值示例：\(R_1=10\,\mathrm{k\Omega}\)，\(R_F=40\,\mathrm{k\Omega}\)，\(u_I=0.5\,\mathrm V\)。\(u_-=0.5\,\mathrm V\)，\(R_1\) 上的电流 \(0.5/10\mathrm k=50\,\mu\mathrm A\) 由 \(R_F\) 供给，\(u_O=0.5+50\,\mu\mathrm A\times40\,\mathrm k=2.5\,\mathrm V=5u_I\)。</div></div>
 <div class="step"><b>①</b><div>虚断：\(R_2\) 上没有电流，\(u_+=u_I\)；虚短：\(u_-=u_+=u_I\)。</div></div>
 <div class="step"><b>②</b><div>对反相端列 KCL（虚断，流入运放的电流为 0）：流过 \(R_F\) 的电流全部流过 \(R_1\)：\[\frac{u_O-u_-}{R_F}=\frac{u_--0}{R_1}\]</div></div>
 <div class="step"><b>③</b><div>代入 \(u_-=u_I\)：\(\dfrac{u_O-u_I}{R_F}=\dfrac{u_I}{R_1}\Rightarrow u_O=u_I+\dfrac{R_F}{R_1}u_I=\left(1+\dfrac{R_F}{R_1}\right)u_I\)。</div></div>
@@ -110,6 +113,7 @@
 <p>反相端虚地，各路电流独立：\(i_{I1}+i_{I2}=i_F\)，</p>
 <div class="formula">\[ u_O=-\left(\frac{R_F}{R_{11}}u_{I1}+\frac{R_F}{R_{12}}u_{I2}\right)\quad\xrightarrow{R_{11}=R_{12}=R_1}\quad u_O=-\frac{R_F}{R_1}(u_{I1}+u_{I2}) \]</div>
 <details class="deriv"><summary>推导过程：反相求和</summary>
+<div class="fig"><svg id="dvSumInv" class="wide" viewBox="0 0 560 250" role="img" aria-label="数值示例"></svg><div class="cap">数值示例：两路电流 20 μA 和 10 μA 各自由本路电压和电阻决定，在虚地节点汇合成 30 μA 流过 \(R_F\)，\(u_O=-30\,\mu\mathrm A\times100\,\mathrm k=-3\,\mathrm V\)。</div></div>
 <div class="step"><b>①</b><div>同相端经电阻接地、无电流：\(u_+=0\)；虚短：\(u_-=0\)（虚地）。</div></div>
 <div class="step"><b>②</b><div>每一路输入电流只由自己决定：\(i_{I1}=\dfrac{u_{I1}-0}{R_{11}}\)，\(i_{I2}=\dfrac{u_{I2}-0}{R_{12}}\)。这正是“各路互不影响”的原因——它们的右端都钉在 0 V 上。</div></div>
 <div class="step"><b>③</b><div>反相端 KCL（虚断）：\(i_{I1}+i_{I2}=i_F=\dfrac{0-u_O}{R_F}\)。</div></div>
@@ -119,6 +123,7 @@
 <h3>同相求和 <a class="src" data-s="27"></a>–<a class="src" data-s="29"></a></h3>
 <p>用叠加原理或先求 \(u_+\)（两路输入对同相端分压），再乘同相比例 \(1+R_F/R_1\)。</p>
 <details class="deriv"><summary>推导过程：同相求和（两路输入 \(u_{I1}\) 经 \(R_{21}\)、\(u_{I2}\) 经 \(R_{22}\) 接到同相端）</summary>
+<div class="fig"><svg id="dvSumNon" class="wide" viewBox="0 0 560 250" role="img" aria-label="数值示例"></svg><div class="cap">数值示例：\(R_{21}=R_{22}=20\,\mathrm{k\Omega}\)，\(u_{I1}=1\,\mathrm V\)，\(u_{I2}=0.4\,\mathrm V\)，\(R_1=10\,\mathrm{k\Omega}\)，\(R_F=20\,\mathrm{k\Omega}\)。同相端不取电流，15 μA 从 \(u_{I1}\) 流向 \(u_{I2}\)，\(u_+=1-15\,\mu\mathrm A\times20\,\mathrm k=0.7\,\mathrm V\)；再乘 \(1+R_F/R_1=3\)，\(u_O=2.1\,\mathrm V\)。两路之间有电流互相流动，所以改一个电阻两路系数都变。</div></div>
 <div class="step"><b>①</b><div>虚断：同相端没有电流流入运放，对同相端列 KCL：\[\frac{u_{I1}-u_+}{R_{21}}+\frac{u_{I2}-u_+}{R_{22}}=0\ \Rightarrow\ u_+=\frac{R_{22}}{R_{21}+R_{22}}u_{I1}+\frac{R_{21}}{R_{21}+R_{22}}u_{I2}\]</div></div>
 <div class="step"><b>②</b><div>从 \(u_+\) 到 \(u_O\) 就是同相比例：\(u_O=\left(1+\dfrac{R_F}{R_1}\right)u_+\)。</div></div>
 <div class="step"><b>③</b><div>注意 ① 里每一路的系数分母都含 \(R_{21}+R_{22}\)：改动任何一个电阻，两路的系数都会变。这就是表里“对其他路有影响”的来源。</div></div>
@@ -135,6 +140,7 @@
 <p>看作反相比例与同相比例的叠加：</p>
 <div class="formula">\[ u_O=\left(1+\frac{R_F}{R_1}\right)\frac{R_3}{R_2+R_3}u_{I2}-\frac{R_F}{R_1}u_{I1}\quad\xrightarrow{R_1=R_2,\ R_3=R_F}\quad u_O=\frac{R_F}{R_1}(u_{I2}-u_{I1}) \]</div>
 <details class="deriv"><summary>推导过程：减法电路（叠加原理）</summary>
+<div class="fig"><svg id="dvSub" class="wide" viewBox="0 0 560 260" role="img" aria-label="数值示例"></svg><div class="cap">数值示例：\(R_1=R_2=10\,\mathrm{k\Omega}\)，\(R_3=R_F=50\,\mathrm{k\Omega}\)，\(u_{I1}=0.3\,\mathrm V\)，\(u_{I2}=0.5\,\mathrm V\)。只留 \(u_{I1}\)：\(u_O'=-5\times0.3=-1.5\,\mathrm V\)；只留 \(u_{I2}\)：\(u_+=0.5\times\frac{50}{60}=0.417\,\mathrm V\)，\(u_O''=6\times0.417=2.5\,\mathrm V\)；合计 \(u_O=1\,\mathrm V=5\times(0.5-0.3)\)。</div></div>
 <div class="step"><b>①</b><div><b>只留 \(u_{I1}\)</b>（\(u_{I2}\) 接地）：同相端经 \(R_2/\!/R_3\) 接地且无电流，\(u_+=0\)，电路就是反相比例：\(u_O'=-\dfrac{R_F}{R_1}u_{I1}\)。</div></div>
 <div class="step"><b>②</b><div><b>只留 \(u_{I2}\)</b>（\(u_{I1}\) 接地）：同相端电压由 \(R_2\)、\(R_3\) 分压得 \(u_+=\dfrac{R_3}{R_2+R_3}u_{I2}\)；从同相端看是同相比例（\(R_1\) 的左端接地）：\(u_O''=\left(1+\dfrac{R_F}{R_1}\right)\dfrac{R_3}{R_2+R_3}u_{I2}\)。</div></div>
 <div class="step"><b>③</b><div>叠加：\(u_O=u_O'+u_O''\)，即上面的公式。</div></div>
@@ -168,6 +174,7 @@
 <p>把反相比例的 \(R_F\) 换成电容 \(C_F\)。虚地：\(i_1=u_I/R_1\)；虚断：这个电流全部给电容充电，\(u_O=-u_C\)：</p>
 <div class="formula boxed">\[ u_O=-\frac{1}{R_1C_F}\int u_I\,\mathrm dt+u_O(t_0)\qquad\xrightarrow{u_I=U_I\ \text{恒定}}\qquad u_O=-\frac{U_I}{R_1C_F}t \]</div>
 <details class="deriv"><summary>推导过程：积分电路</summary>
+<div class="fig"><svg id="dvIntC" class="wide" viewBox="0 0 560 240" role="img" aria-label="数值示例"></svg><svg id="dvIntP" class="wide" viewBox="0 0 640 200" role="img" aria-label="数值示例"></svg><div class="cap">数值示例：\(R_1=10\,\mathrm{k\Omega}\)，\(C_F=0.1\,\mu\mathrm F\)（\(R_1C_F=1\,\mathrm{ms}\)），\(u_I=1\,\mathrm V\)。恒定的 0.1 mA 给电容充电，电容电压每毫秒增加 \(\frac{0.1\,\mathrm{mA}\times1\,\mathrm{ms}}{0.1\,\mu\mathrm F}=1\,\mathrm V\)，\(u_O\) 每毫秒下降 1 V。</div></div>
 <div class="step"><b>①</b><div>虚地：\(u_-=0\)，所以 \(i_1=\dfrac{u_I}{R_1}\)。</div></div>
 <div class="step"><b>②</b><div>虚断：\(i_1\) 全部流进电容，\(i_C=i_1\)。电容两端电压 \(u_C=u_--u_O=-u_O\)（左正右负为参考方向）。</div></div>
 <div class="step"><b>③</b><div>电容的伏安关系 \(i_C=C_F\dfrac{\mathrm du_C}{\mathrm dt}\)，所以 \(\dfrac{u_I}{R_1}=C_F\dfrac{\mathrm d(-u_O)}{\mathrm dt}\)，即 \[\frac{\mathrm du_O}{\mathrm dt}=-\frac{u_I}{R_1C_F}\]</div></div>
@@ -186,6 +193,7 @@
 <p>把输入电阻换成电容 \(C_1\)：\(i_1=C_1\frac{\mathrm du_I}{\mathrm dt}=i_F\)，</p>
 <div class="formula boxed">\[ u_O=-R_FC_1\frac{\mathrm du_I}{\mathrm dt} \]</div>
 <details class="deriv"><summary>推导过程：微分电路及其易受干扰的原因</summary>
+<div class="fig"><svg id="dvDifC" class="wide" viewBox="0 0 560 240" role="img" aria-label="数值示例"></svg><svg id="dvDifP" class="wide" viewBox="0 0 640 270" role="img" aria-label="数值示例"></svg><div class="cap">数值示例：\(C_1=0.1\,\mu\mathrm F\)，\(R_F=10\,\mathrm{k\Omega}\)（\(R_FC_1=1\,\mathrm{ms}\)）。输入是 1 V/ms 的斜坡，叠加了 10 mV、10 kHz 的噪声。斜坡部分给出 \(-1\,\mathrm V\)；噪声的变化率 \(2\pi\times10\,\mathrm{kHz}\times10\,\mathrm{mV}\approx0.63\,\mathrm V/\mathrm{ms}\)，输出里变成 ±0.63 V 的波动。</div></div>
 <div class="step"><b>①</b><div>虚地：电容 \(C_1\) 两端电压就是 \(u_I\)，所以 \(i_1=C_1\dfrac{\mathrm du_I}{\mathrm dt}\)。</div></div>
 <div class="step"><b>②</b><div>虚断：\(i_F=i_1\)；\(R_F\) 上 \(u_--u_O=i_FR_F\)，即 \(u_O=-R_Fi_1=-R_FC_1\dfrac{\mathrm du_I}{\mathrm dt}\)。</div></div>
 <div class="step"><b>③</b><div>输入正弦 \(u_I=U\sin\omega t\)：\(u_O=-\omega R_FC_1U\cos\omega t\)，输出幅值和 \(\omega\) 成正比。频率越高的成分被放大得越多，而噪声恰好以高频为主，所以微分器输出很“毛”。实际电路常在 \(C_1\) 上串一个小电阻来限制高频增益。</div></div>
@@ -221,6 +229,7 @@
 \[\text{回差 }\Delta U=U'_+-U''_+=\frac{2R_2}{R_2+R_F}U_{om}\]</div>
 </div>
 <details class="deriv"><summary>推导过程：滞回比较器的两个门限和翻转过程</summary>
+<div class="fig"><svg id="dvHys" class="wide" viewBox="0 0 340 250" role="img" aria-label="数值示例"></svg><div class="cap">数值示例：\(R_2=10\,\mathrm{k\Omega}\)，\(R_F=40\,\mathrm{k\Omega}\)，\(U_{om}=10\,\mathrm V\)。同相端电位只有 ±2 V 两种取值，回差 4 V。</div></div>
 <div class="step"><b>①</b><div>虚断：同相端不取电流，\(R_2\) 和 \(R_F\) 串联把 \(u_O\) 分压：\(u_+=\dfrac{R_2}{R_2+R_F}u_O\)。注意这里<b>不能</b>用虚短，\(u_+\) 和 \(u_-\) 一般不相等。</div></div>
 <div class="step"><b>②</b><div>输出只有两种状态，所以 \(u_+\) 也只有两种值：\(u_O=+U_{om}\) 时 \(U'_+=+\dfrac{R_2}{R_2+R_F}U_{om}\)；\(u_O=-U_{om}\) 时 \(U''_+=-\dfrac{R_2}{R_2+R_F}U_{om}\)。</div></div>
 <div class="step"><b>③</b><div>翻转条件是 \(u_-=u_I\) 穿过当前的 \(u_+\)。设开始时 \(u_I\) 很负，\(u_O=+U_{om}\)，门限是 \(U'_+\)；\(u_I\) 上升到 \(U'_+\) 时输出翻到 \(-U_{om}\)，门限立刻变成 \(U''_+\)，比 \(u_I\) 低得多——即使 \(u_I\) 稍微回落一点，也翻不回去。</div></div>
@@ -254,6 +263,7 @@
 <div class="reveal">
 <div class="rs">同相端电位由 \(U_R\) 和 \(u_O\) 叠加（KVL / 叠加原理）：\[u_+=\frac{R_F}{R_2+R_F}U_R+\frac{R_2}{R_2+R_F}u_O\]</div>
 <details class="deriv"><summary>推导过程：\(U_R\) 的系数为 \(\frac{R_F}{R_2+R_F}\)</summary>
+<div class="fig"><svg id="dvUR" class="wide" viewBox="0 0 340 260" role="img" aria-label="数值示例"></svg><div class="cap">数值示例（例 2 的参数，输出为 +12 V 时）：两个电源分别作用再相加，得到上门限 10 V。</div></div>
 <p>同相端不取电流，\(U_R\)—\(R_2\)—同相端—\(R_F\)—\(u_O\) 是一条串联支路。对同相端列 KCL：\(\dfrac{U_R-u_+}{R_2}+\dfrac{u_O-u_+}{R_F}=0\)，两边乘 \(R_2R_F\)：\(R_FU_R+R_2u_O=(R_2+R_F)u_+\)。所以离 \(U_R\) <b>远</b>的那个电阻 \(R_F\) 出现在 \(U_R\) 的系数里——和电阻分压的规律一致。</p>
 </details>
 <div class="rs">\[U_{T+}=\frac{20}{30}\times9+\frac{10}{30}\times12=6+4=10\,\mathrm V,\qquad U_{T-}=6-4=2\,\mathrm V\]</div>
@@ -267,6 +277,7 @@
 <p>令 \(u_+=u_-=0\) 解出翻转时的 \(u_i\)：</p>
 <div class="formula">\[ U_{+H}=\frac{R_1}{R_2}U_{om},\qquad U_{+L}=-\frac{R_1}{R_2}U_{om} \]</div>
 <details class="deriv"><summary>推导过程：同相滞回比较器的门限</summary>
+<div class="fig"><svg id="dvNHys" class="wide" viewBox="0 0 340 250" role="img" aria-label="数值示例"></svg><div class="cap">数值示例：\(R_1=10\,\mathrm{k\Omega}\)，\(R_2=20\,\mathrm{k\Omega}\)，\(U_{om}=6\,\mathrm V\)。输出为 −6 V 时，\(u_i\) 升到 3 V 那一刻 \(u_+\) 恰好升到 0，输出翻高，所以 \(U_{+H}=\frac{R_1}{R_2}U_{om}=3\,\mathrm V\)。</div></div>
 <div class="step"><b>①</b><div>同相端 KCL：\(\dfrac{u_i-u_+}{R_1}+\dfrac{u_O-u_+}{R_2}=0\Rightarrow u_+=\dfrac{R_2u_i+R_1u_O}{R_1+R_2}\)。</div></div>
 <div class="step"><b>②</b><div>反相端接地，翻转发生在 \(u_+\) 穿过 0 的时刻：令 \(u_+=0\)，得 \(R_2u_i=-R_1u_O\)，即 \(u_i=-\dfrac{R_1}{R_2}u_O\)。</div></div>
 <div class="step"><b>③</b><div>当前 \(u_O=-U_{om}\) 时，\(u_i\) 要升到 \(+\dfrac{R_1}{R_2}U_{om}=U_{+H}\) 才翻高；当前 \(u_O=+U_{om}\) 时，\(u_i\) 要降到 \(-\dfrac{R_1}{R_2}U_{om}=U_{+L}\) 才翻低。</div></div>
@@ -347,20 +358,24 @@ var st = new Sch('states');
 /* ---------- op-amp circuits ---------- */
 function invAmp(id, o){
   o = o || {}; var s = new Sch(id), a = s.opamp(300, 130), nx = 245;
-  s.term(80, a.m[1]); s.R(80, a.m[1], 200, a.m[1], {lab:o.r1 || 'R_1'}); s.wire(200, a.m[1], a.m[0], a.m[1]); s.node(nx, a.m[1]);
-  s.wire(nx, a.m[1], nx, 50, 330, 50); if (o.cap) s.C(330, 50, 400, 50, {lab:'C_F'}); else s.R(330, 50, 400, 50, {lab:o.rf || 'R_F'}); s.wire(400, 50, 420, 50, 420, 130); s.node(420, 130);
-  s.wire(a.o[0], a.o[1], 480, 130); s.term(480, 130); s.text(490, 135, 'u_O', 't');
-  s.R(a.p[0] - 20, a.p[1], a.p[0] - 20, 215, {lab:'R_2', side:'l'}); s.line(a.p[0] - 20, a.p[1], a.p[0], a.p[1]); s.gnd(a.p[0] - 20, 215);
-  s.text(70, a.m[1] + 5, 'u_I', 't', 'end');
+  s.term(80, a.m[1]); if (o.capIn) s.C(80, a.m[1], 200, a.m[1], {lab:o.r1 || 'C_1', val:o.r1v}); else s.R(80, a.m[1], 200, a.m[1], {lab:o.r1 || 'R_1', val:o.r1v}); s.wire(200, a.m[1], a.m[0], a.m[1]); s.node(nx, a.m[1]);
+  s.wire(nx, a.m[1], nx, 50, 330, 50); if (o.cap) s.C(330, 50, 400, 50, {lab:'C_F', val:o.rfv}); else s.R(330, 50, 400, 50, {lab:o.rf || 'R_F', val:o.rfv}); s.wire(400, 50, 420, 50, 420, 130); s.node(420, 130);
+  s.wire(a.o[0], a.o[1], 480, 130); s.term(480, 130); s.text(490, 135, o.uO || 'u_O', o.uO ? 'tval' : 't');
+  s.R(a.p[0] - 20, a.p[1], a.p[0] - 20, 215, {lab:'R_2', val:o.r2v, side:'l'}); s.line(a.p[0] - 20, a.p[1], a.p[0], a.p[1]); s.gnd(a.p[0] - 20, 215);
+  s.text(70, a.m[1] + 5, o.uI || 'u_I', 't', 'end');
   if (!o.noArrows){ s.arrow(88, a.m[1] - 12, 116, a.m[1] - 12, 'i_1', 'red', 92, a.m[1] - 18); s.arrow(nx - 10, a.m[1] - 18, nx - 10, a.m[1] - 50, '', 'red'); s.text(nx - 16, a.m[1] - 28, 'i_F', 'tred', 'end'); s.text(nx - 4, a.m[1] + 34, 'u_− = 0（虚地）', 'tval', 'end'); }
   return {s:s, a:a};
 }
 invAmp('inv');
-var ns = new Sch('non'), na = ns.opamp(300, 130, {});
-ns.term(120, na.p[1]); ns.R(120, na.p[1], 230, na.p[1], {lab:'R_2', side:'b'}); ns.line(230, na.p[1], na.p[0], na.p[1]); ns.text(110, na.p[1] + 5, 'u_I', 't', 'end');
-ns.node(245, na.m[1]); ns.line(245, na.m[1], na.m[0], na.m[1]); ns.R(245, na.m[1], 165, na.m[1], {lab:'R_1'}); ns.gnd(165, na.m[1]);
-ns.wire(245, na.m[1], 245, 50, 330, 50); ns.R(330, 50, 400, 50, {lab:'R_F'}); ns.wire(400, 50, 420, 50, 420, 130); ns.node(420, 130); ns.wire(na.o[0], na.o[1], 480, 130); ns.term(480, 130); ns.text(490, 135, 'u_O', 't');
-ns.text(237, 68, 'u_− = u_I', 'tval', 'end');
+function nonAmp(id, o){
+  o = o || {}; var ns = new Sch(id), na = ns.opamp(300, 130, {});
+  ns.term(120, na.p[1]); ns.R(120, na.p[1], 230, na.p[1], {lab:'R_2', val:o.r2v, side:'b'}); ns.line(230, na.p[1], na.p[0], na.p[1]); ns.text(110, na.p[1] + 5, o.uI || 'u_I', 't', 'end');
+  ns.node(245, na.m[1]); ns.line(245, na.m[1], na.m[0], na.m[1]); ns.R(245, na.m[1], 165, na.m[1], {lab:'R_1', val:o.r1v, side:o.r1side}); ns.gnd(165, na.m[1]);
+  ns.wire(245, na.m[1], 245, 50, 330, 50); ns.R(330, 50, 400, 50, {lab:'R_F', val:o.rfv}); ns.wire(400, 50, 420, 50, 420, 130); ns.node(420, 130); ns.wire(na.o[0], na.o[1], 480, 130); ns.term(480, 130); ns.text(490, 135, o.uO || 'u_O', o.uO ? 'tval' : 't');
+  ns.text(237, 68, o.um || 'u_− = u_I', 'tval', 'end');
+  return {s:ns, a:na};
+}
+nonAmp('non');
 var fo = new Sch('fol'), fa = fo.opamp(110, 90, {plusTop:false});
 fo.term(40, fa.p[1]); fo.line(40, fa.p[1], fa.p[0], fa.p[1]); fo.text(32, fa.p[1] + 5, 'u_I', 't', 'end');
 fo.wire(fa.m[0], fa.m[1], fa.m[0] - 10, fa.m[1], fa.m[0] - 10, 30, 210, 30, 210, 90); fo.node(210, 90); fo.line(fa.o[0], fa.o[1], 250, 90); fo.term(250, 90); fo.text(258, 95, 'u_O', 't');
@@ -382,21 +397,29 @@ document.getElementById('mInv').onclick = function(){ propMode = 0; this.classLi
 document.getElementById('mNon').onclick = function(){ propMode = 1; this.classList.add('on'); document.getElementById('mInv').classList.remove('on'); propRun(); };
 
 /* summing */
-var sm = new Sch('sumInv'), sa = sm.opamp(300, 130);
-sm.term(80, 80); sm.R(80, 80, 190, 80, {lab:'R_{11}'}); sm.term(80, sa.m[1]); sm.R(80, sa.m[1], 190, sa.m[1], {lab:'R_{12}', side:'b'});
-sm.wire(190, 80, 245, 80, 245, sa.m[1]); sm.line(190, sa.m[1], sa.m[0], sa.m[1]); sm.node(245, sa.m[1]);
-sm.text(70, 85, 'u_{I1}', 't', 'end'); sm.text(70, sa.m[1] + 5, 'u_{I2}', 't', 'end');
-sm.wire(245, 80, 245, 40, 330, 40); sm.R(330, 40, 400, 40, {lab:'R_F'}); sm.wire(400, 40, 420, 40, 420, 130); sm.node(420, 130); sm.node(245, 80);
-sm.wire(sa.o[0], 130, 480, 130); sm.term(480, 130); sm.text(490, 135, 'u_O', 't');
-sm.R(sa.p[0] - 20, sa.p[1], sa.p[0] - 20, 215, {lab:'R_2', side:'l'}); sm.line(sa.p[0] - 20, sa.p[1], sa.p[0], sa.p[1]); sm.gnd(sa.p[0] - 20, 215);
+function sumInvC(id, o){
+  o = o || {}; var sm = new Sch(id), sa = sm.opamp(300, 130);
+  sm.term(80, 80); sm.R(80, 80, 190, 80, {lab:'R_{11}', val:o.r11v}); sm.term(80, sa.m[1]); sm.R(80, sa.m[1], 190, sa.m[1], {lab:'R_{12}', val:o.r12v, side:'b'});
+  sm.wire(190, 80, 245, 80, 245, sa.m[1]); sm.line(190, sa.m[1], sa.m[0], sa.m[1]); sm.node(245, sa.m[1]);
+  sm.text(70, 85, o.u1 || 'u_{I1}', 't', 'end'); sm.text(70, sa.m[1] + 5, o.u2 || 'u_{I2}', 't', 'end');
+  sm.wire(245, 80, 245, 40, 330, 40); sm.R(330, 40, 400, 40, {lab:'R_F', val:o.rfv}); sm.wire(400, 40, 420, 40, 420, 130); sm.node(420, 130); sm.node(245, 80);
+  sm.wire(sa.o[0], 130, 480, 130); sm.term(480, 130); sm.text(490, 135, o.uO || 'u_O', o.uO ? 'tval' : 't');
+  sm.R(sa.p[0] - 20, sa.p[1], sa.p[0] - 20, 215, {lab:'R_2', side:'l'}); sm.line(sa.p[0] - 20, sa.p[1], sa.p[0], sa.p[1]); sm.gnd(sa.p[0] - 20, 215);
+  return {s:sm, a:sa};
+}
+sumInvC('sumInv');
 
 /* subtractor */
-var sb = new Sch('sub'), ba = sb.opamp(300, 130);
-sb.term(80, ba.m[1]); sb.R(80, ba.m[1], 200, ba.m[1], {lab:'R_1'}); sb.line(200, ba.m[1], ba.m[0], ba.m[1]); sb.node(245, ba.m[1]); sb.text(70, ba.m[1] + 5, 'u_{I1}', 't', 'end');
-sb.wire(245, ba.m[1], 245, 50, 330, 50); sb.R(330, 50, 400, 50, {lab:'R_F'}); sb.wire(400, 50, 420, 50, 420, 130); sb.node(420, 130);
-sb.term(80, ba.p[1]); sb.R(80, ba.p[1], 200, ba.p[1], {lab:'R_2', side:'b'}); sb.line(200, ba.p[1], ba.p[0], ba.p[1]); sb.node(255, ba.p[1]); sb.text(70, ba.p[1] + 5, 'u_{I2}', 't', 'end');
-sb.R(255, ba.p[1], 255, 230, {lab:'R_3'}); sb.gnd(255, 230);
-sb.wire(ba.o[0], 130, 480, 130); sb.term(480, 130); sb.text(490, 135, 'u_O', 't');
+function subC(id, o){
+  o = o || {}; var sb = new Sch(id), ba = sb.opamp(300, 130);
+  sb.term(80, ba.m[1]); sb.R(80, ba.m[1], 200, ba.m[1], {lab:'R_1', val:o.r1v}); sb.line(200, ba.m[1], ba.m[0], ba.m[1]); sb.node(245, ba.m[1]); sb.text(70, ba.m[1] + 5, o.u1 || 'u_{I1}', 't', 'end');
+  sb.wire(245, ba.m[1], 245, 50, 330, 50); sb.R(330, 50, 400, 50, {lab:'R_F', val:o.rfv}); sb.wire(400, 50, 420, 50, 420, 130); sb.node(420, 130);
+  sb.term(80, ba.p[1]); sb.R(80, ba.p[1], 200, ba.p[1], {lab:'R_2', val:o.r2v, side:'b'}); sb.line(200, ba.p[1], ba.p[0], ba.p[1]); sb.node(255, ba.p[1]); sb.text(70, ba.p[1] + 5, o.u2 || 'u_{I2}', 't', 'end');
+  sb.R(255, ba.p[1], 255, 230, {lab:'R_3', val:o.r3v}); sb.gnd(255, 230);
+  sb.wire(ba.o[0], 130, 480, 130); sb.term(480, 130); sb.text(490, 135, o.uO || 'u_O', o.uO ? 'tval' : 't');
+  return {s:sb, a:ba};
+}
+subC('sub');
 
 /* example 1: two-amp subtractor */
 var e1 = new Sch('ex1'), A1 = e1.opamp(200, 120, {plusTop:false}), A2 = e1.opamp(470, 110);
@@ -440,13 +463,14 @@ var c1 = new Sch('cmp1'), ca = c1.opamp(120, 90);
 c1.term(40, ca.m[1]); c1.line(40, ca.m[1], ca.m[0], ca.m[1]); c1.text(32, ca.m[1] + 5, 'u_I', 't', 'end');
 c1.term(40, ca.p[1]); c1.line(40, ca.p[1], ca.p[0], ca.p[1]); c1.text(32, ca.p[1] + 5, 'U_R', 't', 'end');
 c1.line(ca.o[0], 90, 260, 90); c1.term(260, 90); c1.text(266, 95, 'u_O', 't'); c1.text(150, 160, '开环，无反馈', 'tred', 'middle');
-function hysC(id, withRef){
-  var s = new Sch(id), h = s.opamp(130, 80);
+function hysC(id, withRef, o){
+  o = o || {}; var s = new Sch(id), h = s.opamp(130, 80);
   s.term(30, h.m[1]); s.R(30, h.m[1], 100, h.m[1], {lab:'R_1'}); s.line(100, h.m[1], h.m[0], h.m[1]); s.text(24, h.m[1] + 5, 'u_I', 't', 'end');
   s.node(100, h.p[1]); s.line(100, h.p[1], h.p[0], h.p[1]); s.wire(100, h.p[1], 100, 150);
-  s.R(100, 150, withRef ? 30 : 30, 150, {lab:'R_2', side:'b'}); if (withRef){ s.term(30, 150); s.text(24, 155, 'U_R', 't', 'end'); } else s.gnd(30, 150);
-  s.R(100, 150, 230, 150, {lab:'R_F', side:'b'}); s.node(100, 150); s.wire(230, 150, 250, 150, 250, 80); s.node(250, 80);
-  s.line(h.o[0], 80, 290, 80); s.term(290, 80); s.text(296, 85, 'u_O', 't'); s.text(165, 206, '正反馈：u_O 经 R_F 回到 +', 'tred', 'middle');
+  s.R(100, 150, withRef ? 30 : 30, 150, {lab:'R_2', val:o.r2v, side:'b'}); if (withRef){ s.term(30, 150); s.text(24, 155, o.ur || 'U_R', 't', 'end'); } else s.gnd(30, 150);
+  s.R(100, 150, 230, 150, {lab:'R_F', val:o.rfv, side:'b'}); s.node(100, 150); s.wire(230, 150, 250, 150, 250, 80); s.node(250, 80);
+  s.line(h.o[0], 80, 290, 80); s.term(290, 80); s.text(296, 85, o.uO || 'u_O', o.uO ? 'tval' : 't'); if (!o.noNote) s.text(165, 206, '正反馈：u_O 经 R_F 回到 +', 'tred', 'middle');
+  return {s:s, h:h};
 }
 hysC('hys', false); hysC('ex2c', true);
 
@@ -491,17 +515,120 @@ wave('ex1w', function(t){ return 3 * Math.sin(2 * Math.PI * t); }, -2, 2, 6, [-4
 wave('ex2w', function(t){ return 5.5 + 5.5 * Math.sin(2 * Math.PI * t - 0.4) + 0.6 * Math.sin(14 * t); }, 2, 10, 12, [-1, 13], 12);
 
 /* noninverting hysteresis */
-(function(){
-  var s = new Sch('nhys'), h = s.opamp(130, 80, {plusTop:false});
+function nhysC(id, o){
+  o = o || {}; var s = new Sch(id), h = s.opamp(130, 80, {plusTop:false});
   s.line(h.m[0], h.m[1], 80, h.m[1]); s.gnd(80, h.m[1]);
   s.node(100, h.p[1]); s.line(100, h.p[1], h.p[0], h.p[1]); s.wire(100, h.p[1], 100, 150);
-  s.term(30, 150); s.R(30, 150, 100, 150, {lab:'R_1', side:'b'}); s.text(24, 155, 'u_i', 't', 'end'); s.node(100, 150);
-  s.R(100, 150, 230, 150, {lab:'R_2', side:'b'}); s.wire(230, 150, 250, 150, 250, 80); s.node(250, 80);
-  s.line(h.o[0], 80, 290, 80); s.term(290, 80); s.text(296, 85, 'u_O', 't');
+  s.term(30, 150); s.R(30, 150, 100, 150, {lab:'R_1', val:o.r1v, side:'b'}); s.text(24, 155, o.ui || 'u_i', 't', 'end'); s.node(100, 150);
+  s.R(100, 150, 230, 150, {lab:'R_2', val:o.r2v, side:'b'}); s.wire(230, 150, 250, 150, 250, 80); s.node(250, 80);
+  s.line(h.o[0], 80, 290, 80); s.term(290, 80); s.text(296, 85, o.uO || 'u_O', o.uO ? 'tval' : 't');
+  return {s:s, h:h};
+}
+nhysC('nhys');
+(function(){
   var p = new Plot('nloop', {x:30, y:15, w:270, h:180}, [-4, 4], [-7.5, 7.5]);
   p.axes({xl:'u_i', yl:'u_O', xtShift:true, xt:[-2, 2], xf:function(v){ return v > 0 ? 'U_{+H}' : 'U_{+L}'; }, yt:[-6, 6], yf:function(v){ return v > 0 ? '+U_{om}' : '−U_{om}'; }});
   p.poly([[-4, -6], [2, -6], [2, 6], [4, 6]], 'cv'); p.poly([[4, 6], [-2, 6], [-2, -6]], 'cv3');
   p.text(2, -7.4, '上升到 U_{+H} 跳高', 'tval', 'middle'); p.text(-2, 7.2, '下降到 U_{+L} 跳低', 'tred', 'middle');
+})();
+/* ---------- numeric figures inside the derivations ---------- */
+function f3(v){ return (+v.toFixed(3)).toString().replace('-', '−'); }
+/* negative feedback block diagram */
+(function(){
+  var A = 1e5, F = 0.1, uI = 1, uO = A * uI / (1 + A * F), d = uO / A, s = new Sch('dvFb');
+  mk('circle', {cx:150, cy:80, r:16, class:'body'}, s.g); s.text(150, 85, 'Σ', 'tb', 'middle');
+  s.arrow(40, 80, 132, 80, '', 'ink'); s.text(40, 70, 'u_I = ' + uI + ' V', 'tval'); s.pm(124, 62, '+'); s.pm(136, 112, '-');
+  mk('rect', {x:250, y:52, width:120, height:56, rx:6, class:'body'}, s.g); s.text(310, 85, 'A_{od} = 10^{5}', 't', 'middle');
+  s.arrow(166, 80, 248, 80, '', 'ink'); s.text(207, 36, 'u_+ − u_− ≈ ' + (d * 1e3).toFixed(2) + ' mV', 'tamber', 'middle');
+  s.arrow(370, 80, 480, 80, '', 'ink'); s.node(440, 80); s.text(488, 85, 'u_O = ' + uO.toFixed(4) + ' V', 'tval');
+  s.wire(440, 80, 440, 160, 370, 160); mk('rect', {x:250, y:140, width:120, height:40, rx:6, class:'body'}, s.g); s.text(310, 165, 'F = ' + F, 't', 'middle');
+  s.line(250, 160, 150, 160); s.arrow(150, 160, 150, 98, '', 'ink'); s.text(160, 132, 'F·u_O = ' + (F * uO).toFixed(5) + ' V', 'ts');
+  s.text(488, 112, '≈ 1/F × u_I = 10 V', 'ts');
+})();
+/* inverting: R_i and balance resistor */
+(function(){
+  var r = invAmp('dvInv', {r1v:'10kΩ', rfv:'100kΩ', r2v:'9.1kΩ', uI:'u_I = 0.5 V', uO:'u_O = −5 V', noArrows:true}), s = r.s, m = r.a.m[1];
+  s.arrow(92, m + 14, 122, m + 14, '', 'red'); s.text(80, m + 32, 'i_1 = 50 μA', 'tred');
+  s.arrow(235, m - 10, 235, m - 46, '', 'red'); s.text(229, m - 30, 'i_F = 50 μA', 'tred', 'end');
+  s.text(241, m + 50, 'u_− = 0 V（虚地）', 'tval', 'end');
+  s.text(40, 250, 'R_i = u_I / i_1 = 0.5 V ÷ 50 μA = 10 kΩ', 'tval');
+})();
+/* non-inverting */
+(function(){
+  var r = nonAmp('dvNon', {r1v:'10kΩ', rfv:'40kΩ', r2v:'8kΩ', uI:'u_I = 0.5 V', uO:'u_O = 2.5 V', um:'u_− = 0.5 V', r1side:'b'}), s = r.s;
+  s.arrow(395, 64, 340, 64, '', 'red'); s.text(368, 82, 'i = 50 μA', 'tred', 'middle');
+  s.arrow(232, 97, 200, 97, '', 'red'); s.text(212, 88, 'i = 50 μA', 'tred', 'middle');
+  s.text(490, 155, '= (1 + 40/10) × 0.5 V', 'ts');
+})();
+/* inverting sum */
+(function(){
+  var r = sumInvC('dvSumInv', {r11v:'10kΩ', r12v:'50kΩ', rfv:'100kΩ', u1:'u_{I1} = 0.2 V', u2:'u_{I2} = 0.5 V', uO:'u_O = −3 V'}), s = r.s;
+  s.arrow(198, 70, 232, 70, 'i_{I1}', 'red', 204, 64); s.arrow(198, 122, 232, 122, 'i_{I2}', 'red', 204, 140);
+  s.arrow(262, 52, 300, 52, '', 'red'); s.text(290, 70, 'i_F = 30 μA', 'tred', 'middle');
+  s.text(10, 196, 'u_− = 0（虚地）', 'tval');
+  s.text(10, 216, 'i_{I1} = 0.2 V ÷ 10 kΩ = 20 μA', 'tred'); s.text(10, 236, 'i_{I2} = 0.5 V ÷ 50 kΩ = 10 μA', 'tred');
+})();
+/* non-inverting sum (new circuit) */
+(function(){
+  var s = new Sch('dvSumNon'), a = s.opamp(300, 130);
+  s.term(80, 150); s.R(80, 150, 190, 150, {lab:'R_{21}', val:'20kΩ'}); s.wire(190, 150, a.p[0], 150); s.node(230, 150);
+  s.term(80, 210); s.R(80, 210, 190, 210, {lab:'R_{22}', val:'20kΩ', side:'b'}); s.wire(190, 210, 230, 210, 230, 150);
+  s.text(70, 155, 'u_{I1} = 1 V', 't', 'end'); s.text(70, 215, 'u_{I2} = 0.4 V', 't', 'end');
+  s.wire(a.m[0], a.m[1], 245, a.m[1], 245, 50, 330, 50); s.node(245, 50); s.R(245, 50, 165, 50, {lab:'R_1', val:'10kΩ'}); s.gnd(165, 50);
+  s.R(330, 50, 400, 50, {lab:'R_F', val:'20kΩ'}); s.wire(400, 50, 420, 50, 420, 130); s.node(420, 130); s.wire(a.o[0], 130, 480, 130); s.term(480, 130); s.text(490, 135, 'u_O = 2.1 V', 'tval');
+  s.arrow(100, 164, 130, 164, '', 'red'); s.arrow(130, 196, 100, 196, '', 'red'); s.text(140, 184, 'i = 15 μA', 'tred');
+  s.text(236, 188, 'u_+ = 0.7 V', 'tval'); s.text(238, 92, 'u_− = 0.7 V', 'tval', 'end');
+  s.arrow(395, 64, 340, 64, '', 'red'); s.text(368, 82, 'i_F = 70 μA', 'tred', 'middle');
+})();
+/* subtractor */
+(function(){
+  var r = subC('dvSub', {r1v:'10kΩ', r2v:'10kΩ', r3v:'50kΩ', rfv:'50kΩ', u1:'u_{I1} = 0.3 V', u2:'u_{I2} = 0.5 V', uO:'u_O = 1 V'}), s = r.s;
+  s.text(320, 200, 'u_+ = u_− = 0.417 V', 'tval');
+  s.arrow(238, 122, 208, 122, '', 'red'); s.text(223, 140, 'i = 11.7 μA', 'tred', 'middle');
+  s.text(320, 220, '电流从运放侧流回 u_{I1}', 'ts');
+})();
+/* integrator: circuit + ramp */
+(function(){
+  var r = invAmp('dvIntC', {cap:true, r1v:'10kΩ', rfv:'0.1μF', uI:'u_I = 1 V', uO:'u_O(t)', noArrows:true}), s = r.s, m = r.a.m[1];
+  s.arrow(92, m + 14, 122, m + 14, '', 'red'); s.text(80, m + 32, 'i = 0.1 mA', 'tred');
+  s.arrow(340, 64, 390, 64, '', 'red'); s.text(365, 82, 'i_C = 0.1 mA', 'tred', 'middle');
+  s.text(241, m + 50, 'u_− = 0', 'tval', 'end');
+  var p = new Plot('dvIntP', {x:70, y:20, w:500, h:150}, [0, 3.2], [-3.5, 0.5]);
+  p.axes({xl:'t / ms', yl:'u_O / V', xt:[1, 2, 3], yt:[-1, -2, -3]});
+  p.poly([[0, 0], [3, -3]], 'cv'); [1, 2, 3].forEach(function(t){ p.dot(t, -t); });
+  p.text(1.08, -0.9, 't = 1 ms：−1 V', 'tval'); p.text(2.08, -1.9, 't = 2 ms：−2 V', 'tval');
+  p.text(0.25, -2.6, '斜率 = −U_I /(R_1C_F) = −1 V/ms', 'tred');
+})();
+/* differentiator: circuit + noise amplification */
+(function(){
+  var r = invAmp('dvDifC', {capIn:true, r1:'C_1', r1v:'0.1μF', rfv:'10kΩ', uI:'u_I', uO:'u_O', noArrows:true}), s = r.s, m = r.a.m[1];
+  s.arrow(92, m + 14, 122, m + 14, '', 'red'); s.text(80, m + 32, 'i_1 = C_1 du_I/dt', 'tred');
+  s.text(241, m + 50, 'u_− = 0', 'tval', 'end');
+  var sv = document.getElementById('dvDifP'), noise = function(t){ return 0.01 * Math.sin(2 * Math.PI * 10 * t); };
+  var a = new Plot(sv, {x:70, y:15, w:500, h:95}, [0, 2], [-0.2, 2.3]), b = new Plot(sv, {x:70, y:150, w:500, h:105}, [0, 2], [-2.3, 0.2]);
+  a.axes({yl:'u_I / V', xt:[], yt:[1, 2], grid:false}); a.fn(function(t){ return t + noise(t); }, 'cv3', 0, 2, 800);
+  a.text(1.15, 0.45, '1 V/ms 斜坡 + 10 mV 噪声（几乎看不出）', 'ts');
+  b.axes({xl:'t / ms', yl:'u_O / V', xt:[1, 2], yt:[-1], grid:false}); b.hline(-1, 'cvdash');
+  b.fn(function(t){ return -(1 + 0.01 * 2 * Math.PI * 10 * Math.cos(2 * Math.PI * 10 * t)); }, 'cv', 0, 2, 1600);
+  b.text(0.05, -2.2, '−1 V ± 0.63 V：噪声被放大', 'tred');
+})();
+/* hysteresis thresholds */
+(function(){
+  var r = hysC('dvHys', false, {r2v:'10kΩ', rfv:'40kΩ', noNote:true}), s = r.s;
+  s.text(10, 206, 'u_O = +10 V → u_+ = 10 × 10/(10+40) = +2 V', 'tval');
+  s.text(10, 226, 'u_O = −10 V → u_+ = −2 V', 'tred');
+  s.text(10, 246, '回差 ΔU = 2 − (−2) = 4 V', 't');
+})();
+(function(){
+  var r = hysC('dvUR', true, {r2v:'10kΩ', rfv:'20kΩ', ur:'U_R = 9 V', uO:'u_O = +12 V', noNote:true}), s = r.s;
+  s.text(10, 206, 'U_R 单独作用：9 × 20/30 = 6 V', 'tval');
+  s.text(10, 226, 'u_O 单独作用：12 × 10/30 = 4 V', 'tval');
+  s.text(10, 246, 'u_+ = 6 + 4 = 10 V = U_{T+}', 'tred');
+})();
+(function(){
+  var r = nhysC('dvNHys', {r1v:'10kΩ', r2v:'20kΩ', ui:'u_i = 3 V', uO:'u_O = −6 V'}), s = r.s;
+  s.text(10, 206, 'u_+ = (20 × 3 + 10 × (−6)) / 30 = 0 V', 'tval');
+  s.text(10, 226, 'u_+ 升到 0（= u_−）→ 输出翻到 +6 V', 'tred');
 })();
 initPage(6);
 })();

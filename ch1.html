@@ -266,6 +266,7 @@
 <div class="rs">\[I_R=\frac{U_I-U_Z}{R}=\frac{12-6}{0.5\,\mathrm{k\Omega}}=12\,\mathrm{mA},\qquad I_L=\frac{U_Z}{R_L}=\frac{6}{1}=6\,\mathrm{mA}\]</div>
 <div class="rs">由 KCL：\(I_Z=I_R-I_L=12-6=6\,\mathrm{mA}\)。只要 \(I_{Z\min}\lt 6\,\mathrm{mA}\lt I_{ZM}\)，输出就稳定在 6V。</div>
 </div>
+<details class="figfold"><summary>配图：带数值的稳压电路</summary><div class="fig"><svg id="exZd" class="wide" viewBox="0 0 440 240" role="img" aria-label="数值示例"></svg></div></details>
 </div>
 <h3>其他特殊二极管 <a class="src" data-s="82"></a>–<a class="src" data-s="85"></a></h3>
 <div class="tbl"><table>
@@ -623,6 +624,20 @@ zc.text(14, 115, 'U_I', 't', 'end'); zc.text(296, 115, 'U_o', 't');
 zc.arrow(55, 72, 100, 72, 'I_R', 'red', 70, 90); zc.arrow(198, 85, 198, 125, 'I_Z', 'red', 204, 140); zc.arrow(272, 85, 272, 125, 'I_L', 'red', 278, 145);
 zc.text(160, 205, '阴极接高电位（反接）', 'ts', 'middle');
 
+//CH1
+/* ---------- zener example with numbers ---------- */
+(function(){
+  var z = new Sch('exZd');
+  z.term(20, 50); z.R(20, 50, 130, 50, {lab:'R', val:'500Ω'}); z.wire(130, 50, 380, 50); z.node(180, 50); z.node(320, 50); z.term(380, 50);
+  z.Z(180, 170, 180, 50, {lab:'D_Z', val:'6V', side:'l'}); z.R(320, 50, 320, 170, {lab:'R_L', val:'1kΩ'});
+  z.term(20, 170); z.wire(20, 170, 380, 170); z.node(180, 170); z.node(320, 170); z.term(380, 170);
+  z.text(14, 115, 'U_I = 12 V', 'tval', 'end'); z.text(386, 115, 'U_o = 6 V', 'tval');
+  z.arrow(50, 66, 100, 66, '', 'red'); z.text(75, 86, 'I_R = 12 mA', 'tred', 'middle');
+  z.arrow(198, 85, 198, 125, '', 'red'); z.text(204, 140, 'I_Z = 6 mA', 'tred');
+  z.arrow(302, 85, 302, 125, '', 'red'); z.text(296, 100, 'I_L = 6 mA', 'tred', 'end');
+  z.text(20, 210, 'R 上的电压 12 − 6 = 6 V → I_R = 6 V ÷ 0.5 kΩ = 12 mA', 'tval');
+  z.text(20, 230, 'I_L = 6 V ÷ 1 kΩ = 6 mA，剩下的 6 mA 流过稳压管', 'tval');
+})();
 initPage(1);
 })();
 </script>

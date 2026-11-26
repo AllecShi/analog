@@ -103,6 +103,9 @@ b.hl{color:var(--accent)}
 .fig{overflow-x:auto}
 .fig svg{display:block;width:100%;height:auto}
 .fig svg:not(.wide){max-width:600px;margin-inline:auto}
+/* every figure: scale never above 1.25 (desktop) / 0.75 (phone) of its drawing size, so sizes stay consistent */
+svg.sz{display:block;width:100%;height:auto;max-width:calc(var(--vw) * 1.25px);margin-inline:auto}
+.fig svg.sz:not(.wide){max-width:min(600px, calc(var(--vw) * 1.25px))}
 .tbl td:first-child{white-space:nowrap}
 .cap{font-size:14px;color:var(--muted);margin-top:8px}
 .key{border-left:4px solid var(--accent);background:var(--accent-soft);padding:10px 14px;border-radius:0 8px 8px 0;margin:16px 0}
@@ -236,6 +239,13 @@ svg text{font-family:var(--f-body)}
 .level{display:flex;gap:10px;align-items:baseline;border:1px solid var(--line);border-radius:8px;padding:8px 14px;margin:12px 0;background:var(--surface);font-size:15px}
 .level .lv{font-size:12px}
 
+/* collapsible figure (worked examples) */
+details.figfold{border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;background:var(--surface);margin:10px 0;padding:0 14px}
+details.figfold > summary{cursor:pointer;padding:7px 0;font-weight:700;color:var(--accent);list-style:none;font-size:15px}
+details.figfold > summary::-webkit-details-marker{display:none}
+details.figfold > summary::before{content:'▸';display:inline-block;width:1.1em;transition:transform .15s}
+details.figfold[open] > summary::before{transform:rotate(90deg)}
+details.figfold[open]{padding-bottom:10px}
 /* collapsible derivation */
 details.deriv{border:1px solid var(--line);border-left:4px solid var(--violet);border-radius:0 8px 8px 0;background:var(--surface);margin:10px 0 16px;padding:0 14px}
 details.deriv > summary{cursor:pointer;padding:8px 0;font-weight:700;color:var(--violet);list-style:none}
@@ -245,6 +255,7 @@ details.deriv[open] > summary::before{transform:rotate(90deg)}
 details.deriv > summary .hint{font-weight:400;color:var(--muted);font-size:13px;margin-left:6px}
 details.deriv[open]{padding-bottom:10px}
 details.deriv .step{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;align-items:baseline;margin:6px 0}
+details.deriv > .fig{margin:6px 0 12px}
 details.deriv .step > b{font-size:14px;color:var(--violet);white-space:nowrap}
 /* misconception + think boxes */
 .myth{border-left:4px solid var(--red);background:var(--p-tint);padding:10px 14px;border-radius:0 8px 8px 0;margin:16px 0}
@@ -273,7 +284,7 @@ sub,sup{font-size:.72em;line-height:0}
   .lead{font-size:15.5px}
   .panel,.ex{padding:12px 10px;border-radius:8px}
   .key,.warn,.myth,.think{padding:8px 10px}
-  details.deriv{padding:0 10px}
+  details.deriv,details.figfold{padding:0 10px}
   .tbl{padding:4px 6px}
   table{font-size:14px}
   th,td{padding:6px 5px}
@@ -288,6 +299,10 @@ sub,sup{font-size:.72em;line-height:0}
   .shots{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
   .fig .zoomhint{display:block;font-size:12px;color:var(--muted);text-align:right;margin-top:2px}
   .fig svg{cursor:zoom-in}
+  svg.sz,.fig svg.sz:not(.wide){max-width:calc(var(--vw) * 0.75px)}
+  .grid3 > .panel{display:flow-root}
+  .grid3 > .panel > svg.sz:first-child{float:left;width:42%;margin:0 12px 4px 0}
+  .grid3 > .panel > svg.sz:first-child + h4{margin-top:4px}
   .page-nav a{font-size:14px}
   .katex-display .katex{white-space:normal}
   .lightbox{padding:8px}
