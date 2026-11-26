@@ -27,12 +27,12 @@
 <p class="muted">线性区 \(u_O=A_{od}(u_+-u_-)\)；超出后进入饱和区，\(u_O=\pm U_{om}\)（比电源电压低 1～2V）。</p></div>
 </div>
 <div class="panel">
-<b>线性区到底有多窄？</b>设 \(U_{om}=12\,\mathrm V\)。
+<b>线性区的宽度：</b>设 \(U_{om}=12\,\mathrm V\)。
 <div class="ctl"><label for="aod">\(A_{od}\)</label><input type="range" id="aod" min="2" max="6" step="0.1" value="5"><output for="aod"></output></div>
 <div class="readout" id="aodOut"></div>
 <div class="cap">实际运放 \(A_{od}\) 约 \(10^5\) 以上，线性区只有零点几毫伏。不加负反馈，一点点输入差就会让输出饱和。所以：<b>运放要工作在线性区，必须引入负反馈</b>。</div>
 </div>
-<details class="deriv"><summary>推导过程：为什么加了负反馈，增益就只由外部电阻决定<span class="hint">（理解虚短的来历）</span></summary>
+<details class="deriv"><summary>推导过程：加负反馈后增益只由外部电阻决定的原因<span class="hint">（理解虚短的来历）</span></summary>
 <p>把运放看成一个增益为 \(A_{od}\) 的放大器，输出的一部分 \(F\,u_O\) 送回反相端（\(F\) 叫反馈系数，由电阻分压决定，\(0\lt F\le1\)）。输入 \(u_I\) 接同相端：</p>
 <div class="step"><b>①</b><div>运放本身：\(u_O=A_{od}(u_+-u_-)=A_{od}(u_I-F\,u_O)\)</div></div>
 <div class="step"><b>②</b><div>移项：\(u_O(1+A_{od}F)=A_{od}u_I\)，所以 \[A_{uf}=\frac{u_O}{u_I}=\frac{A_{od}}{1+A_{od}F}\]</div></div>
@@ -139,7 +139,7 @@
 <div class="step"><b>②</b><div><b>只留 \(u_{I2}\)</b>（\(u_{I1}\) 接地）：同相端电压由 \(R_2\)、\(R_3\) 分压得 \(u_+=\dfrac{R_3}{R_2+R_3}u_{I2}\)；从同相端看是同相比例（\(R_1\) 的左端接地）：\(u_O''=\left(1+\dfrac{R_F}{R_1}\right)\dfrac{R_3}{R_2+R_3}u_{I2}\)。</div></div>
 <div class="step"><b>③</b><div>叠加：\(u_O=u_O'+u_O''\)，即上面的公式。</div></div>
 <div class="step"><b>④</b><div>取 \(R_1=R_2\)、\(R_3=R_F\)：\(\left(1+\dfrac{R_F}{R_1}\right)\dfrac{R_F}{R_1+R_F}=\dfrac{R_1+R_F}{R_1}\cdot\dfrac{R_F}{R_1+R_F}=\dfrac{R_F}{R_1}\)，两路系数大小相同，得 \(u_O=\dfrac{R_F}{R_1}(u_{I2}-u_{I1})\)。</div></div>
-<p class="muted">为什么一定要配平？如果两路系数不相等，\(u_{I1}=u_{I2}\)（共模信号）时输出不为零，电路就不再只放大“差”——这和第 5 章差放要求两边对称是同一个道理。</p>
+<p class="muted">必须配平的原因：两路系数不相等时，若 \(u_{I1}=u_{I2}\)（共模信号），输出不为零，电路就不再只放大“差”——这和第 5 章差放要求两边对称是同一个道理。</p>
 </details>
 <p class="muted">输出与两输入之差成正比，常用作测量放大电路。缺点：比例系数调节不方便，输入电阻较低。</p>
 
@@ -185,7 +185,7 @@
 <h3>微分运算 <a class="src" data-s="37"></a> <a class="src" data-s="38"></a></h3>
 <p>把输入电阻换成电容 \(C_1\)：\(i_1=C_1\frac{\mathrm du_I}{\mathrm dt}=i_F\)，</p>
 <div class="formula boxed">\[ u_O=-R_FC_1\frac{\mathrm du_I}{\mathrm dt} \]</div>
-<details class="deriv"><summary>推导过程：微分电路，以及它为什么怕干扰</summary>
+<details class="deriv"><summary>推导过程：微分电路及其易受干扰的原因</summary>
 <div class="step"><b>①</b><div>虚地：电容 \(C_1\) 两端电压就是 \(u_I\)，所以 \(i_1=C_1\dfrac{\mathrm du_I}{\mathrm dt}\)。</div></div>
 <div class="step"><b>②</b><div>虚断：\(i_F=i_1\)；\(R_F\) 上 \(u_--u_O=i_FR_F\)，即 \(u_O=-R_Fi_1=-R_FC_1\dfrac{\mathrm du_I}{\mathrm dt}\)。</div></div>
 <div class="step"><b>③</b><div>输入正弦 \(u_I=U\sin\omega t\)：\(u_O=-\omega R_FC_1U\cos\omega t\)，输出幅值和 \(\omega\) 成正比。频率越高的成分被放大得越多，而噪声恰好以高频为主，所以微分器输出很“毛”。实际电路常在 \(C_1\) 上串一个小电阻来限制高频增益。</div></div>
@@ -253,7 +253,7 @@
 <div class="fig"><svg id="ex2c" viewBox="0 0 340 200" role="img" aria-label="例2电路"></svg></div>
 <div class="reveal">
 <div class="rs">同相端电位由 \(U_R\) 和 \(u_O\) 叠加（KVL / 叠加原理）：\[u_+=\frac{R_F}{R_2+R_F}U_R+\frac{R_2}{R_2+R_F}u_O\]</div>
-<details class="deriv"><summary>推导过程：为什么 \(U_R\) 的系数是 \(\frac{R_F}{R_2+R_F}\)</summary>
+<details class="deriv"><summary>推导过程：\(U_R\) 的系数为 \(\frac{R_F}{R_2+R_F}\)</summary>
 <p>同相端不取电流，\(U_R\)—\(R_2\)—同相端—\(R_F\)—\(u_O\) 是一条串联支路。对同相端列 KCL：\(\dfrac{U_R-u_+}{R_2}+\dfrac{u_O-u_+}{R_F}=0\)，两边乘 \(R_2R_F\)：\(R_FU_R+R_2u_O=(R_2+R_F)u_+\)。所以离 \(U_R\) <b>远</b>的那个电阻 \(R_F\) 出现在 \(U_R\) 的系数里——和电阻分压的规律一致。</p>
 </details>
 <div class="rs">\[U_{T+}=\frac{20}{30}\times9+\frac{10}{30}\times12=6+4=10\,\mathrm V,\qquad U_{T-}=6-4=2\,\mathrm V\]</div>
@@ -289,15 +289,15 @@
 <tr><td><b>平衡电阻</b></td><td>两输入端对地等效电阻相等，如 \(R_2=R_1/\!/R_F\)</td></tr>
 <tr><td><b>比较器</b></td><td>单门限：\(U_T=U_R\)；滞回：\(U_T=\pm\frac{R_2}{R_2+R_F}U_{om}\)（+ 参考电压项）</td></tr>
 </tbody></table></div>
-<div class="q" data-a="1"><div class="qt">1. 反相比例电路 \(R_1=10\,\mathrm{k\Omega}, R_F=100\,\mathrm{k\Omega}\)，\(u_I=0.2\,\mathrm V\)，\(u_O=\)？</div><div class="opts"><button>+2 V</button><button>−2 V</button><button>+2.2 V</button></div>
+<div class="q" data-a="1"><div class="qt">1. 反相比例电路 \(R_1=10\,\mathrm{k\Omega}, R_F=100\,\mathrm{k\Omega}\)，\(u_I=0.2\,\mathrm V\)，\(u_O=\)（　）。</div><div class="opts"><button>+2 V</button><button>−2 V</button><button>+2.2 V</button></div>
 <div class="qex">✓ 正确。\(u_O=-\frac{100}{10}\times0.2=-2\,\mathrm V\)。</div></div>
-<div class="q" data-a="2"><div class="qt">2. 同相比例电路 \(R_1=10\,\mathrm{k\Omega}, R_F=100\,\mathrm{k\Omega}\)，\(u_I=0.2\,\mathrm V\)，\(u_O=\)？</div><div class="opts"><button>+2 V</button><button>−2 V</button><button>+2.2 V</button></div>
+<div class="q" data-a="2"><div class="qt">2. 同相比例电路 \(R_1=10\,\mathrm{k\Omega}, R_F=100\,\mathrm{k\Omega}\)，\(u_I=0.2\,\mathrm V\)，\(u_O=\)（　）。</div><div class="opts"><button>+2 V</button><button>−2 V</button><button>+2.2 V</button></div>
 <div class="qex">✓ 正确。\(u_O=(1+10)\times0.2=2.2\,\mathrm V\)。</div></div>
-<div class="q" data-a="0"><div class="qt">3. 电压比较器中，“虚短”成立吗？</div><div class="opts"><button>不成立，只有虚断</button><button>成立</button><button>两者都不成立</button></div>
+<div class="q" data-a="0"><div class="qt">3. 电压比较器中，“虚短”（　）。</div><div class="opts"><button>不成立，只有虚断</button><button>成立</button><button>两者都不成立</button></div>
 <div class="qex">✓ 正确。比较器工作在非线性区，\(u_+\ne u_-\)，但输入电流仍为零。</div></div>
-<div class="q" data-a="1"><div class="qt">4. 积分电路输入恒定正电压 1V，\(R_1C_F=1\,\mathrm{ms}\)，2ms 后输出（初值 0）为？</div><div class="opts"><button>+2 V</button><button>−2 V</button><button>−1 V</button></div>
+<div class="q" data-a="1"><div class="qt">4. 积分电路输入恒定正电压 1V，\(R_1C_F=1\,\mathrm{ms}\)，2ms 后输出（初值 0）为（　）。</div><div class="opts"><button>+2 V</button><button>−2 V</button><button>−1 V</button></div>
 <div class="qex">✓ 正确。\(u_O=-\frac{1}{1\,\mathrm{ms}}\times1\,\mathrm V\times2\,\mathrm{ms}=-2\,\mathrm V\)。</div></div>
-<div class="q" data-a="2"><div class="qt">5. 滞回比较器 \(R_2=10\,\mathrm{k\Omega}, R_F=40\,\mathrm{k\Omega}, U_{om}=10\,\mathrm V\)，回差电压是？</div><div class="opts"><button>2 V</button><button>2.5 V</button><button>4 V</button></div>
+<div class="q" data-a="2"><div class="qt">5. 滞回比较器 \(R_2=10\,\mathrm{k\Omega}, R_F=40\,\mathrm{k\Omega}, U_{om}=10\,\mathrm V\)，回差电压为（　）。</div><div class="opts"><button>2 V</button><button>2.5 V</button><button>4 V</button></div>
 <div class="qex">✓ 正确。门限 \(\pm\frac{10}{50}\times10=\pm2\,\mathrm V\)，回差 4V。</div></div>
 
 <details class="gallery"><summary>浏览本章全部课件页（61 页，点击放大）</summary></details>

@@ -13,10 +13,10 @@
 <article>
 <div class="eyebrow">第 4 章 · 课件 28 页</div>
 <h1>放大电路的频率响应</h1>
-<p class="lead">前几章算增益时，电容要么当开路、要么当短路，结果和频率无关。真实电路里，频率太低时耦合电容“不够短路”，频率太高时管子内部的结电容“开始短路”，增益都会下降。本章回答：增益在哪个频率开始掉、掉多快。</p>
+<p class="lead">前几章算增益时，电容要么当开路、要么当短路，结果和频率无关。真实电路里，频率太低时耦合电容“不够短路”，频率太高时管子内部的结电容“开始短路”，增益都会下降。本章研究增益开始下降的频率和下降的速度。</p>
 <div class="key"><b>本章学习目标</b> <a class="src" data-s="1"></a><br>① 理解 RC 频率响应与波特图（<b>重点</b>）　② 理解 BJT 的高频小信号模型　③ 掌握基本放大电路的幅频、相频特性分析（<b>难点：高低频等效电路</b>）</div>
 
-<h2 id="overview"><span class="n">4.0</span>全景：放大电路的频率特性长什么样</h2>
+<h2 id="overview"><span class="n">4.0</span>全景：放大电路频率特性的整体形状</h2>
 <div class="panel fig"><svg id="full" class="wide" viewBox="0 0 640 260" role="img" aria-label="全频段幅频特性"></svg>
 <div class="cap">横轴是对数刻度的频率。中频区增益平坦；低于 \(f_L\)（下限频率）时被<b>耦合电容、旁路电容</b>拖下来；高于 \(f_H\)（上限频率）时被<b>管子的结电容</b>拖下来。\(f_L\)、\(f_H\) 都定义在增益下降 3dB（即 \(0.707\) 倍）处，通频带 \(BW=f_H-f_L\approx f_H\)。</div></div>
 <div class="tbl"><table>
@@ -148,13 +148,13 @@
 <tr><td><b>上限频率</b></td><td>\(f_H=1/(2\pi RC)\)，\(C=C_{b'e}+C_{M1}\)，\(R=(R_s/\!/R_b+r_{bb'})/\!/r_{b'e}\)</td></tr>
 <tr><td><b>下限频率</b></td><td>\(f_{L1}=1/[2\pi C_1(R_s+r_{be})]\)，\(C_1\approx C_e/(1+\beta)\)</td></tr>
 </tbody></table></div>
-<div class="q" data-a="1"><div class="qt">1. RC 低通在 \(f=10f_H\) 处，增益约为多少 dB？</div><div class="opts"><button>−3 dB</button><button>−20 dB</button><button>−40 dB</button></div>
+<div class="q" data-a="1"><div class="qt">1. RC 低通在 \(f=10f_H\) 处，增益约为（　）。</div><div class="opts"><button>−3 dB</button><button>−20 dB</button><button>−40 dB</button></div>
 <div class="qex">✓ 正确。超过 \(f_H\) 后每十倍频下降 20 dB。</div></div>
-<div class="q" data-a="0"><div class="qt">2. 共射电路高频响应变差的主要原因是？</div><div class="opts"><button>\(C_{b'c}\) 的密勒效应</button><button>耦合电容太小</button><button>\(r_{bb'}\) 太大</button></div>
+<div class="q" data-a="0"><div class="qt">2. 共射电路高频响应变差的主要原因是（　）。</div><div class="opts"><button>\(C_{b'c}\) 的密勒效应</button><button>耦合电容太小</button><button>\(r_{bb'}\) 太大</button></div>
 <div class="qex">✓ 正确。\(C_{b'c}\) 被放大 \((1+g_mR_L')\) 倍折算到输入端。</div></div>
-<div class="q" data-a="2"><div class="qt">3. 为什么低频等效电路中 \(C_e\) 要除以 \((1+\beta)\)？</div><div class="opts"><button>因为 \(C_e\) 很大</button><button>因为 \(C_e\) 在输出回路</button><button>\(C_e\) 中流的是 \(i_e=(1+\beta)i_b\)，折算到基极回路阻抗乘 \((1+\beta)\)，电容就除以 \((1+\beta)\)</button></div>
+<div class="q" data-a="2"><div class="qt">3. 低频等效电路中 \(C_e\) 要除以 \((1+\beta)\)，原因是（　）。</div><div class="opts"><button>因为 \(C_e\) 很大</button><button>因为 \(C_e\) 在输出回路</button><button>\(C_e\) 中流的是 \(i_e=(1+\beta)i_b\)，折算到基极回路阻抗乘 \((1+\beta)\)，电容就除以 \((1+\beta)\)</button></div>
 <div class="qex">✓ 正确。和第 2 章“\(R_e\) 折算到基极乘 \((1+\beta)\)”是同一个道理。</div></div>
-<div class="q" data-a="1"><div class="qt">4. 两级相同的放大电路级联，总带宽比单级？</div><div class="opts"><button>更宽</button><button>更窄</button><button>相同</button></div>
+<div class="q" data-a="1"><div class="qt">4. 两级相同的放大电路级联，总带宽比单级（　）。</div><div class="opts"><button>更宽</button><button>更窄</button><button>相同</button></div>
 <div class="qex">✓ 正确。</div></div>
 
 <details class="gallery"><summary>浏览本章全部课件页（28 页，点击放大）</summary></details>

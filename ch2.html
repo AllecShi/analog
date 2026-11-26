@@ -13,7 +13,7 @@
 <article>
 <div class="eyebrow">第 2 章 · 课件 62 页（第一部分）</div>
 <h1>双极结型晶体管及其放大电路</h1>
-<p class="lead">三极管就是两个背靠背的 PN 结，但因为中间的基区做得极薄，它获得了“用小电流控制大电流”的本领。本章先弄懂它为什么能放大，再学会两件事：算静态工作点（直流），算放大倍数（交流）。</p>
+<p class="lead">三极管就是两个背靠背的 PN 结，但因为中间的基区做得极薄，它获得了“用小电流控制大电流”的本领。本章先讲清它能放大的原因，再学会两件事：算静态工作点（直流），算放大倍数（交流）。</p>
 <div class="key"><b>本章学习目标</b> <a class="src" data-s="1"></a><br>① 理解 BJT 的构成和工作原理　② 掌握输出特性曲线　③ 理解放大电路的“动与静”　④ 掌握静态、动态分析方法（<b>重点难点：动态分析</b>）</div>
 
 <!-- ============ 2.1.1 ============ -->
@@ -33,7 +33,7 @@
 
 <!-- ============ 2.1.2 ============ -->
 <h2 id="principle"><span class="n">2.1.2</span>放大原理与电流分配</h2>
-<p>三极管能放大的<b>外部条件：发射结正偏，集电结反偏</b> <a class="src" data-s="8"></a> <a class="src" data-s="14"></a>。下面以 NPN 为例看电子怎么走：</p>
+<p>三极管能放大的<b>外部条件：发射结正偏，集电结反偏</b> <a class="src" data-s="8"></a> <a class="src" data-s="14"></a>。下面以 NPN 为例说明电子的运动路径：</p>
 <div class="panel fig"><svg id="trans" class="wide" viewBox="0 0 640 315" role="img" aria-label="载流子传输"></svg>
 <div class="legend"><span><i class="ele"></i>蓝色虚线箭头：电子运动方向</span><span><i class="cur"></i>红色实线箭头：电流方向</span></div>
 <div class="cap">① 发射结正偏，发射区大量电子注入基区；② 基区很薄、空穴很少，只有极少数电子在基区复合，形成很小的 \(I_B\)；③ 绝大多数电子扩散到集电结边缘，被反偏集电结的强电场“拉”进集电区，形成 \(I_C\)。</div></div>
@@ -68,7 +68,7 @@
 </div>
 
 <div class="ex">
-<div class="exh"><span class="tag">例题</span>三极管工作在什么状态？ <a class="src" data-s="19"></a></div>
+<div class="exh"><span class="tag">例题</span>判断三极管的工作状态 <a class="src" data-s="19"></a></div>
 <p>图示三个电路中 \(U_{BE}=0.7\,\mathrm{V}\)，判断各管的工作状态。</p>
 <div class="fig"><svg id="judge3" class="wide" viewBox="0 0 660 220" role="img" aria-label="三个判断电路"></svg></div>
 <div class="reveal">
@@ -122,7 +122,7 @@
 <tr><td>\(R_c\)</td><td>把变化的电流 \(i_C\) 转换成变化的电压</td></tr>
 <tr><td>\(C_1, C_2\)</td><td>耦合电容：<b>隔直流、通交流</b></td></tr>
 </tbody></table></div>
-<h3>“动与静”：为什么一定要先加直流偏置？ <a class="src" data-s="33"></a> <a class="src" data-s="34"></a></h3>
+<h3>“动与静”：必须先加直流偏置的原因 <a class="src" data-s="33"></a> <a class="src" data-s="34"></a></h3>
 <p>交流信号只有几十 mV，而发射结要 0.5V 以上才导通。不加直流偏置，信号根本过不去。加上偏置后，信号“骑”在直流上，就能在输入特性的线性段上来回摆动。</p>
 <div class="panel">
 <div class="btns"><button type="button" id="biasOn" class="on">有直流偏置 U_BEQ = 0.7V</button><button type="button" id="biasOff">无直流偏置</button></div>
@@ -181,7 +181,7 @@
 <h3>图解法：负载线与 Q 点 <a class="src" data-s="47"></a></h3>
 <p>输出回路方程 \(u_{CE}=V_{CC}-i_CR_c\) 在输出特性上是一条直线，叫<b>直流负载线</b>：过 \((V_{CC},0)\) 和 \((0, V_{CC}/R_c)\)。它与 \(i_B=I_{BQ}\) 那条曲线的交点就是 Q 点。</p>
 <div class="panel">
-<b>动手：</b>\(V_{CC}=12\,\mathrm{V}\)，\(\beta=80\)（例题 S62 的参数）。改变 \(R_b\) 和 \(R_c\)，看 Q 点怎么移动。
+<b>动手：</b>\(V_{CC}=12\,\mathrm{V}\)，\(\beta=80\)（例题 S62 的参数）。改变 \(R_b\) 和 \(R_c\)，观察 Q 点的移动。
 <div class="ctl"><label for="Rb">\(R_b\)</label><input type="range" id="Rb" min="60" max="800" step="10" value="300"><output for="Rb"></output></div>
 <div class="ctl"><label for="Rc">\(R_c\)</label><input type="range" id="Rc" min="1" max="4" step="0.1" value="2"><output for="Rc"></output></div>
 <div class="readout" id="qOut"></div>
@@ -241,7 +241,7 @@ Q(40μA, 3.2mA, 5.6V)，<b>放大区</b>。在上面的交互图里把 \(R_b\) �
 <div class="panel fig"><svg id="hmodel" class="wide" viewBox="0 0 620 200" role="img" aria-label="小信号模型"></svg></div>
 <div class="formula boxed">\[ r_{be}=r_{bb'}+(1+\beta)\frac{26\,\mathrm{mV}}{I_{EQ}}\qquad(r_{bb'}\text{ 常取 }200\sim300\,\Omega) \]</div>
 <p class="muted">注意 \(r_{be}\) 由 Q 点决定，所以必须<b>先算静态</b>，才能做动态分析。</p>
-<details class="deriv"><summary>推导过程：\(r_{be}\) 的公式从哪来</summary>
+<details class="deriv"><summary>推导过程：\(r_{be}\) 公式的来源</summary>
 <div class="step"><b>①</b><div>\(r_{be}\) 是输入特性在 Q 点的“动态电阻”：\(r_{be}=\dfrac{\Delta u_{BE}}{\Delta i_B}\)。它由两段组成：基区体电阻 \(r_{bb'}\)（几百欧，近似常数）和发射结的动态电阻折算到基极的部分。</div></div>
 <div class="step"><b>②</b><div>发射结是一个 PN 结：\(i_E\approx I_Se^{u_{BE}/V_T}\)。求导：\(\dfrac{\mathrm di_E}{\mathrm du_{BE}}=\dfrac{i_E}{V_T}\)，所以发射结动态电阻 \(r_e=\dfrac{V_T}{I_{EQ}}\)，常温 \(V_T\approx26\,\mathrm{mV}\)。这就是第 1 章二极管 \(r_d=V_T/I_D\) 的同一个公式。</div></div>
 <div class="step"><b>③</b><div>\(r_e\) 上流的是 \(i_e=(1+\beta)i_b\)。从基极看，同样的电压 \(i_er_e\) 只对应 \(i_b\) 的电流，等效电阻放大 \((1+\beta)\) 倍：\((1+\beta)r_e\)。</div></div>
@@ -286,15 +286,15 @@ Q(40μA, 3.2mA, 5.6V)，<b>放大区</b>。在上面的交互图里把 \(R_b\) �
 <tr><td><b>动态</b></td><td>交流通路（电容、电源短路）→ 小信号模型 → \(A_u=-\beta R_L'/r_{be}\)，\(R_i\approx r_{be}\)，\(R_o=R_c\)</td></tr>
 <tr><td><b>失真</b></td><td>Q 高 → 饱和失真（\(u_o\) 底部削）；Q 低 → 截止失真（\(u_o\) 顶部削）</td></tr>
 </tbody></table></div>
-<div class="q" data-a="2"><div class="qt">1. 测得某 NPN 管三个电极电位：\(V_B=2.7\,\mathrm{V}, V_E=2\,\mathrm{V}, V_C=2.3\,\mathrm{V}\)，它工作在？</div><div class="opts"><button>放大区</button><button>截止区</button><button>饱和区</button></div>
+<div class="q" data-a="2"><div class="qt">1. 测得某 NPN 管三个电极电位：\(V_B=2.7\,\mathrm{V}, V_E=2\,\mathrm{V}, V_C=2.3\,\mathrm{V}\)，它工作在（　）。</div><div class="opts"><button>放大区</button><button>截止区</button><button>饱和区</button></div>
 <div class="qex">✓ 正确。发射结正偏（0.7V），集电结 \(V_B>V_C\) 也正偏 → 饱和。可以在“状态判断器”里验证。</div></div>
-<div class="q" data-a="0"><div class="qt">2. 画直流通路时，耦合电容应该？</div><div class="opts"><button>开路</button><button>短路</button></div>
+<div class="q" data-a="0"><div class="qt">2. 画直流通路时，耦合电容应（　）。</div><div class="opts"><button>开路</button><button>短路</button></div>
 <div class="qex">✓ 正确。电容隔直流，对直流相当于开路；画交流通路时才短路。</div></div>
-<div class="q" data-a="1" data-hint="Q 点过高，靠近哪个区？对应 u_o 哪一侧？"><div class="qt">3. 共射电路输出 \(u_o\) 的<b>底部</b>被削平，这是什么失真？如何消除？</div><div class="opts"><button>截止失真，减小 \(R_b\)</button><button>饱和失真，增大 \(R_b\)</button><button>饱和失真，减小 \(R_b\)</button></div>
+<div class="q" data-a="1" data-hint="先判断 Q 点靠近饱和区还是截止区，再对应到 u_o 的顶部或底部。"><div class="qt">3. 共射电路输出 \(u_o\) 的<b>底部</b>被削平，它属于哪种失真、怎样消除，正确的是（　）。</div><div class="opts"><button>截止失真，减小 \(R_b\)</button><button>饱和失真，增大 \(R_b\)</button><button>饱和失真，减小 \(R_b\)</button></div>
 <div class="qex">✓ 正确。Q 点过高进入饱和区，\(u_{CE}\) 的低谷被削，即 \(u_o\) 底部失真；增大 \(R_b\) 使 \(I_B\) 减小、Q 点下移。</div></div>
-<div class="q" data-a="1"><div class="qt">4. 其他不变，\(I_{EQ}\) 增大一倍，\(r_{be}\) 会？</div><div class="opts"><button>增大</button><button>减小（但不到一半，因为 \(r_{bb'}\) 不变）</button><button>不变</button></div>
+<div class="q" data-a="1"><div class="qt">4. 其他不变，\(I_{EQ}\) 增大一倍，\(r_{be}\) 将（　）。</div><div class="opts"><button>增大</button><button>减小（但不到一半，因为 \(r_{bb'}\) 不变）</button><button>不变</button></div>
 <div class="qex">✓ 正确。\(r_{be}=r_{bb'}+(1+\beta)26\,\mathrm{mV}/I_{EQ}\)，第二项减半，所以 \(|A_u|\) 会增大。</div></div>
-<div class="q" data-a="0"><div class="qt">5. 共射放大电路输出与输入的相位关系？</div><div class="opts"><button>反相</button><button>同相</button></div>
+<div class="q" data-a="0"><div class="qt">5. 共射放大电路输出与输入的相位关系为（　）。</div><div class="opts"><button>反相</button><button>同相</button></div>
 <div class="qex">✓ 正确。\(A_u=-\beta R_L'/r_{be}\) 中的负号就表示反相。</div></div>
 
 <details class="gallery"><summary>浏览本章全部课件页（62 页，点击放大）</summary></details>

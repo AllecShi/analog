@@ -31,7 +31,7 @@
 <h2 id="jfet"><span class="n">3.1</span>结型场效应管 JFET</h2>
 <p>N 沟道 JFET：一根 N 型半导体条（沟道），两侧做成 P⁺ 区并连在一起作栅极 <a class="src" data-s="4"></a>。栅极和沟道之间是 PN 结，正常工作时加<b>反偏</b>电压（\(u_{GS}\le0\)）。</p>
 <div class="panel">
-<b>拖动两个电压，看沟道怎么变化（N 沟道，\(U_{PN}=-4\,\mathrm{V}\)，\(I_{DSS}=4\,\mathrm{mA}\)）：</b>
+<b>拖动两个电压，观察沟道的变化（N 沟道，\(U_{PN}=-4\,\mathrm{V}\)，\(I_{DSS}=4\,\mathrm{mA}\)）：</b>
 <div class="ctl"><label for="jg">\(u_{GS}\)</label><input type="range" id="jg" min="-4.5" max="0" step="0.05" value="-1"><output for="jg"></output></div>
 <div class="ctl"><label for="jd">\(u_{DS}\)</label><input type="range" id="jd" min="0" max="8" step="0.05" value="1"><output for="jd"></output></div>
 <div class="readout" id="jOut"></div>
@@ -195,13 +195,13 @@
 <tr><td><b>直流分析</b></td><td>假设饱和 → 解二次方程（舍去不合理的根）→ 验证</td></tr>
 <tr><td><b>交流分析</b></td><td>\(g_m=2K_n(U_{GSQ}-U_{TN})\)；g-s 开路，d-s 为 \(g_mu_{gs}\)/\(r_{ds}\)</td></tr>
 </tbody></table></div>
-<div class="q" data-a="1"><div class="qt">1. 增强型 NMOS，\(U_{TN}=1\,\mathrm V\)，\(U_{GS}=0.8\,\mathrm V\)，它工作在？</div><div class="opts"><button>饱和区</button><button>截止区</button><button>可变电阻区</button></div>
+<div class="q" data-a="1"><div class="qt">1. 增强型 NMOS，\(U_{TN}=1\,\mathrm V\)，\(U_{GS}=0.8\,\mathrm V\)，它工作在（　）。</div><div class="opts"><button>饱和区</button><button>截止区</button><button>可变电阻区</button></div>
 <div class="qex">✓ 正确。\(U_{GS}\lt U_{TN}\)，沟道还没形成。</div></div>
-<div class="q" data-a="2" data-hint="先比较 U_DS 和 U_GS − U_TN。"><div class="qt">2. NMOS \(U_{TN}=1\,\mathrm V\)，测得 \(U_{GS}=3\,\mathrm V, U_{DS}=1.5\,\mathrm V\)，它工作在？</div><div class="opts"><button>饱和区</button><button>截止区</button><button>可变电阻区</button></div>
+<div class="q" data-a="2" data-hint="先比较 U_DS 和 U_GS − U_TN。"><div class="qt">2. NMOS \(U_{TN}=1\,\mathrm V\)，测得 \(U_{GS}=3\,\mathrm V, U_{DS}=1.5\,\mathrm V\)，它工作在（　）。</div><div class="opts"><button>饱和区</button><button>截止区</button><button>可变电阻区</button></div>
 <div class="qex">✓ 正确。\(U_{GS}-U_{TN}=2\,\mathrm V>U_{DS}=1.5\,\mathrm V\)，还没预夹断。</div></div>
-<div class="q" data-a="0"><div class="qt">3. 解二次方程得到两个 \(I_D\)，怎么取舍？</div><div class="opts"><button>代回求 \(U_{GS}\)，舍去使管子截止（\(U_{GS}\lt U_{TN}\)）的根</button><button>总是取较大的根</button><button>总是取较小的根</button></div>
+<div class="q" data-a="0"><div class="qt">3. 解二次方程得到两个 \(I_D\)，正确的取舍方法是（　）。</div><div class="opts"><button>代回求 \(U_{GS}\)，舍去使管子截止（\(U_{GS}\lt U_{TN}\)）的根</button><button>总是取较大的根</button><button>总是取较小的根</button></div>
 <div class="qex">✓ 正确。通常是较小的那个，但判断依据是物理上是否合理。</div></div>
-<div class="q" data-a="1"><div class="qt">4. \(K_n=0.5\,\mathrm{mA/V^2}\)，\(I_{DQ}=2\,\mathrm{mA}\)，\(g_m=\)？</div><div class="opts"><button>1 mS</button><button>2 mS</button><button>4 mS</button></div>
+<div class="q" data-a="1"><div class="qt">4. \(K_n=0.5\,\mathrm{mA/V^2}\)，\(I_{DQ}=2\,\mathrm{mA}\)，\(g_m=\)（　）。</div><div class="opts"><button>1 mS</button><button>2 mS</button><button>4 mS</button></div>
 <div class="qex">✓ 正确。\(g_m=2\sqrt{K_nI_{DQ}}=2\sqrt{0.5\times2}=2\,\mathrm{mS}\)。</div></div>
 
 <details class="gallery"><summary>浏览本章全部课件页（47 页，点击放大）</summary></details>

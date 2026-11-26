@@ -35,14 +35,14 @@
 <p>两次分压，就能写出整个链路的增益：</p>
 <div class="formula">\[ v_i = v_s\,\frac{R_i}{R_s+R_i}\qquad v_o = A_{vo}v_i\,\frac{R_L}{R_o+R_L}\qquad A_v=\frac{v_o}{v_i}=A_{vo}\frac{R_L}{R_o+R_L} \]</div>
 <div class="panel">
-<b>动手试一试：</b>调电阻，看信号在输入端和输出端各损失了多少（取 \(A_{vo}=100\)）。
+<b>动手试一试：</b>调节电阻，观察信号在输入端和输出端各自的损失（取 \(A_{vo}=100\)）。
 <div class="ctl"><label for="mRs">\(R_s\)</label><input type="range" id="mRs" min="-1" max="2" step="0.01" value="0"><output for="mRs"></output></div>
 <div class="ctl"><label for="mRi">\(R_i\)</label><input type="range" id="mRi" min="-1" max="3" step="0.01" value="1"><output for="mRi"></output></div>
 <div class="ctl"><label for="mRo">\(R_o\)</label><input type="range" id="mRo" min="-2" max="1" step="0.01" value="0"><output for="mRo"></output></div>
 <div class="ctl"><label for="mRL">\(R_L\)</label><input type="range" id="mRL" min="-1" max="2" step="0.01" value="0.7"><output for="mRL"></output></div>
 <div class="fig"><svg id="ampBars" viewBox="0 0 640 120" role="img" aria-label="增益条形图"></svg></div>
 </div>
-<div class="key"><b>结论（S20–S21 的两个“希望…？”）</b><br>
+<div class="key"><b>结论（S20–S21：对输入、输出电阻的要求）</b><br>
 想让负载不影响增益，希望 \(R_o \ll R_L\)，理想 \(R_o=0\)；想让信号源不被衰减，希望 \(R_i \gg R_s\)，理想 \(R_i\to\infty\)。<br>这两条是评价电压放大电路好坏的核心，后面每一章都会算 \(R_i\)、\(R_o\)。</div>
 <h3>四种增益 <a class="src" data-s="18"></a></h3>
 <div class="tbl"><table>
@@ -62,7 +62,7 @@
 <p>纯净的硅叫<b>本征半导体</b>。每个硅原子有 4 个价电子，与 4 个邻居形成共价键。常温下偶尔有电子挣脱出来成为<b>自由电子</b>，原位留下一个<b>空穴</b>，这个过程叫<b>本征激发</b> <a class="src" data-s="34"></a>。</p>
 <div class="panel fig"><svg id="lattice" viewBox="0 0 640 250" role="img" aria-label="硅晶格本征激发"></svg>
 <div class="cap">一个电子挣脱共价键（蓝点），原地留下空穴（红圈）。</div></div>
-<div class="key"><b>空穴怎么移动？</b>想象一排座位里有一个空座。旁边的人挪过去坐，空座就跑到了他原来的位置。电子往左挪，空穴就往右移，效果相当于一个<b>带正电</b>的粒子在运动。</div>
+<div class="key"><b>空穴的移动方式</b>想象一排座位里有一个空座。旁边的人挪过去坐，空座就跑到了他原来的位置。电子往左挪，空穴就往右移，效果相当于一个<b>带正电</b>的粒子在运动。</div>
 <h3>掺杂：N 型和 P 型 <a class="src" data-s="35"></a> <a class="src" data-s="36"></a></h3>
 <div class="grid3">
 <div class="panel"><svg viewBox="0 0 200 165" role="img" aria-label="本征硅"><g id="mini-i"></g></svg><h4>本征硅</h4><p class="muted">电子 = 空穴，都很少，导电差。</p></div>
@@ -180,7 +180,7 @@
 </div>
 
 <div class="ex">
-<div class="exh"><span class="tag">讲解例题</span>两个二极管并联，谁先导通？ <a class="src" data-s="66"></a> <a class="src" data-s="67"></a> <a class="src" data-s="68"></a></div>
+<div class="exh"><span class="tag">讲解例题</span>两个二极管并联时的导通判断 <a class="src" data-s="66"></a> <a class="src" data-s="67"></a> <a class="src" data-s="68"></a></div>
 <p>硅二极管，导通压降 0.7V，\(R=3\,\mathrm{k\Omega}\)，用恒压降模型求 \(U_{AB}\)。</p>
 <div class="fig"><svg id="ex3" viewBox="0 0 460 250" role="img" aria-label="双二极管电路"></svg></div>
 <div class="reveal">
@@ -301,17 +301,17 @@
 <tr><td><b>稳压管</b></td><td>反向击穿区工作，必须串限流电阻</td></tr>
 </tbody></table></div>
 
-<div class="q" data-a="1"><div class="qt">1. N 型半导体自由电子特别多，所以整体带负电。对吗？</div><div class="opts"><button>对</button><button>不对</button></div>
+<div class="q" data-a="1"><div class="qt">1. N 型半导体自由电子特别多，所以整体带负电。这一说法（　）。</div><div class="opts"><button>对</button><button>不对</button></div>
 <div class="qex">✓ 正确。每多一个自由电子就有一个磷正离子，正负抵消，整体电中性。</div></div>
-<div class="q" data-a="1"><div class="qt">2. PN 结内电场的方向是？</div><div class="opts"><button>P → N</button><button>N → P</button></div>
+<div class="q" data-a="1"><div class="qt">2. PN 结内电场的方向为（　）。</div><div class="opts"><button>P → N</button><button>N → P</button></div>
 <div class="qex">✓ 正确。N 侧留下正离子，P 侧留下负离子，电场从正指向负。</div></div>
-<div class="q" data-a="1" data-hint="外电场和内电场方向是相同还是相反？"><div class="qt">3. 给 PN 结加正向电压，空间电荷区会？</div><div class="opts"><button>变宽</button><button>变窄</button><button>不变</button></div>
+<div class="q" data-a="1" data-hint="比较外电场与内电场的方向。"><div class="qt">3. 给 PN 结加正向电压，空间电荷区（　）。</div><div class="opts"><button>变宽</button><button>变窄</button><button>不变</button></div>
 <div class="qex">✓ 正确。外电场 P→N 与内电场 N→P 相反，削弱内电场，PN 结变窄。可以回到 1.2 节拖滑块验证。</div></div>
-<div class="q" data-a="1"><div class="qt">4. 硅二极管两端加正向 0.3V，导通吗？</div><div class="opts"><button>导通</button><button>不导通</button></div>
+<div class="q" data-a="1"><div class="qt">4. 硅二极管两端加正向 0.3V，它（　）。</div><div class="opts"><button>导通</button><button>不导通</button></div>
 <div class="qex">✓ 正确。硅管死区电压约 0.5V，0.3V 还在死区内。</div></div>
-<div class="q" data-a="2" data-hint="先断开二极管，算阳极和阴极电位。"><div class="qt">5. 把例 1.4.1 中的 6V 电池反过来（正极朝上），用理想模型 \(U_{AB}\) 等于多少？</div><div class="opts"><button>−6V</button><button>−12V</button><button>+6V</button><button>0V</button></div>
+<div class="q" data-a="2" data-hint="先断开二极管，算阳极和阴极电位。"><div class="qt">5. 把例 1.4.1 中的 6V 电池反过来（正极朝上），用理想模型求得 \(U_{AB}\) 为（　）。</div><div class="opts"><button>−6V</button><button>−12V</button><button>+6V</button><button>0V</button></div>
 <div class="qex">✓ 正确。阳极 +6V，阴极开路时 −12V，开路电压 18V > 0，导通，理想模型 \(U_{AB}=+6\,\mathrm{V}\)。</div></div>
-<div class="q" data-a="0"><div class="qt">6. 桥式整流电路中，正、负半周流过负载 \(R_L\) 的电流方向？</div><div class="opts"><button>相同</button><button>相反</button></div>
+<div class="q" data-a="0"><div class="qt">6. 桥式整流电路中，正、负半周流过负载 \(R_L\) 的电流方向（　）。</div><div class="opts"><button>相同</button><button>相反</button></div>
 <div class="qex">✓ 正确。两组二极管轮流导通，负载电流方向始终相同，所以输出是单方向的。</div></div>
 
 <details class="gallery"><summary>浏览本章全部课件页（91 页，点击放大）</summary></details>
