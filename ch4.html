@@ -78,12 +78,14 @@
 <div class="panel fig"><svg id="miller" class="wide" viewBox="0 0 640 200" role="img" aria-label="密勒定理"></svg></div>
 <div class="formula">\[ \dot K=\frac{\dot U_{ce}}{\dot U_{b'e}}=-g_mR_L',\qquad C_{M1}=(1-\dot K)C_{b'c}=(1+g_mR_L')C_{b'c},\qquad C_{M2}=\left(1-\frac1{\dot K}\right)C_{b'c}\approx C_{b'c} \]</div>
 <p>\(C_{b'c}\) 只有几 pF，但折算到输入端被放大了 \((1+g_mR_L')\) 倍，可能变成几百 pF，这就是<b>密勒效应</b>。输出侧 \(C_{M2}\) 的时间常数远小于输入侧，可以忽略 <a class="src" data-s="16"></a>。</p>
+<details class="figfold demo"><summary>交互演示：密勒效应</summary>
 <div class="panel">
 <b>感受密勒效应：</b>\(C_{b'c}=2\,\mathrm{pF}\)，\(C_{b'e}=20\,\mathrm{pF}\)，输入回路等效电阻 \(R=0.77\,\mathrm{k\Omega}\)。
 <div class="ctl"><label for="gmRL">\(g_mR_L'\)</label><input type="range" id="gmRL" min="1" max="200" step="1" value="77"><output for="gmRL"></output></div>
 <div class="fig"><svg id="mBars" viewBox="0 0 640 130" role="img" aria-label="密勒电容条形图"></svg></div>
 <div class="cap">增益 \(g_mR_L'\) 越大，\(C_{M1}\) 越大，\(f_H\) 越低。“增益”和“带宽”此消彼长。</div>
 </div>
+</details>
 <h3>上限频率 <a class="src" data-s="17"></a> <a class="src" data-s="18"></a></h3>
 <p>输入回路用戴维宁定理化简后，就是一个 RC 低通：</p>
 <div class="panel fig"><svg id="hEq" class="wide" viewBox="0 0 640 180" role="img" aria-label="高频简化等效电路"></svg></div>
@@ -131,11 +133,13 @@
 <h2 id="multi"><span class="n">4.3.3</span>多级放大电路的频率响应 <a class="src" data-s="26"></a>–<a class="src" data-s="28"></a></h2>
 <div class="formula">\[ \dot A_u=\dot A_{u1}\dot A_{u2}\cdots\dot A_{un},\qquad 20\lg|\dot A_u|=\sum_k20\lg|\dot A_{uk}|,\qquad \varphi=\sum_k\varphi_k \]</div>
 <p>波特图直接相加。两级相同时，单级在 \(f_{H1}\) 处已降到 0.707 倍，两级就降到 \(0.707^2=0.5\) 倍（−6 dB），所以总的 −3 dB 点向里收缩：<b>级数越多，总增益越高，通频带越窄</b>。</p>
+<details class="figfold demo"><summary>交互演示：级数与总带宽</summary>
 <div class="panel">
 <div class="ctl"><label for="nst">级数 \(n\)</label><input type="range" id="nst" min="1" max="4" step="1" value="2"><output for="nst"></output></div>
 <div class="fig"><svg id="mult" class="wide" viewBox="0 0 640 300" role="img" aria-label="多级频率响应"></svg></div>
 <div class="readout" id="multOut"></div>
 </div>
+</details>
 <p>估算公式 <a class="src" data-s="28"></a>：</p>
 <div class="formula">\[ f_L\approx1.1\sqrt{f_{L1}^2+f_{L2}^2+\cdots+f_{Ln}^2},\qquad \frac1{f_H}\approx1.1\sqrt{\frac1{f_{H1}^2}+\frac1{f_{H2}^2}+\cdots+\frac1{f_{Hn}^2}} \]</div>
 

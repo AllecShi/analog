@@ -12,6 +12,8 @@ var CHAPTERS = [
 ];
 
 var SVGNS = 'http://www.w3.org/2000/svg';
+/* numeric versions of main figures, drawn while the matching derivation is open: NUMFIG[id] = function(svgId){...} */
+var NUMFIG = {};
 function mk(tag, attrs, parent){
   var e = document.createElementNS(SVGNS, tag);
   for (var k in attrs) if (attrs[k] !== undefined && attrs[k] !== null) e.setAttribute(k, attrs[k]);
@@ -37,8 +39,9 @@ function addMarkers(svg){
   svg.id = id;
   var defs = mk('defs', {}, svg), names = {};
   ['ink', 'red', 'blue', 'acc', 'amber'].forEach(function(c){
-    var m = mk('marker', {id: id + '-' + c, viewBox:'0 0 10 10', refX:8.5, refY:5, markerWidth:7, markerHeight:7, orient:'auto-start-reverse'}, defs);
-    mk('path', {d:'M0,0 L10,5 L0,10 z', class:'mk-' + c}, m);
+    /* slim notched head; the line ends inside the head so its square end never shows at the tip */
+    var m = mk('marker', {id: id + '-' + c, viewBox:'0 0 12 8', refX:8, refY:4, markerWidth:7, markerHeight:4.67, orient:'auto-start-reverse'}, defs);
+    mk('path', {d:'M0,0.4 L12,4 L0,7.6 L3,4 z', class:'mk-' + c}, m);
     names[c] = 'url(#' + id + '-' + c + ')';
   });
   svg.__mk = names;
@@ -255,6 +258,14 @@ function bindSliders(ids, fmt, cb){
 
 /* ===== Page init: nav, toc, widgets, KaTeX ===== */
 function initPage(chNum){
+  // loose text / inline tags directly inside a figure panel -> one block, so the wide two-column grid keeps them together
+  document.querySelectorAll('article .panel').forEach(function(p){
+    var INL = /^(B|I|EM|STRONG|SPAN|A|SUB|SUP|CODE|BR)$/, run = [];
+    function flush(){ if (!run.length) return; if (run.some(function(n){ return n.nodeType === 1 || n.textContent.trim(); })){
+      var w = document.createElement('div'); w.className = 'ptext'; run[0].before(w); run.forEach(function(n){ w.appendChild(n); }); } run = []; }
+    Array.prototype.slice.call(p.childNodes).forEach(function(n){ if (n.nodeType === 3 || (n.nodeType === 1 && INL.test(n.tagName))) run.push(n); else flush(); });
+    flush();
+  });
   var here = CHAPTERS.filter(function(c){ return c.n === chNum; })[0];
   var idx = CHAPTERS.indexOf(here), prev = idx > 0 ? CHAPTERS[idx - 1] : null, next = here && idx < CHAPTERS.length - 1 ? CHAPTERS[idx + 1] : null;
   // sidebar (desktop: fixed on the left, no top bar; phones: slides in from a slim top bar)
@@ -275,7 +286,9 @@ function initPage(chNum){
     html += '</li>';
   });
   html += '</ol>';
-  html += '<div class="sb-tools">外观：<button type="button" id="themeBtn"></button></div>';
+  html += '<div class="sb-tools"><div>外观：<button type="button" id="themeBtn"></button></div>' +
+    '<div class="sb-cols" id="sbCols" hidden>栏数：<button type="button" data-c="1">1</button><button type="button" data-c="2">2</button><button type="button" data-c="3">3</button>' +
+    '<button type="button" class="lock" title="锁定栏数（缩放时也保持）" aria-pressed="false"></button></div></div>';
   side.innerHTML = html;
   var themeBtn = document.getElementById('themeBtn');
   function thGet(){ try { return localStorage.getItem('analog-theme'); } catch(e){ return null; } }
@@ -399,8 +412,73 @@ function initPage(chNum){
   });
   // grow each figure's viewBox so no label is cut off at the edge
   fitSvgs(document);
+  // a derivation tagged data-fig/data-draw relabels the main figure with numbers while it is open
+  document.querySelectorAll('details[data-fig][data-draw]').forEach(function(d){
+    var svg = document.getElementById(d.dataset.fig), f = NUMFIG[d.dataset.draw], saved = null;
+    if (!svg || !f) return;
+    d.addEventListener('toggle', function(){
+      if (d.open){
+        if (!saved) saved = {html:svg.innerHTML, vb:svg.getAttribute('viewBox'), mk:svg.__mk};
+        svg.innerHTML = ''; svg.__mk = null; svg.setAttribute('viewBox', d.dataset.vb); f(svg.id); svg.classList.add('numon');
+      } else if (saved){
+        svg.innerHTML = saved.html; svg.__mk = saved.mk; svg.setAttribute('viewBox', saved.vb); svg.classList.remove('numon');
+      }
+      setTimeout(function(){ fitSvgs(document); }, 0);
+    });
+  });
   document.querySelectorAll('.tabs > .tabbar > button, details').forEach(function(b){ b.addEventListener(b.tagName === 'DETAILS' ? 'toggle' : 'click', function(){ setTimeout(function(){ fitSvgs(document); }, 0); }); });
+  // very wide screens (or a page zoomed far out): each numbered section (h2) becomes a card and the
+  // cards are laid out in 2-3 columns, every next card going into the currently shortest column
+  document.body.dataset.cols = '1';
+  if (art && chNum > 0) masonry(art);
   if (location.hash){ var t0 = document.getElementById(location.hash.slice(1)); if (t0) setTimeout(function(){ t0.scrollIntoView(); }, 50); }
+}
+
+function masonry(art){
+  var h2s = Array.prototype.slice.call(art.querySelectorAll(':scope > h2'));
+  if (h2s.length < 3) return;
+  var box = document.createElement('div'); box.className = 'mason'; h2s[0].before(box);
+  var secs = h2s.map(function(h){
+    var sec = document.createElement('section'); sec.className = 'sec'; box.appendChild(sec);
+    var n = h;
+    while (n){ var nx = n.nextSibling; sec.appendChild(n); n = nx;
+      if (n && n.nodeType === 1 && (n.tagName === 'H2' || n.classList.contains('page-nav'))) break; }
+    return sec;
+  });
+  var cur = 0, KEY = 'analog-cols', locked = null, manual = 0;
+  try { locked = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch(e){}
+  /* recommended: one column until the page is really wide; phones always one */
+  function rec(){ var w = window.innerWidth; return w >= 3600 ? 3 : (w >= 2400 ? 2 : 1); }
+  function want(){ if (window.innerWidth < 900) return 1; return locked ? locked : (manual || rec()); }
+  var ui = document.getElementById('sbCols'), LOCK = '<svg viewBox="0 0 16 16" width="14" height="14"><rect x="3" y="7" width="10" height="7" rx="1.5" fill="currentColor"/><path d="M5 7V5a3 3 0 0 1 6 0' + '%' + '" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>';
+  function sync(){
+    if (!ui) return; ui.hidden = false;
+    ui.querySelectorAll('[data-c]').forEach(function(b){ b.classList.toggle('on', +b.dataset.c === cur); });
+    var lk = ui.querySelector('.lock'); lk.classList.toggle('on', !!locked); lk.setAttribute('aria-pressed', locked ? 'true' : 'false');
+    lk.innerHTML = LOCK.replace('%', locked ? 'v2' : 'v0'); lk.title = locked ? '已锁定为 ' + locked + ' 栏，点击解锁' : '锁定栏数（缩放时也保持）';
+  }
+  function save(){ try { if (locked) localStorage.setItem(KEY, JSON.stringify(locked)); else localStorage.removeItem(KEY); } catch(e){} }
+  if (ui){
+    ui.querySelectorAll('[data-c]').forEach(function(b){ b.addEventListener('click', function(){
+      var n = +b.dataset.c; if (locked){ locked = n; save(); } else manual = n; lay(); }); });
+    ui.querySelector('.lock').addEventListener('click', function(){
+      if (locked){ manual = locked; locked = null; } else { locked = cur; manual = 0; } save(); sync(); });
+  }
+  function lay(){
+    var n = want(); document.body.dataset.cols = String(n); if (n === cur){ sync(); return; } cur = n;
+    box.innerHTML = ''; box.className = 'mason' + (n > 1 ? ' on' : '');
+    if (n === 1){ secs.forEach(function(sec){ box.appendChild(sec); }); }
+    else {
+      var cols = []; for (var i = 0; i < n; i++){ var c = document.createElement('div'); c.className = 'mcol'; box.appendChild(c); cols.push(c); }
+      secs.forEach(function(sec){ var c = cols.reduce(function(a, b){ return b.offsetHeight < a.offsetHeight ? b : a; }); c.appendChild(sec); });
+    }
+    fitSvgs(document); sync();
+  }
+  lay();
+  /* zooming / resizing drops a choice that was not locked and goes back to the recommended count */
+  var tm, lastW = window.innerWidth;
+  window.addEventListener('resize', function(){ clearTimeout(tm); tm = setTimeout(function(){
+    if (window.innerWidth === lastW) return; lastW = window.innerWidth; manual = 0; lay(); }, 150); });
 }
 
 
@@ -428,12 +506,12 @@ function fitSvgs(root){
   root.querySelectorAll('article svg[viewBox]').forEach(function(svg){
     if (svg.closest('.katex')) return;
     /* --vw = drawing width: CSS caps the on-screen scale so small and wide figures read at a similar size */
-    svg.classList.add('sz'); svg.style.setProperty('--vw', svg.viewBox.baseVal.width);
+    svg.classList.add('sz'); svg.style.setProperty('--vw', svg.viewBox.baseVal.width); svg.style.setProperty('--vh', svg.viewBox.baseVal.height);
     if (!svg.getBoundingClientRect().width) return;
     var vb = svg.viewBox.baseVal, b; try { b = svg.getBBox(); } catch(e){ return; }
     if (!b.width) return;
     var x0 = Math.min(vb.x, b.x - 4), y0 = Math.min(vb.y, b.y - 4), x1 = Math.max(vb.x + vb.width, b.x + b.width + 4), y1 = Math.max(vb.y + vb.height, b.y + b.height + 4);
     if (x0 < vb.x || y0 < vb.y || x1 > vb.x + vb.width || y1 > vb.y + vb.height) svg.setAttribute('viewBox', [x0, y0, x1 - x0, y1 - y0].map(function(v){ return +v.toFixed(1); }).join(' '))
-    svg.style.setProperty('--vw', svg.viewBox.baseVal.width);
+    svg.style.setProperty('--vw', svg.viewBox.baseVal.width); svg.style.setProperty('--vh', svg.viewBox.baseVal.height);
   });
 }

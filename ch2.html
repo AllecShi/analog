@@ -124,12 +124,14 @@
 </tbody></table></div>
 <h3>“动与静”：必须先加直流偏置的原因 <a class="src" data-s="33"></a> <a class="src" data-s="34"></a></h3>
 <p>交流信号只有几十 mV，而发射结要 0.5V 以上才导通。不加直流偏置，信号根本过不去。加上偏置后，信号“骑”在直流上，就能在输入特性的线性段上来回摆动。</p>
+<details class="figfold demo"><summary>交互演示：有无直流偏置的对比</summary>
 <div class="panel">
 <div class="btns"><button type="button" id="biasOn" class="on">有直流偏置 U_BEQ = 0.7V</button><button type="button" id="biasOff">无直流偏置</button></div>
 <div class="ctl"><label for="uiA">信号幅值</label><input type="range" id="uiA" min="0.005" max="0.06" step="0.005" value="0.02"><output for="uiA"></output></div>
 <div class="fig"><svg id="dongjing" class="wide" viewBox="0 0 640 260" role="img" aria-label="动与静"></svg></div>
 <div class="cap">左：输入特性上的工作点（红点）和信号摆动范围；右：对应的 \(i_B\) 波形。没有偏置时 \(i_B\) 恒为 0，信号完全丢失。</div>
 </div>
+</details>
 <div class="key"><b>动与静的辩证</b> <a class="src" data-s="35"></a>：没有静态偏置，动态小信号就无法传递。“静”是“动”的基础，所以分析放大电路永远<b>先静态、后动态</b>。</div>
 <h3>性能指标 <a class="src" data-s="42"></a></h3>
 <div class="formula">\[ A_u=\frac{u_o}{u_i},\qquad R_i=\frac{u_i}{i_i},\qquad R_o=\left.\frac{u_t}{i_t}\right|_{u_s=0,\ R_L=\infty} \]</div>
@@ -192,6 +194,7 @@
 <div class="ex">
 <div class="exh"><span class="tag">例题</span>改变 \(R_b\)，Q 点进入饱和区 <a class="src" data-s="62"></a></div>
 <p>\(\beta=80\)，\(R_b=300\,\mathrm{k\Omega}\)，\(R_c=2\,\mathrm{k\Omega}\)，\(V_{CC}=12\,\mathrm{V}\)。求：(1) Q 点及工作区域；(2) \(R_b=100\,\mathrm{k\Omega}\) 时的 Q 点及工作区域（忽略饱和压降）。</p>
+<details class="figfold"><summary>配图：两个 Q 点在负载线上的位置（含解答数值）</summary><div class="fig"><svg id="exSatD" class="wide" viewBox="0 0 640 300" role="img" aria-label="数值示例"></svg></div></details>
 <div class="reveal">
 <div class="rs">\[I_{BQ}=\frac{V_{CC}-V_{BE}}{R_b}\approx\frac{12}{300}=40\,\mu\mathrm{A},\quad I_{CQ}=80\times40\,\mu\mathrm{A}=3.2\,\mathrm{mA}\]</div>
 <div class="rs">\[V_{CEQ}=12-2\times3.2=5.6\,\mathrm{V}\]
@@ -201,7 +204,6 @@ Q(40μA, 3.2mA, 5.6V)，<b>放大区</b>。在上面的交互图里把 \(R_b\) �
 \[I_{CM}=\frac{V_{CC}-V_{CES}}{R_c}\approx\frac{12}{2}=6\,\mathrm{mA}\]
 因为 \(\beta I_{BQ}=9.6\,\mathrm{mA}>6\,\mathrm{mA}\)，BJT 工作在<b>饱和区</b>，Q(120μA, 6mA, 0V)。<br><span class="muted">教训：算出 \(U_{CE}\) 为负或很小，说明假设“放大区”不成立。</span></div>
 </div>
-<details class="figfold"><summary>配图：两个 Q 点在负载线上的位置</summary><div class="fig"><svg id="exSatD" class="wide" viewBox="0 0 640 300" role="img" aria-label="数值示例"></svg></div></details>
 </div>
 
 <!-- ============ 2.3 dynamic ============ -->
@@ -209,14 +211,17 @@ Q(40μA, 3.2mA, 5.6V)，<b>放大区</b>。在上面的交互图里把 \(R_b\) �
 <h3>信号在电路中的传递 <a class="src" data-s="50"></a></h3>
 <p>加入 \(u_i=U_{im}\sin\omega t\) 后，每个量都是“直流 + 交流”：</p>
 <div class="formula">\[ u_{BE}=U_{BE}+U_{im}\sin\omega t\ \to\ i_B=I_B+I_{bm}\sin\omega t\ \to\ i_C=I_C+I_{cm}\sin\omega t\ \to\ u_{CE}=U_{CE}+U_{cem}\sin(\omega t+\pi) \]</div>
-<div class="panel fig"><svg id="waves" class="wide" viewBox="0 0 640 400" role="img" aria-label="各点波形"></svg>
+<details class="figfold demo"><summary>波形图：各电量的波形与相位关系</summary>
+<div class="panel fig"><svg id="waves" class="wide" viewBox="0 0 640 292" role="img" aria-label="各点波形"></svg>
 <div class="cap">\(i_C\) 增大时 \(R_c\) 上压降增大，\(u_{CE}\) 反而减小。所以输出 \(u_o\) 与输入 \(u_i\) <b>反相</b>（相差 180°），这是共射电路的标志。</div></div>
+</details>
 <h3>交流负载线 <a class="src" data-s="52"></a> <a class="src" data-s="60"></a> <a class="src" data-s="61"></a></h3>
 <p>接上负载后，交流通路里 \(R_c\) 与 \(R_L\) 并联，记 \(R_L'=R_c/\!/R_L\)。交流量满足 \(u_{ce}=-i_cR_L'\)，所以交流负载线：</p>
 <ul><li>斜率 \(-1/R_L'\)，比直流负载线（斜率 \(-1/R_c\)）更陡；</li><li><b>必过 Q 点</b>（信号过零时，电压电流就等于静态值）。</li></ul>
 <div class="formula">\[ i_C=-\frac{1}{R_L'}u_{CE}+\frac{1}{R_L'}U_{CEQ}+I_{CQ} \]</div>
 <h3>非线性失真 <a class="src" data-s="54"></a> <a class="src" data-s="55"></a></h3>
 <p>Q 点设置不当，信号摆动时会进入饱和区或截止区，波形被削掉。下面固定 \(V_{CC}=12\,\mathrm{V}, R_c=R_L=2\,\mathrm{k\Omega}, \beta=80\)：</p>
+<details class="figfold demo"><summary>交互演示：Q 点位置与非线性失真</summary>
 <div class="panel">
 <div class="ctl"><label for="ibq">\(I_{BQ}\)</label><input type="range" id="ibq" min="5" max="70" step="1" value="35"><output for="ibq"></output></div>
 <div class="ctl"><label for="ibm">\(I_{bm}\)</label><input type="range" id="ibm" min="0" max="45" step="1" value="20"><output for="ibm"></output></div>
@@ -225,6 +230,7 @@ Q(40μA, 3.2mA, 5.6V)，<b>放大区</b>。在上面的交互图里把 \(R_b\) �
 <div class="fig"><svg id="dist" class="wide" viewBox="0 0 640 300" role="img" aria-label="失真演示"></svg></div>
 <div class="cap">左：输出特性上的直流负载线（灰虚线）、交流负载线（绿）、Q 点和摆动范围；右：输出电压 \(u_o\) 波形。</div>
 </div>
+</details>
 <div class="tbl"><table>
 <thead><tr><th>失真类型</th><th>原因</th><th>\(u_o\) 波形（NPN 共射）</th><th>消除方法</th></tr></thead>
 <tbody>
@@ -254,8 +260,8 @@ Q(40μA, 3.2mA, 5.6V)，<b>放大区</b>。在上面的交互图里把 \(R_b\) �
 <div class="panel fig"><svg id="ceSS" class="wide" viewBox="0 0 640 230" role="img" aria-label="共射小信号等效电路"></svg></div>
 <div class="formula">\[ u_i=i_b r_{be},\qquad u_o=-\beta i_b\,(R_c/\!/R_L) \]
 \[ A_u=\frac{u_o}{u_i}=-\frac{\beta R_L'}{r_{be}},\qquad R_i=R_b/\!/r_{be}\approx r_{be},\qquad R_o=R_c,\qquad A_{us}=A_u\frac{R_i}{R_s+R_i} \]</div>
-<details class="deriv"><summary>推导过程：\(A_u\)、\(R_i\)、\(R_o\)、\(A_{us}\) 逐个按定义求</summary>
-<div class="fig"><svg id="dvAu" class="wide" viewBox="0 0 640 300" role="img" aria-label="数值示例"></svg><div class="cap">数值示例：参数同下面的补充例题，信号源 \(u_s=10\,\mathrm{mV}\)。</div></div>
+<details class="deriv" data-fig="ceSS" data-draw="dvAu" data-vb="0 0 640 300"><summary>推导过程：\(A_u\)、\(R_i\)、\(R_o\)、\(A_{us}\) 逐个按定义求</summary>
+<div class="fig nofig"><div class="cap">数值示例：参数同下面的补充例题，信号源 \(u_s=10\,\mathrm{mV}\)。上方电路图已同步标出这些数值。</div></div>
 <div class="step"><b>\(A_u\)</b><div>输入回路：\(u_i\) 直接加在 \(r_{be}\) 两端（\(R_b\) 与它并联，不影响这个电压），\(i_b=u_i/r_{be}\)。输出回路：受控电流 \(\beta i_b\) 从集电极向下流，流过 \(R_c/\!/R_L=R_L'\)，按 \(u_o\) 上正下负的参考方向，\(u_o=-\beta i_bR_L'\)。相除：\(A_u=-\dfrac{\beta R_L'}{r_{be}}\)。负号表示输出与输入反相。</div></div>
 <div class="step"><b>\(R_i\)</b><div>从输入端看进去，\(R_b\) 和 \(r_{be}\) 都接在 b 与地（e）之间，是并联：\(R_i=R_b/\!/r_{be}\)。\(R_b\) 一般几百 kΩ，\(r_{be}\) 约 1 kΩ，所以 \(R_i\approx r_{be}\)。</div></div>
 <div class="step"><b>\(R_o\)</b><div>按定义：令 \(u_s=0\)、去掉 \(R_L\)，在输出端加测试电压 \(u_t\)。\(u_s=0\Rightarrow i_b=0\Rightarrow\beta i_b=0\)，受控电流源开路，看进去只剩 \(R_c\)：\(R_o=R_c\)。</div></div>
@@ -265,6 +271,7 @@ Q(40μA, 3.2mA, 5.6V)，<b>放大区</b>。在上面的交互图里把 \(R_b\) �
 <div class="ex">
 <div class="exh"><span class="tag">补充例题</span>完整的静态 + 动态分析</div>
 <p>沿用 S62 的电路（\(\beta=80, R_b=300\,\mathrm{k\Omega}, R_c=2\,\mathrm{k\Omega}, V_{CC}=12\,\mathrm{V}\)），再接 \(R_L=2\,\mathrm{k\Omega}\)，信号源内阻 \(R_s=0.5\,\mathrm{k\Omega}\)，\(r_{bb'}=200\,\Omega\)。求 \(A_u, R_i, R_o, A_{us}\)。<span class="muted">（讲义补充，便于把静态和动态串起来）</span></p>
+<details class="figfold"><summary>配图：带数值的小信号等效电路（含解答数值）</summary><div class="fig"><svg id="exSupD" class="wide" viewBox="0 0 640 280" role="img" aria-label="数值示例"></svg></div></details>
 <div class="reveal">
 <div class="rs"><b>静态</b>（已求）：\(I_{BQ}=40\,\mu\mathrm{A}\)，\(I_{EQ}=(1+\beta)I_{BQ}=81\times40\,\mu\mathrm{A}=3.24\,\mathrm{mA}\)</div>
 <div class="rs">\[r_{be}=200+81\times\frac{26}{3.24}\approx200+650=850\,\Omega=0.85\,\mathrm{k\Omega}\]</div>
@@ -273,7 +280,6 @@ Q(40μA, 3.2mA, 5.6V)，<b>放大区</b>。在上面的交互图里把 \(R_b\) �
 <div class="rs">\[A_{us}=A_u\frac{R_i}{R_s+R_i}=-94\times\frac{0.85}{0.5+0.85}\approx-59\]
 <span class="muted">信号源内阻“吃掉”了约 37% 的增益，因为共射电路的 \(R_i\) 不大。</span></div>
 </div>
-<details class="figfold"><summary>配图：带数值的小信号等效电路</summary><div class="fig"><svg id="exSupD" class="wide" viewBox="0 0 640 280" role="img" aria-label="数值示例"></svg></div></details>
 </div>
 <div class="key"><b>动态分析三步走：</b>① 求 Q 点 → 算 \(r_{be}\)；② 画交流通路 → 换成小信号模型；③ 按定义求 \(A_u, R_i, R_o\)。</div>
 
@@ -508,11 +514,11 @@ var wv = document.getElementById('waves');
 var rows = [['u_i', function(t){ return Math.sin(t); }, 0, 'cv3'], ['u_{BE}', function(t){ return 0.7 + 0.25 * Math.sin(t); }, 0.7, 'cv3'], ['i_B', function(t){ return 0.7 + 0.25 * Math.sin(t); }, 0.7, 'cv2'],
   ['i_C', function(t){ return 0.7 + 0.25 * Math.sin(t); }, 0.7, 'cv2'], ['u_{CE}', function(t){ return 0.6 - 0.35 * Math.sin(t); }, 0.6, 'cv'], ['u_o', function(t){ return -Math.sin(t); }, 0, 'cv']];
 rows.forEach(function(r, i){ var zero = r[2] === 0;
-  var pl = new Plot(wv, {x:90, y:10 + i * 64, w:520, h:48}, [0, 4 * Math.PI], zero ? [-1.2, 1.2] : [0, 1.05]);
+  var pl = new Plot(wv, {x:90, y:10 + i * 44, w:520, h:34}, [0, 4 * Math.PI], zero ? [-1.2, 1.2] : [0, 1.05]);
   pl.axes({xt:[], yt:[], grid:false, xAtBottom:!zero}); if (!zero) pl.hline(r[2], 'cvdash');
-  pl.fn(r[1], r[3]); rtext(wv, 80, 40 + i * 64, r[0], 't', 'end');
+  pl.fn(r[1], r[3]); rtext(wv, 80, 31 + i * 44, r[0], 't', 'end');
   if (!zero) rtext(wv, pl.X(4 * Math.PI) + 22, pl.Y(r[2]) + 4, '直流分量', 'ts'); });
-mk('line', {x1:90 + 520 / 8, y1:10, x2:90 + 520 / 8, y2:390, class:'cvdash'}, wv); rtext(wv, 90 + 520 / 8 + 4, 395, 'u_i 最大时 u_o 最小 → 反相', 'tred');
+mk('line', {x1:90 + 520 / 8, y1:10, x2:90 + 520 / 8, y2:272, class:'cvdash'}, wv); rtext(wv, 90 + 520 / 8 + 4, 284, 'u_i 最大时 u_o 最小 → 反相', 'tred');
 
 /* ---------- distortion ---------- */
 var RC = 2, RLp = 1, dp = document.getElementById('dist');
@@ -596,8 +602,8 @@ function ceSSV(id, o){
   ss.text(255, 36, 'b', 'tb'); ss.text(375, 36, 'c', 'tb'); ss.text(320, 206, 'e', 'tb');
   (o.notes || []).forEach(function(t, i){ ss.text(40, 236 + 20 * i, t[0], t[1] || 'tval'); });
 }
-ceSSV('dvAu', {us:'10 mV', ui:'u_i = 6.3 mV', ib:'i_b = 7.4 μA', uo:'u_o = −0.59 V',
-  notes:[['R_s 和 R_i = 300 // 0.85 ≈ 0.85 kΩ 分压：u_i = 10 × 0.85 / 1.35 ≈ 6.3 mV'], ['i_b = 6.3 mV ÷ 0.85 kΩ ≈ 7.4 μA，流过 R_c // R_L = 1 kΩ：u_o ≈ −0.59 V'], ['A_u = −0.59 V ÷ 6.3 mV ≈ −94，A_{us} = −0.59 V ÷ 10 mV ≈ −59', 'tred']]});
+NUMFIG.dvAu = function(ID){ ceSSV(ID, {us:'10 mV', ui:'u_i = 6.3 mV', ib:'i_b = 7.4 μA', uo:'u_o = −0.59 V',
+  notes:[['R_s 和 R_i = 300 // 0.85 ≈ 0.85 kΩ 分压：u_i = 10 × 0.85 / 1.35 ≈ 6.3 mV'], ['i_b = 6.3 mV ÷ 0.85 kΩ ≈ 7.4 μA，流过 R_c // R_L = 1 kΩ：u_o ≈ −0.59 V'], ['A_u = −0.59 V ÷ 6.3 mV ≈ −94，A_{us} = −0.59 V ÷ 10 mV ≈ −59', 'tred']]}); };
 ceSSV('exSupD', {ui:'R_i ≈ 0.85 kΩ', ib:'i_b', uo:'R_o = 2 kΩ',
   notes:[['r_{be} = 200 + 81 × 26 / 3.24 ≈ 850 Ω；R_L\' = 2 // 2 = 1 kΩ'], ['A_u = −80 × 1 / 0.85 ≈ −94；A_{us} = −94 × 0.85 / 1.35 ≈ −59', 'tred']]});
 /* load line: Rb = 300k (active) vs 100k (saturated) */

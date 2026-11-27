@@ -34,6 +34,7 @@
 <div class="cap">虚线框内是放大电路。\(A_{vo}\) 是负载开路时的电压增益，受控源输出 \(A_{vo}v_i\)。</div></div>
 <p>两次分压，就能写出整个链路的增益：</p>
 <div class="formula">\[ v_i = v_s\,\frac{R_i}{R_s+R_i}\qquad v_o = A_{vo}v_i\,\frac{R_L}{R_o+R_L}\qquad A_v=\frac{v_o}{v_i}=A_{vo}\frac{R_L}{R_o+R_L} \]</div>
+<details class="figfold demo"><summary>交互演示：信号在输入端、输出端的损失</summary>
 <div class="panel">
 <b>动手试一试：</b>调节电阻，观察信号在输入端和输出端各自的损失（取 \(A_{vo}=100\)）。
 <div class="ctl"><label for="mRs">\(R_s\)</label><input type="range" id="mRs" min="-1" max="2" step="0.01" value="0"><output for="mRs"></output></div>
@@ -42,6 +43,7 @@
 <div class="ctl"><label for="mRL">\(R_L\)</label><input type="range" id="mRL" min="-1" max="2" step="0.01" value="0.7"><output for="mRL"></output></div>
 <div class="fig"><svg id="ampBars" viewBox="0 0 640 120" role="img" aria-label="增益条形图"></svg></div>
 </div>
+</details>
 <div class="key"><b>结论（S20–S21：对输入、输出电阻的要求）</b><br>
 想让负载不影响增益，希望 \(R_o \ll R_L\)，理想 \(R_o=0\)；想让信号源不被衰减，希望 \(R_i \gg R_s\)，理想 \(R_i\to\infty\)。<br>这两条是评价电压放大电路好坏的核心，后面每一章都会算 \(R_i\)、\(R_o\)。</div>
 <h3>四种增益 <a class="src" data-s="18"></a></h3>
@@ -197,11 +199,13 @@
 <h2 id="apps"><span class="n">1.4.3</span>二极管的应用：开关、限幅、整流</h2>
 <h3>应用 1：开关电路（与门）<a class="src" data-s="70"></a></h3>
 <p>点击输入端切换 0V / 5V（理想二极管）。只要有一个输入为 0V，对应二极管导通，把输出拉到 0V。</p>
+<details class="figfold demo"><summary>交互演示：二极管与门</summary>
 <div class="panel">
 <div class="btns"><button type="button" id="gA">\(u_{I1}\) = 0V</button><button type="button" id="gB">\(u_{I2}\) = 0V</button></div>
 <div class="fig"><svg id="gate" viewBox="0 0 460 250" role="img" aria-label="二极管与门"></svg></div>
 <div class="readout" id="gateOut"></div>
 </div>
+</details>
 <p class="muted">这种“全 1 才出 1”的关系在数字电路里叫<b>与逻辑</b>。</p>
 
 <h3>应用 2：限幅电路 <a class="src" data-s="71"></a> <a class="src" data-s="72"></a></h3>
@@ -261,12 +265,12 @@
 <div class="ex">
 <div class="exh"><span class="tag">补充例题</span>稳压电路电流计算</div>
 <p>上图中 \(U_I=12\,\mathrm{V}\)，\(R=500\,\Omega\)，\(U_Z=6\,\mathrm{V}\)，\(R_L=1\,\mathrm{k\Omega}\)，求 \(I_R\)、\(I_L\)、\(I_Z\)。<span class="muted">（此题为讲义补充，非课件原题）</span></p>
+<details class="figfold"><summary>配图：带数值的稳压电路（含解答数值）</summary><div class="fig"><svg id="exZd" class="wide" viewBox="0 0 440 240" role="img" aria-label="数值示例"></svg></div></details>
 <div class="reveal">
 <div class="rs">先判断稳压管是否击穿：断开稳压管，\(R_L\) 上分压 \(12\times\frac{1}{0.5+1}=8\,\mathrm{V}>U_Z\)，所以稳压管反向击穿，\(U_o=U_Z=6\,\mathrm{V}\)。</div>
 <div class="rs">\[I_R=\frac{U_I-U_Z}{R}=\frac{12-6}{0.5\,\mathrm{k\Omega}}=12\,\mathrm{mA},\qquad I_L=\frac{U_Z}{R_L}=\frac{6}{1}=6\,\mathrm{mA}\]</div>
 <div class="rs">由 KCL：\(I_Z=I_R-I_L=12-6=6\,\mathrm{mA}\)。只要 \(I_{Z\min}\lt 6\,\mathrm{mA}\lt I_{ZM}\)，输出就稳定在 6V。</div>
 </div>
-<details class="figfold"><summary>配图：带数值的稳压电路</summary><div class="fig"><svg id="exZd" class="wide" viewBox="0 0 440 240" role="img" aria-label="数值示例"></svg></div></details>
 </div>
 <h3>其他特殊二极管 <a class="src" data-s="82"></a>–<a class="src" data-s="85"></a></h3>
 <div class="tbl"><table>
