@@ -325,6 +325,11 @@ function initPage(chNum){
       (next ? '<a class="nx" href="' + next.file + '"><small>下一章</small>第 ' + next.n + ' 章　' + next.title + '</a>' : '<span></span>');
     art.appendChild(pn);
   }
+  // very wide screens (or a page zoomed far out): each numbered section (h2) becomes a card and the
+  // cards are laid out in 2-3 columns, every next card going into the currently shortest column.
+  // Done before KaTeX so moving the sections touches a light DOM and forces no extra layout.
+  document.body.dataset.cols = '1';
+  if (art && chNum > 0) masonry(art);
 
   // slide refs: <a class="src" data-s="48">S48</a> (chapter = this page) or data-s="2:48"
   function slideUrl(spec){ var p = String(spec).split(':'); var ch = p.length > 1 ? p[0] : chNum, s = p.length > 1 ? p[1] : p[0]; return {ch:+ch, s:+s, url:'img/ch' + ch + '/s' + s + '.jpg'}; }
@@ -395,8 +400,19 @@ function initPage(chNum){
   }
   // subscripts in text written by scripts (readouts, buttons): U_BE -> U<sub>BE</sub>
   fixSubs(document.body);
-  new MutationObserver(function(ms){ ms.forEach(function(m){ var el = m.target.nodeType === 3 ? m.target.parentNode : m.target; if (el) fixSubs(el); }); })
-    .observe(document.body, {childList:true, subtree:true, characterData:true});
+  /* text written later by scripts (readouts, buttons): fix subscripts in what was added / changed only.
+     Attached after masonry so moving the sections around is not re-scanned. */
+  new MutationObserver(function(ms){
+    var set = new Set();
+    ms.forEach(function(m){
+      if (m.type === 'characterData'){ if (m.target.parentNode) set.add(m.target.parentNode); return; }
+      m.addedNodes.forEach(function(n){
+        if (n.nodeType === 3){ if (n.parentNode) set.add(n.parentNode); }
+        else if (n.nodeType === 1 && !(n.classList && (n.classList.contains('sec') || n.classList.contains('mcol') || n.classList.contains('mason')))) set.add(n);
+      });
+    });
+    set.forEach(function(el){ fixSubs(el); });
+  }).observe(document.body, {childList:true, subtree:true, characterData:true});
   // phones: figures always fit the screen width; tap one to see it large (scrollable)
   document.querySelectorAll('.fig').forEach(function(f){
     var svgs = f.querySelectorAll(':scope > svg'); if (!svgs.length) return;
@@ -410,8 +426,9 @@ function initPage(chNum){
       function close(){ z.remove(); document.body.style.overflow = ''; }
       z.querySelector('button').onclick = close; c.onclick = close; }); });
   });
-  // grow each figure's viewBox so no label is cut off at the edge
-  fitSvgs(document);
+  // grow each figure's viewBox so no label is cut off at the edge (lazily: only figures near the screen)
+  fitLazy();
+  if (art && art.__relay) art.__relay();
   // a derivation tagged data-fig/data-draw relabels the main figure with numbers while it is open
   document.querySelectorAll('details[data-fig][data-draw]').forEach(function(d){
     var svg = document.getElementById(d.dataset.fig), f = NUMFIG[d.dataset.draw], saved = null;
@@ -423,14 +440,12 @@ function initPage(chNum){
       } else if (saved){
         svg.innerHTML = saved.html; svg.__mk = saved.mk; svg.setAttribute('viewBox', saved.vb); svg.classList.remove('numon');
       }
-      setTimeout(function(){ fitSvgs(document); }, 0);
+      setTimeout(function(){ fitSvgs(svg.parentNode); }, 0);
     });
   });
-  document.querySelectorAll('.tabs > .tabbar > button, details').forEach(function(b){ b.addEventListener(b.tagName === 'DETAILS' ? 'toggle' : 'click', function(){ setTimeout(function(){ fitSvgs(document); }, 0); }); });
-  // very wide screens (or a page zoomed far out): each numbered section (h2) becomes a card and the
-  // cards are laid out in 2-3 columns, every next card going into the currently shortest column
-  document.body.dataset.cols = '1';
-  if (art && chNum > 0) masonry(art);
+  /* opening a fold / switching a tab: re-fit only the figures inside it */
+  document.querySelectorAll('.tabs > .tabbar > button, details').forEach(function(b){ var scope = b.tagName === 'DETAILS' ? b : b.closest('.tabs');
+    b.addEventListener(b.tagName === 'DETAILS' ? 'toggle' : 'click', function(){ setTimeout(function(){ fitSvgs(scope); }, 0); }); });
   if (location.hash){ var t0 = document.getElementById(location.hash.slice(1)); if (t0) setTimeout(function(){ t0.scrollIntoView(); }, 50); }
 }
 
@@ -448,8 +463,10 @@ function masonry(art){
   var cur = 0, KEY = 'analog-cols', locked = null, manual = 0;
   try { locked = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch(e){}
   /* recommended: one column until the page is really wide; phones always one */
-  function rec(){ var w = window.innerWidth; return w >= 3600 ? 3 : (w >= 2400 ? 2 : 1); }
-  function want(){ if (window.innerWidth < 900) return 1; return locked ? locked : (manual || rec()); }
+  /* matchMedia instead of innerWidth: reading innerWidth on a phone forces a full layout of the page mid-script */
+  function mq(w){ return matchMedia('(min-width:' + w + 'px)').matches; }
+  function rec(){ return mq(3600) ? 3 : (mq(2400) ? 2 : 1); }
+  function want(){ if (!mq(900)) return 1; return locked ? locked : (manual || rec()); }
   var ui = document.getElementById('sbCols'), LOCK = '<svg viewBox="0 0 16 16" width="14" height="14"><rect x="3" y="7" width="10" height="7" rx="1.5" fill="currentColor"/><path d="M5 7V5a3 3 0 0 1 6 0' + '%' + '" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>';
   function sync(){
     if (!ui) return; ui.hidden = false;
@@ -472,11 +489,13 @@ function masonry(art){
       var cols = []; for (var i = 0; i < n; i++){ var c = document.createElement('div'); c.className = 'mcol'; box.appendChild(c); cols.push(c); }
       secs.forEach(function(sec){ var c = cols.reduce(function(a, b){ return b.offsetHeight < a.offsetHeight ? b : a; }); c.appendChild(sec); });
     }
-    fitSvgs(document); sync();
+    if (n > 1 || secs.__laid) fitLazy(); secs.__laid = true; sync();
   }
   lay();
+  /* multi-column: balance the columns again once formulas are typeset (heights change) */
+  art.__relay = function(){ if (cur > 1){ cur = 0; lay(); } };
   /* zooming / resizing drops a choice that was not locked and goes back to the recommended count */
-  var tm, lastW = window.innerWidth;
+  var tm, lastW = null; addEventListener('load', function(){ lastW = window.innerWidth; });
   window.addEventListener('resize', function(){ clearTimeout(tm); tm = setTimeout(function(){
     if (window.innerWidth === lastW) return; lastW = window.innerWidth; manual = 0; lay(); }, 150); });
 }
@@ -486,9 +505,12 @@ function masonry(art){
 var SUB_RE = /([A-Za-z0-9)α-ωΑ-Ω'])(?:_\{([^}]*)\}|_([A-Za-z0-9']+)|\^\{([^}]*)\})/;
 var SUB_SKIP = 'svg,script,style,.katex,textarea,option,sub,sup';
 function fixSubs(root){
-  if (!root || root.nodeType !== 1 || root.closest(SUB_SKIP)) return;
-  var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null), n, todo = [];
-  while ((n = w.nextNode())){ var p = n.parentNode; if (p && p.closest && p.closest(SUB_SKIP)) continue; if (SUB_RE.test(n.nodeValue)) todo.push(n); }
+  if (!root || root.nodeType !== 1 || !root.isConnected || root.closest(SUB_SKIP)) return;
+  /* skip whole KaTeX / SVG subtrees at once instead of testing every text node with closest() */
+  var w = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, {acceptNode: function(n){
+    if (n.nodeType === 1) return n.matches(SUB_SKIP) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_SKIP;
+    return SUB_RE.test(n.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP; }}), n, todo = [];
+  while ((n = w.nextNode())) todo.push(n);
   todo.forEach(function(n){
     var f = document.createDocumentFragment(), s = n.nodeValue, m;
     while ((m = SUB_RE.exec(s))){
@@ -502,16 +524,40 @@ function fixSubs(root){
   });
 }
 /* ===== make the viewBox big enough for everything drawn ===== */
-function fitSvgs(root){
-  root.querySelectorAll('article svg[viewBox]').forEach(function(svg){
-    if (svg.closest('.katex')) return;
-    /* --vw = drawing width: CSS caps the on-screen scale so small and wide figures read at a similar size */
-    svg.classList.add('sz'); svg.style.setProperty('--vw', svg.viewBox.baseVal.width); svg.style.setProperty('--vh', svg.viewBox.baseVal.height);
+/* batched: all style writes, then all measurements, then all viewBox writes, so the page is laid out once, not once per figure */
+function fitList(svgs){
+  svgs = svgs.filter(function(svg){ return !svg.closest('.katex'); });
+  /* --vw = drawing width: CSS caps the on-screen scale so small and wide figures read at a similar size */
+  svgs.forEach(function(svg){ svg.classList.add('sz'); svg.style.setProperty('--vw', svg.viewBox.baseVal.width); svg.style.setProperty('--vh', svg.viewBox.baseVal.height); });
+  var todo = [];
+  svgs.forEach(function(svg){
     if (!svg.getBoundingClientRect().width) return;
     var vb = svg.viewBox.baseVal, b; try { b = svg.getBBox(); } catch(e){ return; }
     if (!b.width) return;
     var x0 = Math.min(vb.x, b.x - 4), y0 = Math.min(vb.y, b.y - 4), x1 = Math.max(vb.x + vb.width, b.x + b.width + 4), y1 = Math.max(vb.y + vb.height, b.y + b.height + 4);
-    if (x0 < vb.x || y0 < vb.y || x1 > vb.x + vb.width || y1 > vb.y + vb.height) svg.setAttribute('viewBox', [x0, y0, x1 - x0, y1 - y0].map(function(v){ return +v.toFixed(1); }).join(' '))
-    svg.style.setProperty('--vw', svg.viewBox.baseVal.width); svg.style.setProperty('--vh', svg.viewBox.baseVal.height);
+    if (x0 < vb.x || y0 < vb.y || x1 > vb.x + vb.width || y1 > vb.y + vb.height) todo.push([svg, [x0, y0, x1 - x0, y1 - y0]]);
   });
+  todo.forEach(function(t){ var svg = t[0];
+    svg.setAttribute('viewBox', t[1].map(function(v){ return +v.toFixed(1); }).join(' '));
+    svg.style.setProperty('--vw', svg.viewBox.baseVal.width); svg.style.setProperty('--vh', svg.viewBox.baseVal.height); });
+}
+function fitSvgs(root){
+  if (!root) return;
+  var list = Array.prototype.slice.call(root.querySelectorAll('article svg[viewBox]'));
+  if (root.matches && root.matches('article svg[viewBox]')) list.push(root);
+  fitList(list);
+}
+/* load time: set the size variables on every figure (cheap), measure each one only when it comes near the screen */
+var FIT_IO = null;
+function fitLazy(){
+  var all = Array.prototype.slice.call(document.querySelectorAll('article svg[viewBox]')).filter(function(s){ return !s.closest('.katex'); });
+  all.forEach(function(svg){ svg.classList.add('sz'); svg.style.setProperty('--vw', svg.viewBox.baseVal.width); svg.style.setProperty('--vh', svg.viewBox.baseVal.height); });
+  if (!window.IntersectionObserver){ fitList(all); return; }
+  if (FIT_IO) FIT_IO.disconnect();
+  FIT_IO = new IntersectionObserver(function(es){
+    var vis = es.filter(function(e){ return e.isIntersecting; }).map(function(e){ return e.target; });
+    vis.forEach(function(s){ FIT_IO.unobserve(s); });
+    if (vis.length) fitList(vis);
+  }, {rootMargin:'800px 0px'});
+  all.forEach(function(s){ FIT_IO.observe(s); });
 }
